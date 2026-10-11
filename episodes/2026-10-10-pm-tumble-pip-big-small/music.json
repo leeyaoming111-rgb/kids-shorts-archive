@@ -1,0 +1,19 @@
+{
+ "tempo": 88,
+ "time_signature": "6/8",
+ "key": "G major (absolute sung pitches)",
+ "progression": "G-Em-C-D chorus; G-C-D-Em-D rounds",
+ "instruments": [
+  "tuba oom-pah bass",
+  "toy piano and pizzicato chords",
+  "tin whistle (Pip double)",
+  "low reed (Tumble double)",
+  "woodblock",
+  "triangle",
+  "slide whistle and boing SFX"
+ ],
+ "form": "spoken intro, chorus, 4 x (BIG line low, tiny line high, gag), finale duet, bye",
+ "hook": "Big and small, big and small! Let's go find them all!",
+ "voice": "am_eric (Tumble) + af_bella (Pip) duet",
+ "chant": "none; BIG/tiny contrast pairs"
+}

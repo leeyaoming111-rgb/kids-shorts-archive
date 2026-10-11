@@ -20,6 +20,7 @@ Dino Count shape.
 | `history.json` | One line per finished video: job_id, date, title, format, lesson, characters, setting, voice, hook. |
 | `tools/qa_geom.py` | Geometry QA: penetration, floating perches, below-ground. Copy into the job. |
 | `tools/REVIEWER.md` | Brief for the independent reviewer subagent. |
+| `tools/el_song.py`, `tools/audio_el_example.py` | ElevenLabs song generator and checks; example mix with spoken lines and SFX. |
 | `runner.sh`, `install_helper.command` | The Mac helper. Do not modify. |
 
 `job_id` format: `YYYY-MM-DD-am-slug` or `YYYY-MM-DD-pm-slug` (local Mexico City time; am = before 13:00).
@@ -62,7 +63,23 @@ Fixed for quality and safety only:
 - Contacts: place anything that rests on something (a bird on a head, a hat, feet) from SDF-measured surface heights.
 - Output: 1080x1920, 30 fps, about 45 s. `render.py out/video.mp4` must run on the Mac with only numpy, scipy, skimage, PIL, skia, moderngl. Nothing else is installed there.
 
-### Audio rules (from the Penguin Shapes failure)
+### Song: ElevenLabs Music first, Kokoro as fallback
+
+When `ELEVENLABS_API_KEY` is set and `api.elevenlabs.io` is reachable, make the song with `tools/el_song.py` (Episode 2 is the
+reference):
+1. Write a composition plan for `music_v2_5`: one section per sung line or story beat, exact `duration_ms` per section (min 3 s),
+   lyrics in `text`, the voice and instruments in each section's `positive_styles` (not inline cues), the tempo, key and genre
+   in the first section, `vocals` in the intro's `negative_styles`.
+2. Generate 3 takes with different seeds (the plan allows 2 requests at a time). Keep the take with the best speech-to-text
+   lyric recall (target 100%, minimum 95%) whose every line sits inside its section.
+3. Forced alignment on the chosen take gives word timings. Drive captions, lip sync, shot cuts and gag events from them.
+4. Diarized speech-to-text confirms the voices (for example a deep BIG voice and a high tiny voice). Spoken lines use ElevenLabs
+   TTS with character timestamps (Episode 2: Liam for Tumble, Jessica for Pip).
+5. Mix song + spoken lines + SFX at -14 LUFS with at least 0.3 s between voice lines. Check the full lyric text against the
+   transcript once more after mixing.
+Without the key or network, use the Kokoro sung-TTS pipeline below.
+
+### Audio rules for the Kokoro fallback (from the Penguin Shapes failure)
 
 Penguin Shapes cut 8 of 18 sung lines short by up to 0.36 s, often on the lesson word. Prevent it:
 - Budget syllables: at most 3.5 sung syllables per second. Leave at least 0.5 beat of rest after every sung line.

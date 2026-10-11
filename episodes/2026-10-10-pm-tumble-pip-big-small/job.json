@@ -1,0 +1,8 @@
+{
+ "title": "Tumble & Pip, Episode 2: Big and Small!",
+ "format": "series episode 2",
+ "lesson": "big and small (size contrast)",
+ "prompt": "A 45-second vertical (9:16) cartoon episode for children aged 3 to 5. Tumble the clay fox cub and his tiny bird friend Pip go on a picnic in a sunny meadow and play \"big and small\". Tumble sings every BIG thing in a deep, slow voice; Pip sings every tiny thing in a high, quick voice. Four rounds, each with a slapstick gag: a big apple rolls away with Pip running on top; Tumble's big leaf fan blows Pip head over tail into the picnic basket; Tumble sits on a tiny mushroom and it squashes and boings him into the air; Pip's tiny stomp goes \"tap\" while Tumble's big hop shakes the whole meadow. Bouncy 6/8 jig with tuba and tin whistle. The word BIG appears huge on screen and the word \"tiny\" appears tiny. Finale in split screen, BIG on top and small below, then a crane up over the meadow as they wave goodbye.",
+ "voice": "ElevenLabs Music v2.5 duet (deep BIG voice + high tiny voice) + ElevenLabs TTS Liam (Tumble) / Jessica (Pip)",
+ "revision": "reviewer PASS round 3, geometry QA 0"
+}

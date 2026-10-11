@@ -15,6 +15,7 @@ Every new run reads this archive first and must differ from it: new format, worl
 | <img src="episodes/2026-10-09-pm-dino-count/stills/t17.jpg" width="120"> | [Dino Count!](episodes/2026-10-09-pm-dino-count/plan.md) | song-and-reveal (v1 template) | counting 1 to 5 and back down | am_eric | reference template |
 | <img src="episodes/2026-10-10-pm-penguin-shapes/stills/t17.jpg" width="120"> | [Penguin Shapes!](episodes/2026-10-10-pm-penguin-shapes/plan.md) | song-and-reveal (v1 template, owner rejected) | shapes: circle, square, triangle, star, heart | af_heart | rejected (template reskin) |
 | <img src="episodes/2026-10-10-pm-tumble-pip-weather/stills_r2/t15.0.jpg" width="120"> | [Tumble & Pip, Episode 1: What's the Weather?](episodes/2026-10-10-pm-tumble-pip-weather/plan.md) | series episode 1 (series: Tumble & Pip) | weather: sunny, cloudy, windy, rainy, rainbow | am_eric | r2, reviewer PASS |
+| <img src="episodes/2026-10-10-pm-tumble-pip-big-small/stills/04_15.2s.jpg" width="120"> | [Tumble & Pip, Episode 2: Big and Small!](episodes/2026-10-10-pm-tumble-pip-big-small/plan.md) | series episode 2 (series: Tumble & Pip) | big and small | ElevenLabs Music duet + TTS | reviewer PASS (round 3), QA 0 |
 | <img src="episodes/2026-10-10-pm-lulu-bo-turns/stills/t22.3.jpg" width="120"> | [My Turn, Your Turn! (Lulu & Bo at the Pond)](episodes/2026-10-10-pm-lulu-bo-turns/plan.md) | story (one-off) | taking turns | af_heart (Bo spoken: am_eric) | done |
 
 ## Layout

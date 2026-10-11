@@ -1,6 +1,58 @@
 [
-  {"job_id": "2026-10-09-pm-dino-count", "date": "2026-10-09", "title": "Dino Count!", "lesson": "counting 1 to 5 and back down", "characters": "five pastel clay dinosaurs: pink stegosaurus, peach long-neck, blue T-rex, yellow triceratops, lavender ankylosaurus", "setting": "mossy hill with a smoking clay volcano", "voice": "am_eric", "hook": "Stomp, stomp, one more friend! Count with me from start to end!", "format": "song-and-reveal (v1 template)"},
-  {"job_id": "2026-10-10-pm-penguin-shapes", "date": "2026-10-10", "title": "Penguin Shapes!", "lesson": "shapes: circle, square, triangle, star, heart", "characters": "five pastel clay penguins: pink (bow), mint (tuft), sky blue, lavender (tuft), peach (bow)", "setting": "snowy hill with a clay igloo, pine trees and falling snow", "voice": "af_heart", "hook": "Waddle, waddle, slide and play! Find a shape with me today!", "format": "song-and-reveal (v1 template, owner rejected)"},
-  {"job_id": "2026-10-10-pm-tumble-pip-weather", "date": "2026-10-10", "title": "Tumble & Pip, Episode 1: What's the Weather?", "format": "series episode 1 (series: Tumble & Pip)", "lesson": "weather: sunny, cloudy, windy, rainy, rainbow", "characters": "Tumble (pastel-orange clay fox cub) and Pip (tiny sky-blue clay bird)", "setting": "round clay cottage and front garden, weather changes overhead", "voice": "am_eric", "hook": "Peek out, what do you see? Sun or rain, come sing with me!", "revision": "r2 (glitch fixes; videos/2026-10-10-pm-tumble-pip-weather-r2.mp4 is the current cut)"},
-  {"job_id": "2026-10-10-pm-lulu-bo-turns", "date": "2026-10-10", "title": "My Turn, Your Turn! (Lulu & Bo at the Pond)", "format": "story (one-off)", "lesson": "taking turns", "characters": "Lulu (lime-green clay frog with a pink flower) and Bo (turtle with mint face and orange shell)", "setting": "golden-hour lily pond with a big rock and a pink petal slide", "voice": "af_heart (Bo spoken: am_eric)", "hook": "My turn, your turn, wait and see! One for you and one for me!"}
+ {
+  "job_id": "2026-10-09-pm-dino-count",
+  "date": "2026-10-09",
+  "title": "Dino Count!",
+  "lesson": "counting 1 to 5 and back down",
+  "characters": "five pastel clay dinosaurs: pink stegosaurus, peach long-neck, blue T-rex, yellow triceratops, lavender ankylosaurus",
+  "setting": "mossy hill with a smoking clay volcano",
+  "voice": "am_eric",
+  "hook": "Stomp, stomp, one more friend! Count with me from start to end!",
+  "format": "song-and-reveal (v1 template)"
+ },
+ {
+  "job_id": "2026-10-10-pm-penguin-shapes",
+  "date": "2026-10-10",
+  "title": "Penguin Shapes!",
+  "lesson": "shapes: circle, square, triangle, star, heart",
+  "characters": "five pastel clay penguins: pink (bow), mint (tuft), sky blue, lavender (tuft), peach (bow)",
+  "setting": "snowy hill with a clay igloo, pine trees and falling snow",
+  "voice": "af_heart",
+  "hook": "Waddle, waddle, slide and play! Find a shape with me today!",
+  "format": "song-and-reveal (v1 template, owner rejected)"
+ },
+ {
+  "job_id": "2026-10-10-pm-tumble-pip-weather",
+  "date": "2026-10-10",
+  "title": "Tumble & Pip, Episode 1: What's the Weather?",
+  "format": "series episode 1 (series: Tumble & Pip)",
+  "lesson": "weather: sunny, cloudy, windy, rainy, rainbow",
+  "characters": "Tumble (pastel-orange clay fox cub) and Pip (tiny sky-blue clay bird)",
+  "setting": "round clay cottage and front garden, weather changes overhead",
+  "voice": "am_eric",
+  "hook": "Peek out, what do you see? Sun or rain, come sing with me!",
+  "revision": "r2 (glitch fixes; videos/2026-10-10-pm-tumble-pip-weather-r2.mp4 is the current cut)"
+ },
+ {
+  "job_id": "2026-10-10-pm-lulu-bo-turns",
+  "date": "2026-10-10",
+  "title": "My Turn, Your Turn! (Lulu & Bo at the Pond)",
+  "format": "story (one-off)",
+  "lesson": "taking turns",
+  "characters": "Lulu (lime-green clay frog with a pink flower) and Bo (turtle with mint face and orange shell)",
+  "setting": "golden-hour lily pond with a big rock and a pink petal slide",
+  "voice": "af_heart (Bo spoken: am_eric)",
+  "hook": "My turn, your turn, wait and see! One for you and one for me!"
+ },
+ {
+  "job_id": "2026-10-10-pm-tumble-pip-big-small",
+  "date": "2026-10-10",
+  "title": "Tumble & Pip, Episode 2: Big and Small!",
+  "format": "series episode 2 (series: Tumble & Pip)",
+  "lesson": "big and small",
+  "setting": "Picnic Meadow by the stream",
+  "voice": "ElevenLabs Music v2.5 duet + ElevenLabs TTS (Liam, Jessica)",
+  "hook": "Big and small, big and small! Let's go find them all!",
+  "checks": "lyric recall 100% song / 97% mix, -14.6 LUFS, geometry QA 0, reviewer PASS (round 3)"
+ }
 ]
