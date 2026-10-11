@@ -1,0 +1,8 @@
+*.wav
+*.mp4
+*.pkl
+*.onnx
+*.bin
+*.ttf
+__pycache__/
+out/

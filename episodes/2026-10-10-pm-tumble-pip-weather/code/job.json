@@ -1,0 +1,8 @@
+{
+ "title": "Tumble & Pip, Episode 1: What's the Weather?",
+ "format": "series episode 1",
+ "lesson": "weather: sunny, cloudy, windy, rainy, rainbow",
+ "prompt": "A 45-second vertical (9:16) cartoon episode for children aged 3 to 5. Tumble, a little clay fox cub, slides into his front garden to play with his tiny bird friend Pip. Every time he looks up at the sky, the weather changes, and he picks the right thing: a sunhat for sunshine, cloud-watching for clouds, a kite for wind, an umbrella and yellow boots for rain, and a happy dance when a rainbow appears. Gentle waltz song with marimba and music box, clear male voice. Each verse asks \"What's the weather?\", pauses so children can answer, then names it. Claymation style, soft lighting that changes with the weather, thumbprint textures, real camera shots: crane, close-up tilting to the sky, over-the-shoulder, low-angle wide, push-in.",
+ "voice": "am_eric",
+ "revision": "r2: glitch fixes after geometry QA + reviewer agent"
+}

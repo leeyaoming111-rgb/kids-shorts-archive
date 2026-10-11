@@ -1,0 +1,18 @@
+{
+ "tempo": 132,
+ "time_signature": "3/4",
+ "key": "written C, sung B (TRANSPOSE -11)",
+ "progression": "C-Am-F-G (chorus); per verse C | F (pause) | answer chord | G",
+ "instruments": [
+  "marimba oom-pah-pah",
+  "plucked bass",
+  "music box melody double",
+  "warm pad in pauses",
+  "shaker",
+  "triangle"
+ ],
+ "form": "spoken intro, chorus, 5 x (question, guessing pause, answer, action line), outro",
+ "hook": "Peek out, what do you see? Sun or rain, come sing with me!",
+ "voice": "am_eric",
+ "chant": "none; question-pause-answer"
+}

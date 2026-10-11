@@ -1,0 +1,16 @@
+{
+ "tempo": 120,
+ "time_signature": "4/4",
+ "key": "written C (sung transposed)",
+ "progression": "C-C-F-G (chorus), C-F-C-G (verses)",
+ "instruments": [
+  "ukulele-style plucks",
+  "plucked bass",
+  "kick/snare/hat kit",
+  "glockenspiel melody double"
+ ],
+ "form": "intro, chorus, 5 x (arrival chant + answer line), chorus, list finale, hooray, bye",
+ "chant": "'<word>, <word>, here comes/here's a <ITEM>!' on C-C-F-F-<rising>",
+ "hook": "Waddle, waddle, slide and play! Find a shape with me today!",
+ "voice": "af_heart"
+}
