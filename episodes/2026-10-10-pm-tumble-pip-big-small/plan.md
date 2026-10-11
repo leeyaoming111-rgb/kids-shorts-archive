@@ -1,7 +1,7 @@
 # Tumble & Pip, Episode 2: Big and Small!
 
 - **job_id:** 2026-10-10-pm-tumble-pip-big-small
-- **status:** done (rendered on the Mac in 83 s, 2026-10-10 23:41 local)
+- **status:** done, v2 remake (fixed voices, fully sung). First version (rendered on the Mac in 83 s, 2026-10-10 23:41 local)
 - **format:** series episode 2 (series: Tumble & Pip). Previous video was a one-off story (Lulu & Bo).
 - **lesson:** big and small (not in the last 4: counting, shapes, weather, taking turns)
 - **characters:** Tumble (pastel-orange clay fox cub) and Pip (tiny sky-blue clay bird), who speaks and sings for the first time.
@@ -51,3 +51,11 @@ A 45-second vertical (9:16) cartoon episode for children aged 3 to 5. Tumble the
 - Final mix: -14.6 LUFS, minimum gap between voice lines 0.36 s, full-mix lyric recall 97% (65/67; only "Wheee" and "Boing" misheard).
 - Geometry QA: 0 issues (penetration, floating, below-ground, pops) at 15 fps.
 - Reviewer agent: FAIL, FAIL, PASS (3 rounds). See review.md.
+
+## v2 remake (owner feedback: flat gag sounds, voices changing, too much talking)
+
+- Fixed cast voices made with ElevenLabs Voice Design: Tumble `Kx0fJ79cIgKz5YbJmR0t` (about 270 Hz, warm) and Pip `tGxaydQ2FS8MHwM6syrt` (about 550 Hz, bubbly). Both are used for every line, sung and spoken, in this and future episodes.
+- Fully sung song: ElevenLabs Music take F (100% lyric recall), with a 9 s opening chorus. Vocals were split off with stem separation, converted line by line to the cast voices and retuned onto the melody. Lines 0-3 were sung with cast-voice TTS because the conversion garbled them.
+- Gag sounds use eleven_v3 with emotion tags (Wheee, Whoa, Oops), and Boing gets a springy pitch bend.
+- Round 2 is reordered: Pip sings "Tiny leaf fan!" first, then the gust blows him into the basket.
+- Checks: full-mix speech-to-text puts every Tumble line on one speaker and every Pip line on the other; lyric recall 93%+ ("fan" is sometimes heard as "bear"); -14.5 LUFS; geometry QA 0; Mac render 82 s.
