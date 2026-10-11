@@ -79,6 +79,28 @@ reference):
    transcript once more after mixing.
 Without the key or network, use the Kokoro sung-TTS pipeline below.
 
+### Cast voices (fixed for every video, from Ep 2 v2)
+
+Recurring characters keep ONE ElevenLabs voice for speaking AND singing, in every episode. The voice IDs are in `tools/cast_voices.json`
+(Tumble `Kx0fJ79cIgKz5YbJmR0t`, Pip `tGxaydQ2FS8MHwM6syrt`). A new character gets a voice from Voice Design (`/v1/text-to-voice/design`,
+model `eleven_ttv_v3`, describe an adult voice actor performing the character, 3 previews), picked by pitch contrast with the cast and
+clarity, saved with `/v1/text-to-voice`, and added to `cast_voices.json`. Never let the music model's own singers stay in the final mix.
+
+Song pipeline (tools/el_song2.py, convert.py, retune.py, singtts.py, build_song_v2.py; Episode 2 v2 is the reference):
+1. Everything is SUNG. Write melodic lyrics, a chorus of 6 to 9 s, and put "sung melodically, legato, not spoken, not a chant" in
+   `positive_styles` and "spoken word, talking, rap, chant" in `negative_styles`. Only gag exclamations may be spoken.
+2. Generate 2 takes at a time with different seeds until one has 95%+ recall, all lines in their sections, and gag breaks in the right place.
+3. `POST /v1/music/stem-separation` (zip of vocals, bass, drums, guitar, other, piano). The instrumental is the sum of all non-vocal stems.
+4. Per sung line, convert the vocal stem with speech-to-speech (`eleven_multilingual_sts_v2`) to the character's voice, then
+   PSOLA-retune it onto the source melody, shifted by whole octaves into the character's range. STT-check every converted line.
+5. Any line the conversion garbles (high held unison lines often are), sing instead with the character's TTS: forced-align the words,
+   stretch each word to the source word timing, then retune onto the melody (singtts.py).
+6. A sung line can move by a whole bar only when the instrumental chroma under both spots matches (similarity 0.9 or more).
+7. Gag exclamations use `eleven_v3` TTS in the cast voice with audio tags ([excited], [surprised], [laughs]) and stability 0.0.
+   Generate 2 per line and keep the take with the widest pitch range. Give "Boing" a springy pitch bend.
+8. Final checks: diarized STT of the full mix shows exactly one speaker per character, and lyric recall is 90%+.
+Output format: mp3_44100_128 (192 needs the Creator tier).
+
 ### Audio rules for the Kokoro fallback (from the Penguin Shapes failure)
 
 Penguin Shapes cut 8 of 18 sung lines short by up to 0.36 s, often on the lesson word. Prevent it:
