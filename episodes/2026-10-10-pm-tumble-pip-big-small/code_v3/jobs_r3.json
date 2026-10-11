@@ -1,0 +1,1 @@
+[{"src": "/home/claude/job4/v2/sts/sung_00.wav", "ref": "ref/tumble.wav", "out_dir": "svc/00c", "shift": 0}, {"src": "/home/claude/job4/v2/sts/sung_02.wav", "ref": "ref/tumble.wav", "out_dir": "svc/02c", "shift": 0}, {"src": "/home/claude/job4/v2/sts/sung_x.wav", "ref": "ref/tumble.wav", "out_dir": "svc/xc", "shift": 0}]

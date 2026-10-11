@@ -86,19 +86,26 @@ Recurring characters keep ONE ElevenLabs voice for speaking AND singing, in ever
 model `eleven_ttv_v3`, describe an adult voice actor performing the character, 3 previews), picked by pitch contrast with the cast and
 clarity, saved with `/v1/text-to-voice`, and added to `cast_voices.json`. Never let the music model's own singers stay in the final mix.
 
-Song pipeline (tools/el_song2.py, convert.py, retune.py, singtts.py, build_song_v2.py; Episode 2 v2 is the reference):
-1. Everything is SUNG. Write melodic lyrics, a chorus of 6 to 9 s, and put "sung melodically, legato, not spoken, not a chant" in
-   `positive_styles` and "spoken word, talking, rap, chant" in `negative_styles`. Only gag exclamations may be spoken.
-2. Generate 2 takes at a time with different seeds until one has 95%+ recall, all lines in their sections, and gag breaks in the right place.
-3. `POST /v1/music/stem-separation` (zip of vocals, bass, drums, guitar, other, piano). The instrumental is the sum of all non-vocal stems.
-4. Per sung line, convert the vocal stem with speech-to-speech (`eleven_multilingual_sts_v2`) to the character's voice, then
-   PSOLA-retune it onto the source melody, shifted by whole octaves into the character's range. STT-check every converted line.
-5. Any line the conversion garbles (high held unison lines often are), sing instead with the character's TTS: forced-align the words,
-   stretch each word to the source word timing, then retune onto the melody (singtts.py).
-6. A sung line can move by a whole bar only when the instrumental chroma under both spots matches (similarity 0.9 or more).
+Song pipeline (Episode 2 v3 is the reference; tools: el_song2.py, seedvc/batch.py, singtts.py, build_song_v3.py):
+1. Everything is SUNG. Use melodic lyrics and a chorus of 6 to 9 s. Put "sung melodically, legato, not spoken" in `positive_styles`
+   and "spoken word, talking, rap, chant" in `negative_styles`. Only the gag exclamations are spoken.
+2. Generate takes 2 at a time with the newest ElevenLabs music model (music_v2_5). Keep a take with 95%+ recall, every line inside
+   its section and the gag breaks in the right places. The model ignores per-section singer requests, so don't select takes on who sang.
+   Its copyright filter can false-flag heavily repeated lyric lines: vary the line or keep repeats to two.
+3. `POST /v1/music/stem-separation` gives the stems. The instrumental is the sum of all non-vocal stems.
+4. Convert each sung line of the vocal stem with **Seed-VC** (github Plachtaa/seed-vc, f0-conditioned 44.1 kHz singing model;
+   weights from huggingface.co). The reference is a 10 to 15 s sample of the character's ElevenLabs voice. Shift by whole octaves into
+   the character's range (Tumble about 200-330 Hz, Pip about 400-600 Hz). Check the source pitch for octave errors first: if the output
+   lands an octave off, redo with 12 semitones less. Seed-VC keeps the melody, so nothing is retuned afterwards.
+   Use 15 diffusion steps, or 25-30 for a line that comes out unclear. On the 2-CPU cloud workspace it takes 1.5-3 minutes per line.
+   The Mac sandbox kills background jobs, so run it in the cloud workspace (venv at /home/claude/svenv, torch 2.6 CPU).
+5. Speech-to-text check every converted line. If a line stays unclear (high held unison lines are the usual case), sing it first with
+   the character's ElevenLabs TTS onto the melody (singtts.py), then pass that through Seed-VC so it sounds natural.
+6. Move a sung line by a whole bar only when the instrumental chroma at both spots matches (similarity 0.9 or more).
 7. Gag exclamations use `eleven_v3` TTS in the cast voice with audio tags ([excited], [surprised], [laughs]) and stability 0.0.
-   Generate 2 per line and keep the take with the widest pitch range. Give "Boing" a springy pitch bend.
-8. Final checks: diarized STT of the full mix shows exactly one speaker per character, and lyric recall is 90%+.
+   Make 2 takes per line and keep the one with the widest pitch range. Give "Boing" a springy pitch bend.
+8. Final checks: full-mix lyric recall 90%+ and loudness -14 LUFS.
+Do NOT use ElevenLabs speech-to-speech on singing: it pulls lines to speaking pitch, and retuning them back sounds strained (Ep 2 v2).
 Output format: mp3_44100_128 (192 needs the Creator tier).
 
 ### Audio rules for the Kokoro fallback (from the Penguin Shapes failure)

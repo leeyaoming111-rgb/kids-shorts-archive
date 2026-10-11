@@ -59,3 +59,9 @@ A 45-second vertical (9:16) cartoon episode for children aged 3 to 5. Tumble the
 - Gag sounds use eleven_v3 with emotion tags (Wheee, Whoa, Oops), and Boing gets a springy pitch bend.
 - Round 2 is reordered: Pip sings "Tiny leaf fan!" first, then the gust blows him into the basket.
 - Checks: full-mix speech-to-text puts every Tumble line on one speaker and every Pip line on the other; lyric recall 93%+ ("fan" is sometimes heard as "bear"); -14.5 LUFS; geometry QA 0; Mac render 82 s.
+
+## v3 (current): clean singing
+- v2's singing sounded strained because ElevenLabs speech-to-speech pulled the sung lines to speaking pitch and big PSOLA retunes followed.
+- v3 converts each sung line from the ElevenLabs Music take with Seed-VC, an f0-conditioned singing voice converter that keeps the melody, using the fixed cast voices as reference.
+- The three opening chorus lines were re-sung from the word-perfect cast-voice versions.
+- Full-mix lyric recall 95% (every sung lyric correct); -14.4 LUFS; Mac render 80 s.

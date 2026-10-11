@@ -1,0 +1,1 @@
+[{"src": "src/src_00.wav", "ref": "ref/tumble.wav", "out_dir": "svc/00b", "shift": -12}, {"src": "src/src_02.wav", "ref": "ref/tumble.wav", "out_dir": "svc/02b", "shift": -12}, {"src": "src/src_x.wav", "ref": "ref/tumble.wav", "out_dir": "svc/xb", "shift": -12}]

@@ -1,0 +1,38 @@
+[
+ {
+  "src": "/home/claude/job4/v2/sts/src_01.wav",
+  "ref": "ref/pip.wav",
+  "out_dir": "svc/01",
+  "shift": 0
+ },
+ {
+  "src": "/home/claude/job4/v2/sts/src_04.wav",
+  "ref": "ref/pip.wav",
+  "out_dir": "svc/04",
+  "shift": 0
+ },
+ {
+  "src": "/home/claude/job4/v2/sts/src_06.wav",
+  "ref": "ref/pip.wav",
+  "out_dir": "svc/06",
+  "shift": 0
+ },
+ {
+  "src": "/home/claude/job4/v2/sts/src_08.wav",
+  "ref": "ref/pip.wav",
+  "out_dir": "svc/08",
+  "shift": 0
+ },
+ {
+  "src": "/home/claude/job4/v2/sts/src_10.wav",
+  "ref": "ref/pip.wav",
+  "out_dir": "svc/10",
+  "shift": 24
+ },
+ {
+  "src": "/home/claude/job4/v2/sts/src_12.wav",
+  "ref": "ref/pip.wav",
+  "out_dir": "svc/12",
+  "shift": 24
+ }
+]
