@@ -65,3 +65,6 @@ A 45-second vertical (9:16) cartoon episode for children aged 3 to 5. Tumble the
 - v3 converts each sung line from the ElevenLabs Music take with Seed-VC, an f0-conditioned singing voice converter that keeps the melody, using the fixed cast voices as reference.
 - The three opening chorus lines were re-sung from the word-perfect cast-voice versions.
 - Full-mix lyric recall 95% (every sung lyric correct); -14.4 LUFS; Mac render 80 s.
+
+## v4 (final): native singing
+The owner compared three 14-second samples: native music-model singers, v3 (Seed-VC on CPU) and Seed-VC on the Mac GPU with a cleaned vocal at 50 steps. Both converted versions sounded equally tinny and robotic, so v4 uses take F's own singers with no conversion. The song is fully sung, and the gag sounds stay in the cast voices (eleven_v3). Lyric recall 91%, -14.4 LUFS, Mac render 83 s.
