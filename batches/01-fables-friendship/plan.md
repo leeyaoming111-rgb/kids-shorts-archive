@@ -1,6 +1,6 @@
 # Batch 01: Tumble & Pip, Fables About Friendship
 
-- **status:** approved by the owner 2026-10-12 (see "Owner decisions" at the end). Next: Fable 1 as the pipeline test.
+- **status:** approved by the owner 2026-10-12 (see "Owner decisions" at the end). Fable 1 is at the animatic stage: visuals built and checked in both aspects, waiting for the ElevenLabs song ([fable-01 plan](fable-01-tiny-pip-big-help/plan.md)).
 - **series:** Tumble & Pip
 - **output:** 10 standalone Shorts (9:16, about 45 s each) and 1 long-form episode (16:9, about 9 min, past the 8-minute mid-roll ad mark) made from the same scenes
 - **audience:** ages 3 to 5, Made for Kids, UK English captions

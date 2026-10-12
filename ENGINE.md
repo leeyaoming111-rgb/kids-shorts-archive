@@ -1,13 +1,58 @@
-# Kids Shorts 3D engine: playbook for scheduled runs (v2, 2026-10-10)
+# Kids Shorts 3D engine: playbook for scheduled runs (v3, 2026-10-12)
 
-Each scheduled run makes ONE new, original 45-second vertical 3D claymation Short for children aged 3 to 5.
-The cloud session writes the story, song, audio, models and animation. The Mac renders it on its GPU (Apple M4, about 70 s).
+Each run makes original 45-second vertical 3D claymation Shorts for children aged 3 to 5, and every Short is built so it
+can also join a long-form episode. The cloud session writes the story, song, audio, models and animation. The Mac renders
+it on its GPU (Apple M4, about 70 s per Short).
 
-**v2 changes the goal.** v1 made every video a reskin of "Dino Count" (same hill, five arrival spots, locked camera, same
-120 BPM C-F-G bouncy song, same "X, X, here comes Y" chant). The owner rejected that. Every video must now look, move
-and sound new. The dino code supplies tools only (SDF clay modelling, GPU renderer, sung-TTS tuning, mixing). It never
-supplies the look, the layout, the camera or the song. This playbook overrides any instruction elsewhere to copy the
-Dino Count shape.
+## v3: batch mode (owner decision 2026-10-12, overrides v2 where they differ)
+
+Shorts are now made in **batches**: one theme, 10 to 14 Shorts, one long-form episode built from the same scenes.
+The first batch is `batches/01-fables-friendship/plan.md` in the archive repo. Read the current batch plan before
+anything else; it holds the fable list, song plan, episode running order, schedule and owner decisions.
+
+What changes from v2:
+1. **Variety moves inside the batch.** Within a batch, every Short needs a different story, gag, shot list and set
+   corner. Across a batch, the series stays the same on purpose: same cast and voices, same world, same theme sting,
+   same moral chorus, same caption style. The v2 cross-video rules (format rotation, lesson not in the last 4, world
+   not in the last 6, music fingerprint 4+ differences) now apply **between batches**, not between Shorts of a batch.
+   History: the owner rejected Penguin Shapes as a reskin of Dino Count (same hill, slots, camera, song). A batch must
+   never turn into that: shared series elements are fine, a repeated story shape, layout or gag is not.
+2. **One song sound per batch.** The theme sting and the moral chorus are generated once and stored
+   (`batches/<batch>/series_audio/`). Each Short gets one verse take from ElevenLabs Music on the batch fingerprint,
+   spliced on bar lines with `batches/<batch>/el_batch.py`. A join needs instrumental chroma similarity 0.9 or more.
+   Leave the composition and sound to ElevenLabs (owner's choice); only check recall, sections and joins.
+3. **Two cameras per shot.** Every shot frames a world-space box; `render.py` solves the camera distance for 9:16
+   (`render.py out.mp4`) and 16:9 (`render.py --wide out.mp4`). Stage the action in a centre core that works in both.
+   Fable 1 (`batches/01-fables-friendship/fable-01-tiny-pip-big-help/code/render.py`) is the reference.
+4. **Episode-ready skeleton.** Hook, sting, setup, problem, twist, moral card, moral chorus, button. The episode cut
+   drops the sting and the button and adds link scenes, a recap and an outro (see the batch plan).
+5. **Cadence: at least 2 Shorts a day, from a bank.** Do not publish until the whole batch and its episode are done.
+   If the pipeline cannot hold 2 a day, publish 1 a day; never lower the quality gates or pad with re-cuts of old Shorts.
+6. **Sources.** Fable batches retell public-domain plots only (Aesop, Grimm, Andersen, Panchatantra, Jataka, folk tales),
+   never a modern book, film or song version. Soften for ages 3 to 5. Credit the fable in every description.
+7. **Timeline without audio.** `timeline.py` runs on the planned 100 BPM grid with estimated word times until
+   `out/song_check.json` exists, so staging, stills, contact sheets and geometry QA can be done before the song.
+   Never queue a final render until the real song is aligned and mixed.
+8. **No ElevenLabs key: stop at the animatic.** Build and check the visuals, then stop and tell the owner. No Kokoro fallback.
+
+Unchanged from v2: the quality and safety rules, geometry QA, the reviewer agent, the cast voices, the audio checks and
+the queue/archive steps below. Where a v2 step says "different from the archive", read it as "different from the
+other Shorts in this batch".
+
+### Batch folder layout (in this repo)
+
+| Path | What it holds |
+|---|---|
+| `batches/<nn-slug>/plan.md` | the batch plan and owner decisions |
+| `batches/<nn-slug>/el_batch.py` | sting, chorus and verse generation, checks, bar-line assembly |
+| `batches/<nn-slug>/series_audio/` | the chosen sting and chorus takes (audio stays out of git) |
+| `batches/<nn-slug>/fable-NN-slug/plan.md` | the Short's plan, shot list, lyrics, status |
+| `batches/<nn-slug>/fable-NN-slug/code/` | `timeline.py`, `meshes.py`, `render.py`, `render_base.py`, `qa_geom.py` |
+| `batches/<nn-slug>/fable-NN-slug/stills/`, `review/` | 8 stills per aspect, reviewer contact sheets and report |
+
+---
+
+The v2 playbook follows. It still applies except where v3 above overrides it.
 
 ## Folder map (on the Mac: ~/Movies/kids-shorts)
 

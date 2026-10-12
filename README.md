@@ -24,11 +24,11 @@ Themed sets of Shorts that also join into one long-form episode.
 
 | Batch | Series | Shorts | Episode | Status |
 |---|---|---|---|---|
-| [01: Fables About Friendship](batches/01-fables-friendship/plan.md) | Tumble & Pip | 10 Aesop retellings | Story Stump episode, about 9 min, 16:9 | approved, Fable 1 next |
+| [01: Fables About Friendship](batches/01-fables-friendship/plan.md) | Tumble & Pip | 10 Aesop retellings | Story Stump episode, about 9 min, 16:9 | Fable 1 at animatic stage (visuals done, waiting for the song) |
 
 ## Layout
 
-- `ENGINE.md`: the playbook each scheduled run follows.
+- `ENGINE.md`: the playbook each scheduled run follows (v3: batch mode).
 - `history.json`: one line per finished video.
 - `batches/<nn-slug>/plan.md`: batch plan (fables, song plan, episode running order, schedule).
 - `episodes/<job_id>/`: `plan.md`, `music.json`, `review.md` (when reviewed), `stills*/`, `code/`.
