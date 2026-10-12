@@ -50,12 +50,12 @@
   },
   {
    "join": "verse->chorus",
-   "chroma": 0.816,
+   "chroma": 0.798,
    "ok": false
   },
   {
    "join": "chorus->verse",
-   "chroma": 0.953,
+   "chroma": 0.954,
    "ok": true
   }
  ],
@@ -170,9 +170,9 @@
  "mix": {
   "lufs": -14.44,
   "target_lufs": -14,
-  "peak": 0.921,
+  "peak": 0.909,
   "lyric_recall": 1.0,
-  "stt": "Up, up, up goes my big kite. Tumble and Pip. Can I help? I'm good at things. This kite's too big for tiny wings. Whoosh, the wind goes round and round. Now Tumble's tangled on the ground. Uh-oh. Help! [whistles] I can help. Wee. Peck, peck, peck. Tiny friends can be big helpers. Big or small, short or tall, friends help friends, that's best of all. Bye-bye. Bye-bye.",
+  "stt": "Up, up, up goes my big kite Tumble and Pip. Can I help? I'm good at things This kite's too big for tiny wings. Whoosh, the wind goes round and round. Now Tumble's tangled on the ground Uh-oh. Help! [whistles] I can help. Wee! Peck, peck, peck Tiny friends can be big helpers Big or small, short or tall, friends help friends, that's best of all Bye-bye. Bye-bye",
   "sfx": "none (optional, skipped)"
  },
  "sources": {
@@ -180,5 +180,7 @@
   "stt": "scribe_v1",
   "alignment": "forced-alignment",
   "stems": "music/stem-separation two_stems_v1"
- }
+ },
+ "chorus_join_fix": "stored chorus aligned to the verse take's beat (onset cross-correlation; fable-01 +80 ms, fable-02 -50 ms) and joined with a 0.3 s equal-power crossfade from the verse's own chorus; residual beat offset 0 ms",
+ "by_ear": "owner listen 2026-10-12: sting joins fine; the ~38 s chorus join was rough on the first mix (fixed above, needs a re-listen)"
 }

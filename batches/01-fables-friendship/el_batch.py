@@ -136,11 +136,21 @@ def instrumental(mp3):
 def join_sim(A, ea, B, sb, sr=44100, w=0.6):
     """instrumental chroma 'under both spots': B's head vs what A itself plays after the cut, and A's tail vs what
     precedes B's head in its own take. Uninterrupted audio scores 1.0; returns the lower of the two that exist."""
+    if sb < 0: ea, sb = ea - sb, 0.0                     # B delayed: compare from B's first sample
     i, j, n = int(ea * sr), int(sb * sr), int(w * sr)
     sims = []
     if i + n <= len(A) and j + n <= len(B): sims.append(chroma_sim(A[i:i + n], B[j:j + n]))
     if i >= n and j >= n: sims.append(chroma_sim(A[i - n:i], B[j - n:j]))
     return min(sims)
+def beat_offset(own, stored, sr=44100, hop=441, max_ms=150):
+    """seconds to skip into `stored` so its onsets line up with `own` (negative: delay it)"""
+    def env(x):
+        x = x.mean(1); n = len(x) // hop; fr = x[:n * hop].reshape(n, hop)
+        S = np.abs(np.fft.rfft(fr * np.hanning(hop), axis=1)); f = np.maximum(np.diff(np.log1p(S), axis=0), 0).sum(1)
+        return f - f.mean()
+    a, b = env(own), env(stored); L = min(len(a), len(b)); m = int(max_ms / 1000 * sr / hop)
+    cc = {l: np.dot(a[max(0, l):L + min(0, l)], b[max(0, -l):L - max(0, l)]) for l in range(-m, m + 1)}
+    return -max(cc, key=cc.get) * hop / sr
 def assemble(fable_dir, verse_mp3, sting_mp3, chorus_mp3, sr=44100):
     secs, tl = fable_sections(fable_dir)
     bar = tl.BAR; xf = int(0.03 * sr)
@@ -152,17 +162,26 @@ def assemble(fable_dir, verse_mp3, sting_mp3, chorus_mp3, sr=44100):
     # verse take timeline: Hook | Setup..Moral | Chorus(lyric, replaced) | Button
     vb = {n: (a, b) for n, a, b in vchk["sections"]}
     cut1 = vb["Hook"][1]; cut2 = vb["Chorus"][0]; cut3 = vb["Button"][0]
+    # the stored chorus lands up to ~80 ms off the verse's beat: line it up with the verse take's own chorus
+    c0 = beat_offset(v[int(cut2 * sr): int((cut2 + 3 * bar) * sr)], c[: int(3 * bar * sr)], sr)
+    i0 = int(round(c0 * sr)); pad = max(0, -i0)
+    cp = np.concatenate([np.zeros((pad, 2), np.float32), c[max(0, i0): max(0, i0) + int(3 * bar * sr) - pad]])
+    # half-beat equal-power crossfade from the verse's own chorus into the stored one (in time with each other)
+    nx = pad + int(0.3 * sr); g = np.zeros(nx); g[pad:] = np.linspace(0, np.pi / 2, nx - pad)
+    cp[:nx] = v[int(cut2 * sr): int(cut2 * sr) + nx] * np.cos(g)[:, None] + cp[:nx] * np.sin(g)[:, None]
+    print(f"chorus aligned to the verse beat: offset {c0 * 1000:+.0f} ms, crossfade 0.3 s")
     pieces = [("verse", v[: int(cut1 * sr)]), ("sting", s[: int(bar * sr)]), ("verse", v[int(cut1 * sr): int(cut2 * sr)]),
-              ("chorus", c[: int(3 * bar * sr)]), ("verse", v[int(cut3 * sr): int((cut3 + bar) * sr)])]
+              ("chorus", cp), ("verse", v[int(cut3 * sr): int((cut3 + bar) * sr)])]
     # (instrumental, start, end) of each piece in its own take, for the join check
-    spans = [(vi, 0, cut1), (si, 0, bar), (vi, cut1, cut2), (ci, 0, 3 * bar), (vi, cut3, cut3 + bar)]
+    spans = [(vi, 0, cut1), (si, 0, bar), (vi, cut1, cut2), (ci, c0, c0 + 3 * bar), (vi, cut3, cut3 + bar)]
     joins = []
     for (na, _), (nb, _), (A, _, ea), (B, sb, _) in zip(pieces[:-1], pieces[1:], spans[:-1], spans[1:]):
         sim = join_sim(A, ea, B, sb, sr)
         joins.append(dict(join=f"{na}->{nb}", chroma=round(sim, 3), ok=sim >= 0.9))
         print(f"join {na} -> {nb}: chroma similarity {sim:.2f} {'ok' if sim >= 0.9 else 'TOO LOW: regenerate the verse take'}")
     out = pieces[0][1]
-    for _, p in pieces[1:]:
+    for name, p in pieces[1:]:
+        if name == "chorus": out = np.concatenate([out, p]); continue      # already crossfaded above
         ramp = np.linspace(0, 1, xf)[:, None]
         out = np.concatenate([out[:-xf], out[-xf:] * (1 - ramp) + p[:xf] * ramp, p[xf:]])
     od = os.path.join(fable_dir, "code", "out"); os.makedirs(od, exist_ok=True)
@@ -176,7 +195,7 @@ def assemble(fable_dir, verse_mp3, sting_mp3, chorus_mp3, sr=44100):
             if t < cut2: return t + sh_sting
             return t - cut3 + (cut2 + sh_sting + sh_chorus)
         if part == "sting": return t + cut1
-        return t + cut2 + sh_sting
+        return t - c0 + cut2 + sh_sting
     lines = []
     for L in vchk["lines"]:
         if L["sec"] == "Chorus": continue
