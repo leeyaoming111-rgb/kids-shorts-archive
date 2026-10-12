@@ -1,8 +1,8 @@
 # Batch 01: Tumble & Pip, Fables About Friendship
 
-- **status:** draft plan, waiting for owner sign-off (see "Decisions for the owner" at the end)
+- **status:** approved by the owner 2026-10-12 (see "Owner decisions" at the end). Next: Fable 1 as the pipeline test.
 - **series:** Tumble & Pip
-- **output:** 8 standalone Shorts (9:16, about 45 s each) and 1 long-form episode (16:9, about 7.5 min) made from the same scenes
+- **output:** 10 standalone Shorts (9:16, about 45 s each) and 1 long-form episode (16:9, about 9 min, past the 8-minute mid-roll ad mark) made from the same scenes
 - **audience:** ages 3 to 5, Made for Kids, UK English captions
 - **lesson family:** social-emotional learning (SEL): helping, sharing, honesty, being kind
 - **sources:** Aesop's fables only (public domain). Retold from the plots, never from any modern book, film or song version.
@@ -12,7 +12,7 @@
 - Fables give each Short a tested story shape: a want, a problem, a twist and a clear moral.
 - Tumble (a big, eager fox cub) and Pip (a tiny, clever bird) map straight onto the classic animal roles, and Tumble already is a fox.
 - Most scenes reuse the Picnic Meadow set from Episode 2 (apple tree, big stump, stream, basket, mushrooms) and Bo the turtle from Lulu & Bo, so new modelling stays small.
-- Every Short ends on the same moral chorus, which makes the 8 Shorts feel like one series and gives the episode a ready-made recap.
+- Every Short ends on the same moral chorus, which makes the 10 Shorts feel like one series and gives the episode a ready-made recap.
 
 ## Adaptation rules (apply to every fable)
 
@@ -37,7 +37,7 @@
 | Captions | big, rounded, bottom third. The moral line gets a yellow "moral card" style used only for morals. |
 | Look | SDF clay with the thumbprint shader, soft shadows, saturated characters, softer backgrounds, as in Episode 2. |
 
-## The 8 fables
+## The 10 fables
 
 Every Short uses the same 45 s skeleton so the episode can join them cleanly:
 
@@ -49,7 +49,7 @@ Every Short uses the same 45 s skeleton so the episode can join them cleanly:
 | Problem and tries | 14.0-26.0 | gag with setup, anticipation and payoff | same |
 | Twist and fix | 26.0-34.0 | the fable's turn, then the kind fix | same |
 | Moral | 34.0-36.0 | moral card, spoken by a character | same |
-| Moral chorus | 36.0-43.0 | the fixed chorus and the copyable move | first and last fables only, the rest crossfade to a link scene |
+| Moral chorus | 36.0-43.0 | the fixed chorus and the copyable move | first, middle and last fables only, the rest crossfade to a link scene |
 | Button | 43.0-45.0 | a tiny final gag and "Bye-bye!" | removed |
 
 ### 1. The Lion and the Mouse: "Tiny Pip, Big Help"
@@ -119,6 +119,22 @@ Every Short uses the same 45 s skeleton so the episode can join them cleanly:
 - **Moral:** Pip: "Tell the truth, so friends know!"
 - **Assets:** basket from Episode 2, big flower, puddle from Episode 1.
 
+### 9. The Bundle of Sticks: "Stronger Together"
+
+- **Hook:** Tumble holding one twig, and a big bundle tied with grass lying on the stump. "Can you snap the bundle?"
+- **Story:** Tumble snaps one twig easily, snap! Then he tries the whole bundle: he pulls, pushes, sits on it and goes red in the face. It won't snap. Pip: "One stick is easy... lots of sticks together are strong!" Pip and Tumble use the bundle as a bridge across the stream that one twig never could be.
+- **Gag:** Tumble sits on the bundle to snap it and it springs back and bounces him into the air.
+- **Moral:** Pip: "Together we're strong!"
+- **Assets:** twigs and a grass tie (cylinders), stump, stream.
+
+### 10. The Dove and the Ant: "One Good Turn"
+
+- **Hook:** a tiny ant spinning on a leaf in the stream. "Oh no, little ant!"
+- **Story:** Pip spots an ant swept along the stream and drops a leaf. The ant climbs on and floats to the bank: "Thank you, Pip!" Later Pip lands in a sticky honey drip on a flower and can't lift his feet. The ant whistles and the whole ant line from Fable 6 marches up and pulls him free, heave-ho, pop!
+- **Gag:** each tug stretches Pip like clay toffee before he pops loose and somersaults onto Tumble's nose.
+- **Moral:** the ant: "Help a friend, and a friend helps you!"
+- **Assets:** ants and leaf from Fable 6, stream, a honey drip (glossy shader preset), big flower from Fable 8.
+
 ## Song plan
 
 One sound for the whole batch, built from three parts.
@@ -137,7 +153,7 @@ One sound for the whole batch, built from three parts.
 
 ## Long-form episode: "Tumble & Pip: Fables About Friendship"
 
-16:9, 1920x1080, about 7.5 min. Framing device: **the Story Stump.** At sunset Tumble and Pip sit on the big stump. Pip says "Tell me a story!" and Tumble opens a clay storybook. Each fable plays as "the story", and the link scenes return to the stump.
+16:9, 1920x1080, about 9 min. Framing device: **the Story Stump.** At sunset Tumble and Pip sit on the big stump. Pip says "Tell me a story!" and Tumble opens a clay storybook. Each fable plays as "the story", and the link scenes return to the stump.
 
 | # | Segment | Length | Content |
 |---|---|---|---|
@@ -149,18 +165,22 @@ One sound for the whole batch, built from three parts.
 | 6 | Fable 3: Pebble, Pebble, Plop! | 0:38 | |
 | 7 | Link | 0:08 | invites the audience to count the pebbles again |
 | 8 | Fable 4: Slow and Steady Bo | 0:38 | |
-| 9 | Link, mid-point | 0:15 | stand-up stretch: the copyable move with the chorus |
-| 10 | Fable 5: The Other Fox | 0:38 | |
-| 11 | Link | 0:08 | |
+| 9 | Link | 0:08 | |
+| 10 | Fable 5: The Other Fox | 0:40 | ends on the full moral chorus |
+| 11 | Mid-point break | 0:20 | stand-up stretch: the copyable move with the chorus, sung twice |
 | 12 | Fable 6: Busy Little Ants | 0:38 | |
 | 13 | Link | 0:08 | |
-| 14 | Fable 7: Scarf Off! | 0:38 | |
+| 14 | Fable 10: One Good Turn | 0:38 | follows the ants straight on from Fable 6 |
 | 15 | Link | 0:08 | |
-| 16 | Fable 8: Pip Who Cried Help | 0:40 | |
-| 17 | Recap | 0:40 | the chorus melody with one still and one moral line per fable ("Tiny friends help... Ask a friend... Think it through...") |
-| 18 | Outro | 0:15 | stars come out, the book closes, "Goodnight, friends!" |
+| 16 | Fable 9: Stronger Together | 0:38 | |
+| 17 | Link | 0:08 | |
+| 18 | Fable 7: Scarf Off! | 0:38 | |
+| 19 | Link | 0:08 | |
+| 20 | Fable 8: Pip Who Cried Help | 0:40 | |
+| 21 | Recap | 0:50 | the chorus melody with one still and one moral line per fable ("Tiny friends help... Ask a friend... Think it through...") |
+| 22 | Outro | 0:15 | stars come out, the book closes, "Goodnight, friends!" |
 
-Total about 7:35. The link scenes and recap are new material (about 2 minutes), which makes the episode a real episode rather than a stitched compilation. That matters for YouTube's children's quality guidance and for the inauthentic content policy.
+Total about 9:20. The episode clears 8 minutes so mid-roll ads can be placed. The link scenes, break and recap are new material (about 2.5 minutes), which makes the episode a real episode rather than a stitched compilation. That matters for YouTube's children's quality guidance and for the inauthentic content policy.
 
 ## Production plan
 
@@ -182,28 +202,46 @@ Total about 7:35. The link scenes and recap are new material (about 2 minutes), 
 | Bo voice (Voice Design) | 4 | low |
 | Mirrored reflection under a translucent water plane | 5 | medium |
 | Log bridge | 5 | low |
-| Ants (instanced), anthill door, snowflakes | 6 | medium |
+| Ants (instanced), anthill door, snowflakes | 6, 10 | medium |
+| Twig bundle | 9 | low |
+| Honey drip (glossy preset) | 10 | low |
 | Wind and Sun sky faces, scarf strip | 7 | medium |
-| Big flower | 8 | low |
+| Big flower | 8, 10 | low |
 | Theme sting, moral chorus | all | medium (once) |
 
-### Schedule (first batch, about 2 weeks)
+### Cadence: 2 Shorts a day
+
+The owner wants at least 2 Shorts a day. That fixes the production rate at **14 Shorts a week**, whatever the batch size, so the plan works backwards from it:
+
+1. **Bank before launch.** Don't post until this whole batch (10 Shorts) and the episode are finished. Posting 2 a day from a buffer stops a slow day from breaking the streak.
+2. **Batch 01 (10 Shorts) is the speed test.** Log hours and reviewer rounds per Short. If the pipeline holds 2 Shorts a day, from Batch 02 onward one batch is 14 Shorts a week and one episode of about 12 to 13 minutes.
+3. **If it can't hold 2 a day,** post 1 a day rather than lower the quality gates or pad with re-cuts. Re-posting cut-down versions of the same Short is the kind of repetition YouTube's inauthentic content policy demonetises.
 
 | Days | Work |
 |---|---|
-| 1-2 | Series bible sign-off, theme sting, moral chorus (3 takes each, owner picks), Bo's voice, dual-aspect camera support in `render.py` |
+| 1-2 | Theme sting, moral chorus (3 takes each), Bo's voice, two-camera support in `render.py` |
 | 3-4 | Fable 1 end to end in both aspects, as the pipeline test. Owner review. |
-| 5-9 | Fables 2-8, about 1.5 per day, every gate in `ENGINE.md` Step 4 per Short |
-| 10-11 | Episode: Story Stump intro, links, recap, outro, wide renders, assembly, reviewer pass on the full episode |
-| 12 onward | Publish |
+| 5-9 | Fables 2-10, 2 per day, every gate in `ENGINE.md` Step 4 per Short |
+| 10-11 | Episode: Story Stump intro, links, break, recap, outro, wide renders, assembly, reviewer pass on the full episode |
+| 12 | Launch, with Batch 02 already in production |
 
 ### Publishing
 
-- **Shorts:** one per day for 8 days, in fable order (Fable 1 first because it teaches the chorus).
-- **Episode:** publish on day 6 or 7 so the later Shorts have a long-form video on the channel to send viewers to.
+- **Shorts:** two per day (morning and late afternoon UK time), in fable order. Fable 1 goes first because it teaches the chorus. The 10 Shorts run for 5 days.
+- **Episode:** publish on day 3 so the later Shorts have a long-form video on the channel to send viewers to.
 - **Settings:** Made for Kids, UK English.
-- **Titles:** "Tiny Pip, Big Help! | Tumble & Pip Fables" for Shorts, "Fables About Friendship | Tumble & Pip | 8 Stories for Kids" for the episode.
+- **Titles:** "Tiny Pip, Big Help! | Tumble & Pip Fables" for Shorts, "Fables About Friendship | Tumble & Pip | 10 Stories for Kids" for the episode.
 - **Credit:** every description says "Based on Aesop's fable *The Lion and the Mouse*". It is honest, it is helpful for parents, and it shows the retelling is deliberate.
+
+### Long-form ladder (towards hour-long videos)
+
+Hour-long compilations do well for children's channels because they play on TVs for a long time, and each view adds a lot of watch time. They are only safe when they gather distinct episodes, not when they loop one clip set.
+
+| Stage | When | Long-form |
+|---|---|---|
+| 1 | Batches 01-03 | one 9 to 13 minute episode per batch |
+| 2 | after 4 batches | a 30 to 40 minute "Story Time" compilation of 3 or 4 episodes with a new opening, new links between episodes and one long sing-along |
+| 3 | after 8 or more batches | a 60-minute compilation, plus a new chapter-style episode each month |
 
 ### What to measure (per Short and for the episode)
 
@@ -218,9 +256,12 @@ Total about 7:35. The link scenes and recap are new material (about 2 minutes), 
 
 After the batch, compare fables: which gags, morals and hooks performed best decides Batch 02.
 
-## Decisions for the owner
+## Owner decisions (2026-10-12)
 
-1. **Moral chorus lyrics.** Keep "Big or small, short or tall, friends help friends, that's best of all!" or write your own.
-2. **Bo as a guest.** OK to bring Bo from Lulu & Bo into the Tumble & Pip world?
-3. **Story Stump framing** for the episode, or Tumble and Pip acting the stories out with no frame?
-4. **UK English** captions and spellings (colour, mum). Confirm.
+1. **Song:** leave the composition and sound to ElevenLabs Music. Keep the draft chorus lyrics unless a take sings them badly.
+2. **Bo** joins as a guest (Fable 4).
+3. **Story Stump** framing for the episode.
+4. **UK English** captions and spellings.
+5. **Two cameras per shot** (9:16 and 16:9).
+6. **At least 2 Shorts a day,** posted from a banked buffer (see "Cadence").
+7. **Episode length:** lengthened to about 9 min (10 fables) so it clears 8 minutes. Hour-long videos come later through compilations (see "Long-form ladder").

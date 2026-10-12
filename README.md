@@ -24,7 +24,7 @@ Themed sets of Shorts that also join into one long-form episode.
 
 | Batch | Series | Shorts | Episode | Status |
 |---|---|---|---|---|
-| [01: Fables About Friendship](batches/01-fables-friendship/plan.md) | Tumble & Pip | 8 Aesop retellings | Story Stump episode, about 7.5 min, 16:9 | draft plan |
+| [01: Fables About Friendship](batches/01-fables-friendship/plan.md) | Tumble & Pip | 10 Aesop retellings | Story Stump episode, about 9 min, 16:9 | approved, Fable 1 next |
 
 ## Layout
 
