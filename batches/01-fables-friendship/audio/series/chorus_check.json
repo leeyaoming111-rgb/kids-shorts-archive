@@ -1,0 +1,106 @@
+{
+ "stt": "Big or small, short or tall, friends help friends, that's best of all!",
+ "recall": 1.0,
+ "speakers": [
+  "speaker_0"
+ ],
+ "lines": [
+  {
+   "line": "Big or small, short or tall,",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 0.0,
+   "t1": 7.2,
+   "words": [
+    {
+     "w": "Big",
+     "t0": 0.14,
+     "t1": 0.4
+    },
+    {
+     "w": "or",
+     "t0": 0.46,
+     "t1": 0.56
+    },
+    {
+     "w": "small,",
+     "t0": 0.66,
+     "t1": 1.14
+    },
+    {
+     "w": "short",
+     "t0": 1.28,
+     "t1": 1.62
+    },
+    {
+     "w": "or",
+     "t0": 1.66,
+     "t1": 1.8
+    },
+    {
+     "w": "tall,",
+     "t0": 1.9,
+     "t1": 2.16
+    }
+   ]
+  },
+  {
+   "line": "friends help friends, that's best of all!",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 0.0,
+   "t1": 7.2,
+   "words": [
+    {
+     "w": "friends",
+     "t0": 2.5,
+     "t1": 2.78
+    },
+    {
+     "w": "help",
+     "t0": 2.82,
+     "t1": 3.02
+    },
+    {
+     "w": "friends,",
+     "t0": 3.08,
+     "t1": 3.36
+    },
+    {
+     "w": "that's",
+     "t0": 3.42,
+     "t1": 3.66
+    },
+    {
+     "w": "best",
+     "t0": 3.7,
+     "t1": 4.0
+    },
+    {
+     "w": "of",
+     "t0": 4.08,
+     "t1": 4.3
+    },
+    {
+     "w": "all!",
+     "t0": 4.38,
+     "t1": 5.22
+    }
+   ]
+  }
+ ],
+ "sections": [
+  [
+   "Chorus",
+   0.0,
+   7.2
+  ],
+  [
+   "Ring-out",
+   7.2,
+   10.2
+  ]
+ ],
+ "align_loss": 0.7001156670706613,
+ "all_inside": true
+}

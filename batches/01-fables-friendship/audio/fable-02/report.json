@@ -1,0 +1,184 @@
+{
+ "fable": "fable-02-sour-apples",
+ "verse": {
+  "seed": 405,
+  "recall": 1.0,
+  "all_inside": true,
+  "align_loss": 1.158,
+  "stt": "One red apple way up high. Jump, jump, jump, I'll reach it, I'll try. One more big jump, whoa. Those apples are sour anyway. Let's try together, you and me. [gentle music] Tug, tug, tug, here it comes. Don't say sour, ask a friend. Big or small, short or tall, friends help friends, that's best of all"
+ },
+ "verse_takes_tried": {
+  "401": {
+   "recall": 0.9818,
+   "all_inside": true
+  },
+  "402": {
+   "recall": 0.9455,
+   "all_inside": false
+  },
+  "403": {
+   "recall": 0.9818,
+   "all_inside": false
+  },
+  "404": {
+   "recall": 0.9818,
+   "all_inside": false
+  },
+  "405": {
+   "recall": 1.0,
+   "all_inside": true
+  },
+  "406": {
+   "recall": 0.9818,
+   "all_inside": false
+  }
+ },
+ "series": {
+  "sting_seed": 104,
+  "chorus_seed": 202
+ },
+ "joins": [
+  {
+   "join": "verse->sting",
+   "chroma": 0.334,
+   "ok": false
+  },
+  {
+   "join": "sting->verse",
+   "chroma": 0.585,
+   "ok": false
+  },
+  {
+   "join": "verse->chorus",
+   "chroma": 0.949,
+   "ok": true
+  },
+  {
+   "join": "chorus->verse",
+   "chroma": 0.766,
+   "ok": false
+  }
+ ],
+ "joins_all_ok": false,
+ "joins_note": "instrumental-stem chroma 'under both spots' (el_batch.join_sim). The stored sting is near a cappella: its instrumental stem is about -76 dB for 0-1.2 s, then one decaying hit, so the sting joins compare against near-silence and failed on all 6 verse takes; no take passed all 4 joins.",
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 13.55,
+   "caption": "Oof!",
+   "tags": "[muffled] [surprised]",
+   "dur": 1.2,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "chosen": "s00_tumble_take2.mp3",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 12.68
+      },
+      {
+       "seed": 22,
+       "range_st": 19.17
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 32.85,
+   "caption": "Mmm, SWEET!",
+   "tags": "[delighted]",
+   "dur": 2.16,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "chosen": "s01_tumble_take2.mp3",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 24.84
+      },
+      {
+       "seed": 22,
+       "range_st": 26.09
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "chosen": "s02_both_tumble_take1.mp3",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.16
+      },
+      {
+       "seed": 22,
+       "range_st": 16.04
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "chosen": "s02_both_pip_take2.mp3",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.79
+      },
+      {
+       "seed": 22,
+       "range_st": 8.9
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "voices": {
+  "tumble": "Kx0fJ79cIgKz5YbJmR0t",
+  "pip": "tGxaydQ2FS8MHwM6syrt"
+ },
+ "tts": {
+  "model": "eleven_v3",
+  "stability": 0.0,
+  "takes": 2,
+  "pick": "widest 5-95% pitch range (semitones)"
+ },
+ "mix": {
+  "lufs": -14.44,
+  "target_lufs": -14,
+  "peak": 0.805,
+  "lyric_recall": 0.9828,
+  "stt": "One red apple way up high. Tumble and pit. Jump, jump, jump, I'll reach it, I'll try. One more big jump, whoa. Ooh. Those apples are sour anyway. Let's try together, you and me. [singing] Tug, tug, tug, here it comes. Mmm. Sweet! Don't say sour, ask a friend. Big or small, short or tall, friends help friends, that's best of all. Bye-bye. Bye-bye",
+  "sfx": "none (optional, skipped)"
+ },
+ "sources": {
+  "music": "music_v2_5",
+  "stt": "scribe_v1",
+  "alignment": "forced-alignment",
+  "stems": "music/stem-separation two_stems_v1"
+ }
+}

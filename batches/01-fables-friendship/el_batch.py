@@ -123,10 +123,29 @@ def chroma_sim(a, b, sr=44100):
         m = (f > 60) & (f < 4000); pc = np.round(12 * np.log2(f[m] / 440.0)).astype(int) % 12
         c = np.bincount(pc, weights=X[m], minlength=12); return c / (np.linalg.norm(c) + 1e-9)
     return float(chroma(a) @ chroma(b))
+def instrumental(mp3):
+    """instrumental stem of a take (/v1/music/stem-separation, two_stems_v1), cached next to it as *_instr.mp3"""
+    out = mp3.replace(".mp3", "_instr.mp3")
+    if not os.path.exists(out):
+        import requests, zipfile, io
+        r = requests.post(f"{API}/music/stem-separation", headers=key(), data={"stem_variation_id": "two_stems_v1"},
+                          files={"file": open(mp3, "rb")}, timeout=300)
+        if r.status_code != 200: sys.exit(f"stem separation failed {r.status_code}: {r.text[:400]}")
+        open(out, "wb").write(zipfile.ZipFile(io.BytesIO(r.content)).read("instrumental.mp3"))
+    return load(out)
+def join_sim(A, ea, B, sb, sr=44100, w=0.6):
+    """instrumental chroma 'under both spots': B's head vs what A itself plays after the cut, and A's tail vs what
+    precedes B's head in its own take. Uninterrupted audio scores 1.0; returns the lower of the two that exist."""
+    i, j, n = int(ea * sr), int(sb * sr), int(w * sr)
+    sims = []
+    if i + n <= len(A) and j + n <= len(B): sims.append(chroma_sim(A[i:i + n], B[j:j + n]))
+    if i >= n and j >= n: sims.append(chroma_sim(A[i - n:i], B[j - n:j]))
+    return min(sims)
 def assemble(fable_dir, verse_mp3, sting_mp3, chorus_mp3, sr=44100):
     secs, tl = fable_sections(fable_dir)
     bar = tl.BAR; xf = int(0.03 * sr)
     v, s, c = load(verse_mp3), load(sting_mp3), load(chorus_mp3)
+    vi, si, ci = instrumental(verse_mp3), instrumental(sting_mp3), instrumental(chorus_mp3)
     vchk = json.load(open(verse_mp3.replace(".mp3", "_check.json")))
     schk = json.load(open(sting_mp3.replace(".mp3", "_check.json")))
     cchk = json.load(open(chorus_mp3.replace(".mp3", "_check.json")))
@@ -135,8 +154,12 @@ def assemble(fable_dir, verse_mp3, sting_mp3, chorus_mp3, sr=44100):
     cut1 = vb["Hook"][1]; cut2 = vb["Chorus"][0]; cut3 = vb["Button"][0]
     pieces = [("verse", v[: int(cut1 * sr)]), ("sting", s[: int(bar * sr)]), ("verse", v[int(cut1 * sr): int(cut2 * sr)]),
               ("chorus", c[: int(3 * bar * sr)]), ("verse", v[int(cut3 * sr): int((cut3 + bar) * sr)])]
-    for (na, a_), (nb, b_) in zip(pieces[:-1], pieces[1:]):
-        sim = chroma_sim(a_[-int(0.6 * sr):], b_[: int(0.6 * sr)])
+    # (instrumental, start, end) of each piece in its own take, for the join check
+    spans = [(vi, 0, cut1), (si, 0, bar), (vi, cut1, cut2), (ci, 0, 3 * bar), (vi, cut3, cut3 + bar)]
+    joins = []
+    for (na, _), (nb, _), (A, _, ea), (B, sb, _) in zip(pieces[:-1], pieces[1:], spans[:-1], spans[1:]):
+        sim = join_sim(A, ea, B, sb, sr)
+        joins.append(dict(join=f"{na}->{nb}", chroma=round(sim, 3), ok=sim >= 0.9))
         print(f"join {na} -> {nb}: chroma similarity {sim:.2f} {'ok' if sim >= 0.9 else 'TOO LOW: regenerate the verse take'}")
     out = pieces[0][1]
     for _, p in pieces[1:]:
@@ -163,7 +186,7 @@ def assemble(fable_dir, verse_mp3, sting_mp3, chorus_mp3, sr=44100):
         if L["sec"] == "Chorus": lines.append(dict(L, words=[dict(w, t0=shift(w["t0"], "chorus"), t1=shift(w["t1"], "chorus")) for w in L["words"]]))
     lines.sort(key=lambda L: L["words"][0]["t0"])
     sections = [(n, a * bar, b * bar) for n, a, b, _ in tl.PLAN_SECTIONS]
-    json.dump(dict(sections=sections, lines=[dict(line=L["line"], who=L["who"], sec=L["sec"], words=L["words"]) for L in lines]),
+    json.dump(dict(sections=sections, joins=joins, lines=[dict(line=L["line"], who=L["who"], sec=L["sec"], words=L["words"]) for L in lines]),
               open(os.path.join(od, "song_check.json"), "w"), indent=1)
     print("wrote song.wav and song_check.json; next: TTS gag lines (eleven_v3, cast voices), SFX, mix at -14 LUFS, full-mix recall")
 

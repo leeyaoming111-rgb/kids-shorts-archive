@@ -1,0 +1,29 @@
+{
+ "sting": {
+  "seed": 104,
+  "recall": 1.0,
+  "all_inside": true,
+  "align_loss": 1.29,
+  "stt": "Tumble and Pip",
+  "tried": {
+   "101": 0.333,
+   "102": 0.667,
+   "103": 0.667,
+   "104": 1.0,
+   "105": 0.0,
+   "106": 0.667
+  }
+ },
+ "chorus": {
+  "seed": 202,
+  "recall": 1.0,
+  "all_inside": true,
+  "align_loss": 0.7,
+  "stt": "Big or small, short or tall, friends help friends, that's best of all!",
+  "tried": {
+   "201": 1.0,
+   "202": 1.0,
+   "203": 1.0
+  }
+ }
+}
