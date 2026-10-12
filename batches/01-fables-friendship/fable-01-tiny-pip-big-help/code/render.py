@@ -40,9 +40,10 @@ TPOS = (1.2, -0.35)                         # Tumble's kite-flying spot
 APPLE_TREE = (-3.6, -3.4)
 COTTAGE_FAR = (7.5, -17.0)
 MUSH = [(3.5, -0.2, 0.2), (3.2, 0.25, 0.14), (0.2, -1.6, 0.18)]
-KITE_SKY = np.array([TPOS[0] - 1.3, 4.7, TPOS[1] - 3.2])
+KITE_SKY = np.array([TPOS[0] + 1.5, 4.7, TPOS[1] - 2.6])      # on his paw side, so the string never crosses his face
 KITE_REST = (TPOS[0] - 1.3, TPOS[1] + 1.6)          # in front of his head side, clear of the body when he falls
-STRING_END = (TPOS[0] + 0.55, TPOS[1] + 0.55)          # where the loose end lies after the spin-out
+STRING_FREE = (TPOS[0] + 0.95 * math.cos(0.9), TPOS[1] + 0.95 * math.sin(0.9))            # the loose end of the string on the grass after the spin-out (spiral start)
+GRAB = 0.6                                          # button: Pip picks the end up at this time into the shot
 rng = np.random.default_rng(21)
 FLOWERS = []
 pastel = [(1.0, .72, .82), (1.0, .85, .6), (.78, .72, 1.0), (.7, .86, 1.0), (1.0, 1.0, 1.0), (1.0, .78, .7)]
@@ -213,7 +214,7 @@ def fox_mats(st):
 ORBIT_A, ORBIT_B = T.GUST0 + 0.5, T.GUST1 - 0.5
 def kite_orbit_angle(t):
     if not (ORBIT_A <= t <= ORBIT_B): return None
-    return -0.6 + 2 * math.pi * 2.6 * ease(clampu(t, ORBIT_A, ORBIT_B))   # 2.6 loops: the last one ends behind him
+    return 1.0 + 2 * math.pi * 2.34 * ease(clampu(t, ORBIT_A, ORBIT_B))   # starts on his paw side; 2.34 loops end behind him
 def kite_state(t, st):
     """kite position and rotation; the kite is a diamond in its local xy plane"""
     bob = np.array([0.25 * math.sin(t * 1.1), 0.18 * math.sin(t * 1.7), 0.0])
@@ -230,16 +231,16 @@ def kite_state(t, st):
         return orbit_pos(t), roty(kite_orbit_angle(t) + math.pi / 2) @ rotz(0.4 * math.sin(t * 7)) @ rotx(-0.3)
     rest = np.array([KITE_REST[0], surf(*KITE_REST) + 0.06, KITE_REST[1]])
     Mrest = roty(0.6) @ rotx(-math.pi / 2)                                   # lying face up in the grass
-    if t < SH["button_crane"][0] + 0.4:
+    if t < SH["button_crane"][0] + GRAB + 0.3:
         u = clampu(t, ORBIT_B, ORBIT_B + 0.9)
         if u < 1:                                                           # flutters down round behind him, never across his face
             p0, p2 = orbit_pos(ORBIT_B), rest
-            via = np.array([TPOS[0] - 1.2, 2.9, TPOS[1] - 1.6])
+            via = np.array([TPOS[0] - 1.2, 3.4, TPOS[1] - 2.1])
             e = ease(u)
             p = (1 - e) ** 2 * p0 + 2 * (1 - e) * e * via + e ** 2 * p2
             return p, roty(0.6) @ rotx(-math.pi / 2 * e - 0.3 * (1 - e))
         return rest, Mrest
-    u = ease(clampu(t, SH["button_crane"][0] + 0.4, SH["button_crane"][1]))     # Pip pulls it up into the sky again
+    u = ease(clampu(t, SH["button_crane"][0] + GRAB + 0.3, SH["button_crane"][1]))     # Pip pulls it up into the sky again
     p = lerp(rest, np.array([TPOS[0] - 1.3, 4.2, TPOS[1] - 1.6]), u) + bob * u
     p[1] = lerp(rest[1], 4.2, u ** 0.45)                                      # lifts straight up first, clear of his head
     return p, roty(0.6 * (1 - u) + 0.2 * u) @ rotx(-math.pi / 2 * (1 - u) - 0.35 * u)
@@ -266,17 +267,20 @@ def sag_line(a, b, sag, n=24, ground=True):
         if ground: p[1] = max(p[1], surf(p[0], p[2]) + 0.015)
         pts.append(p)
     return pts
+PILE_A0 = 0.9                                  # the loose string's spiral starts front-right of Tumble, clear of the stump
 def ground_spiral(c, r0, r1, turns, n=40):
     return [np.array([c[0] + r * math.cos(a), surf(c[0] + r * math.cos(a), c[1] + r * math.sin(a)) + 0.015, c[1] + r * math.sin(a)])
-            for a, r in zip(np.linspace(0, 2 * math.pi * turns, n), np.linspace(r0, r1, n))]
+            for a, r in zip(PILE_A0 + np.linspace(0, 2 * math.pi * turns, n), np.linspace(r0, r1, n))]
 def string_path(t, st, mats, kite_p, pip_beak):
     R, Mh, arms, legs = mats
     hand = apply(arms[0], FOXD["arm0"]["hand"])
     w = wrap_amt(t)
     kite_low = kite_p + np.array([0, -0.55, 0])                            # bridle point under the diamond
-    if t >= SH["button_crane"][0] + 0.25 and pip_beak is not None:
-        lowk = 1 - clampu(kite_p[1], 0.3, 2.5) / 2.5                         # droops across the grass while the kite is still low
-        return [pip_beak] + sag_line(pip_beak, kite_low, 0.25 + 1.2 * lowk, 30)[1:]
+    if t >= SH["button_crane"][0] + GRAB and pip_beak is not None:          # Pip reels the loose string up off the grass
+        v = clampu(t, SH["button_crane"][0] + GRAB, SH["button_crane"][0] + GRAB + 1.0)
+        pile = ground_spiral((TPOS[0], TPOS[1]), 0.95, 1.25, 1.2 * (1 - v), n=max(2, int(40 * (1 - v))))
+        lie = 2.5 * (1 - clampu(kite_low[1], 1.6, 3.0))                     # lies on the grass until the kite is above his head
+        return [pip_beak] + sag_line(pip_beak, pile[0], 0.0, 10)[1:] + pile[1:] + sag_line(pile[-1], kite_low, 0.05 + lie, 30)[1:]
     if st["hold"] and w < 0.05:
         return sag_line(hand, kite_low, 0.35 if t < T.GUST0 else 0.1, 30)
     if t < T.SPIN0:
@@ -372,9 +376,9 @@ def pip_state(t, st, mats):
     if n == "spin_out":
         a, b = SH[n]
         dest, _ = knot_ground(fox_mats(dict(tumble(SH["peck"][1] - 0.01)))[0])
-        away = np.array([TPOS[0] + 1.25, 0, TPOS[1] + 0.9])
-        u = clampu(t, a, a + 0.75)
-        p = lerp(dest, on_ground(away[0], away[2]), ease(u)); p[1] += 0.45 * math.sin(math.pi * u)
+        away = np.array([TPOS[0] + 1.3, 0, TPOS[1] + 0.6])                      # off to the front-right, clear of him and the stump
+        u = clampu(t, a, a + 0.42)                                         # hops clear before Tumble starts to rise
+        p = lerp(dest, on_ground(away[0], away[2]), ease(u)); p[1] += 1.0 * math.sin(math.pi * u)     # high arc, over him not across him
         ex = {}
         if t > T.SPIN1: ex["cheer"] = True
         return p, math.atan2(TPOS[0] - away[0], TPOS[1] - away[2]), u < 1 or t > T.SPIN1, 0.0, False, ex
@@ -384,7 +388,7 @@ def pip_state(t, st, mats):
         top = hand + np.array([0, 0.095, 0]) + UP
         u = clampu(t, a, a + 0.6)
         if u < 1:
-            start = on_ground(TPOS[0] + 1.25, TPOS[1] + 0.9)
+            start = on_ground(TPOS[0] + 1.3, TPOS[1] + 0.6)
             p = lerp(start, top, ease(u)); p[1] += 0.4 * math.sin(math.pi * u)
             return p, 0.35, True, 0.0, False, {}
         return top, 0.35, False, 0.0, True, {}
@@ -400,12 +404,15 @@ def pip_state(t, st, mats):
         return top, 0.35, False, 0.0, True, ex
     # button: Pip grabs the loose string end and flies the kite up
     a, b = SH["button_crane"]
-    u = clampu(t, a, b)
-    p0 = apply(arms[0], FOXD["arm0"]["hand"]) + np.array([0, PAW_TOP, 0]) + UP if t < a + 0.05 else apply(fox_mats(tumble(a - 0.01))[2][0], FOXD["arm0"]["hand"]) + np.array([0, PAW_TOP, 0]) + UP
-    p1 = np.array([TPOS[0] - 0.55, 2.5, TPOS[1] + 0.6])                      # in front of the kite's climb, never in its way
-    p = lerp(p0, p1, ease(u)) + np.array([0, 0.08 * math.sin(t * 9), 0]) * u
-    p += np.array([0.35, 0.9, 0.1]) * math.sin(math.pi * min(1.0, u * 1.25))      # up and over his head, away from his face
-    return p, lerp(0.35, -0.3, ease(clampu(t, a + 0.3, a + 0.9))), True, -0.15 * clampu(t, a + 0.2, a + 0.5), False, {"beak": True}   # keeps the chorus heading until clear
+    p0 = apply(fox_mats(tumble(a - 0.01))[2][0], FOXD["arm0"]["hand"]) + np.array([0, PAW_TOP, 0]) + UP
+    g = np.array([STRING_FREE[0], surf(*STRING_FREE) + 0.03, STRING_FREE[1]]) + UP + np.array([0, 0, 0.3])   # stands just in front, beak to the end
+    if t < a + GRAB:                                                        # hops down to the loose end by Tumble's right foot
+        u = clampu(t, a, a + GRAB); p = lerp(p0, g, ease(u)); p[1] += 0.35 * math.sin(math.pi * u)
+        return p, lerp(0.35, math.pi, ease(clampu(u, 0.3, 0.9))), u < 0.85, 0.35 * clampu(u, 0.8, 1.0), False, {"beak": u > 0.9}
+    u = clampu(t, a + GRAB, b)                                              # then flies it up on his own side, high and to the right
+    p1 = np.array([TPOS[0] + 1.05, 3.1, TPOS[1] + 0.35])
+    p = lerp(g, p1, ease(u)) + np.array([0, 0.06 * math.sin(t * 9), 0]) * u
+    return p, lerp(math.pi, -0.35, ease(clampu(u, 0.0, 0.4))), True, 0.35 * (1 - clampu(u, 0.0, 0.2) / 0.2), False, {"beak": True}
 
 # ---------------- camera (aspect-fitted) ----------------
 def fit_cam(tgt, yaw_deg, pitch_deg, fit_w, fit_h, fov=38.0, lift=None):
@@ -519,7 +526,7 @@ def build_draws(t):
         for k in range(16):
             ph = (t * 0.55 + k / 16.0) % 1.0
             x = TPOS[0] - 4.5 + 9.0 * ph; z = TPOS[1] - 1.5 - 2.4 * ((k * 0.37) % 1.0)          # a band behind him, clear of faces
-            y = 0.25 + 1.4 * ((k * 0.61) % 1.0) + 0.2 * math.sin(t * 4 + k)
+            y = 0.25 + 1.0 * ((k * 0.61) % 1.0) + 0.15 * math.sin(t * 4 + k)
             draws.append((SC["leaf"], trans(x, y, z) @ rotz(t * 7 + k) @ rotx(t * 5 + k) @ scale(1.6 * g),
                           U(mat=0, bump=0.0, tint=(0.55, 0.8, 0.45) if k % 3 else (0.95, 0.75, 0.4), tintMix=1.0), False))
     # ---- Tumble ----
@@ -546,7 +553,7 @@ def build_draws(t):
     sq = -0.12 * pex.get("cling", 0.0)
     Mp = trans(*pp) @ roty(pyaw) @ rotx(ppitch) @ scale(1.1 * (1 - sq * 0.5), 1.1 * (1 + sq), 1.1 * (1 - sq * 0.5))
     draws.append((PIPP["body"], Mp, dict(up, perch=pperch), True))
-    if pfly and pex.get("beak") and t < SH["button_crane"][0] + 0.35: flap = -0.1 + 0.6 * clampu(t, SH["button_crane"][0], SH["button_crane"][0] + 0.35) * (0.5 + 0.5 * math.sin(t * 28))   # take-off flaps stay up, clear of his cheek
+    if pfly and SH["button_crane"][0] <= t < SH["button_crane"][0] + 0.35: flap = -0.1 + 0.6 * clampu(t, SH["button_crane"][0], SH["button_crane"][0] + 0.35) * (0.5 + 0.5 * math.sin(t * 28))   # take-off flaps stay up, clear of his cheek
     elif pfly: flap = 0.9 * math.sin(t * 28)
     elif pex.get("droop"): flap = 0.04 - 0.25 * pex["droop"]
     elif pex.get("cheer"): flap = 1.1 + 0.5 * math.sin(t * 14)
