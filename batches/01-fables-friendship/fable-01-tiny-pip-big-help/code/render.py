@@ -177,8 +177,8 @@ def tumble(t):
         sway = math.sin(2 * math.pi * (t - a) / (2 * BEAT))                   # sway on every second beat, Pip riding his paw
         st["roll"] = 0.06 * sway; st["head"][2] = 0.1                                  # tips away from Pip (positive roll moves the crown to -x)
         st["arms"] = [[1.3, 0.35], [0.6 - 0.3 * sway, 0.3]]
-        hf = clampu(t, T.HIGH_FIVE - 0.35, T.HIGH_FIVE + 0.35)
-        if 0 < hf < 1: st["arms"][0] = [1.3 + 0.3 * math.sin(math.pi * hf), 0.35]       # paw comes up to meet Pip's wing
+        hc = hf_curves(t)
+        if hc: st["arms"][0] = [paw_side_for_rise(hc[1]), 0.35]                # paw comes up to meet Pip's wing
     elif n == "button_crane":
         a, b = SH[n]
         st["yaw"] = -0.05; st["hold"] = False
@@ -213,7 +213,7 @@ def fox_mats(st):
 ORBIT_A, ORBIT_B = T.GUST0 + 0.5, T.GUST1 - 0.5
 def kite_orbit_angle(t):
     if not (ORBIT_A <= t <= ORBIT_B): return None
-    return -0.6 + 2 * math.pi * 2.3 * ease(clampu(t, ORBIT_A, ORBIT_B))
+    return -0.6 + 2 * math.pi * 2.6 * ease(clampu(t, ORBIT_A, ORBIT_B))   # 2.6 loops: the last one ends behind him
 def kite_state(t, st):
     """kite position and rotation; the kite is a diamond in its local xy plane"""
     bob = np.array([0.25 * math.sin(t * 1.1), 0.18 * math.sin(t * 1.7), 0.0])
@@ -231,13 +231,16 @@ def kite_state(t, st):
     rest = np.array([KITE_REST[0], surf(*KITE_REST) + 0.06, KITE_REST[1]])
     Mrest = roty(0.6) @ rotx(-math.pi / 2)                                   # lying face up in the grass
     if t < SH["button_crane"][0] + 0.4:
-        u = clampu(t, ORBIT_B, ORBIT_B + 0.7)
-        if u < 1:
-            p = lerp(orbit_pos(ORBIT_B), rest, ease(u)); p[1] += 0.6 * math.sin(math.pi * u)
-            return p, roty(0.6) @ rotx(-math.pi / 2 * ease(u) - 0.3 * (1 - ease(u)))
+        u = clampu(t, ORBIT_B, ORBIT_B + 0.9)
+        if u < 1:                                                           # flutters down round behind him, never across his face
+            p0, p2 = orbit_pos(ORBIT_B), rest
+            via = np.array([TPOS[0] - 1.2, 2.9, TPOS[1] - 1.6])
+            e = ease(u)
+            p = (1 - e) ** 2 * p0 + 2 * (1 - e) * e * via + e ** 2 * p2
+            return p, roty(0.6) @ rotx(-math.pi / 2 * e - 0.3 * (1 - e))
         return rest, Mrest
     u = ease(clampu(t, SH["button_crane"][0] + 0.4, SH["button_crane"][1]))     # Pip pulls it up into the sky again
-    p = lerp(rest, np.array([TPOS[0] - 0.6, 4.2, TPOS[1] - 1.4]), u) + bob * u
+    p = lerp(rest, np.array([TPOS[0] - 1.3, 4.2, TPOS[1] - 1.6]), u) + bob * u
     p[1] = lerp(rest[1], 4.2, u ** 0.45)                                      # lifts straight up first, clear of his head
     return p, roty(0.6 * (1 - u) + 0.2 * u) @ rotx(-math.pi / 2 * (1 - u) - 0.35 * u)
 def orbit_pos(t):
@@ -292,9 +295,29 @@ def string_path(t, st, mats, kite_p, pip_beak):
 # ---------------- Pip ----------------
 PIP_FOOT = 0.060
 UP = np.array([0, PIP_FOOT, 0])
-PAW_TOP = 0.088                              # paw sphere radius 0.1, minus a little so the feet rest on the clay
+PAW_TOP = 0.088
+HF_H = 0.42                                    # Pip's high-five hop height
+def _paw_table():
+    """local hand height for arm0 side angles (fwd 0.35), to solve the paw raise that meets Pip"""
+    pv = np.array(FOXD["arm0"]["pivot"]); hd = np.array(FOXD["arm0"]["hand"]); out = []
+    for sd in np.linspace(1.3, 1.9, 61):
+        M = trans(*pv) @ rotz(sd) @ rotx(-0.35) @ trans(*(-pv)); out.append((sd, apply(M, hd)[1]))
+    return np.array(out)
+PAW_TAB = _paw_table()
+def paw_side_for_rise(r):
+    y = PAW_TAB[:, 1] - PAW_TAB[0, 1]
+    i = np.argmax(y)
+    return float(np.interp(r, y[:i + 1], PAW_TAB[:i + 1, 0]))
+HF_RISE = 0.11                                 # the paw can rise this far before Pip would touch Tumble's head (solved)
+def hf_curves(t):
+    """Pip hops up and lands back on the paw just as it bumps up to meet him: contact at T.HIGH_FIVE"""
+    a0 = T.HIGH_FIVE - 0.42; u = clampu(t, a0, a0 + 0.7)
+    if not (0 < u < 1): return None
+    r = HF_RISE * math.sin(math.pi * u) ** 2
+    g = 0.34 * math.sin(math.pi * min(u / 0.6, 1.0))
+    return g + r, r                                                         # (Pip height, paw rise) above the rest pose                              # paw sphere radius 0.1, minus a little so the feet rest on the clay
 STUMP_PIP = np.array([STUMP[0] - 0.4, surf(*STUMP) + STUMP_TOP, STUMP[1] + 0.12]) + UP
-KNOT_L = (-0.22, 0.78, COIL_RZ + 0.04)       # on the coil, low on his chest once he lies on his side (beak height)
+KNOT_L = (-0.22, 0.7, COIL_RZ + 0.1)       # on the coil, low on his chest once he lies on his side (beak height)
 def knot_ground(R):
     """Pip's spot in front of the knot, and the knot itself"""
     kc = apply(R, KNOT_L); f = apply(R, (KNOT_L[0], KNOT_L[1], KNOT_L[2] + 0.24))
@@ -350,8 +373,8 @@ def pip_state(t, st, mats):
         a, b = SH[n]
         dest, _ = knot_ground(fox_mats(dict(tumble(SH["peck"][1] - 0.01)))[0])
         away = np.array([TPOS[0] + 1.25, 0, TPOS[1] + 0.9])
-        u = clampu(t, a, T.SPIN0 + 0.2)
-        p = lerp(dest, on_ground(away[0], away[2]), ease(u)); p[1] += 0.35 * math.sin(math.pi * u)
+        u = clampu(t, a, a + 0.75)
+        p = lerp(dest, on_ground(away[0], away[2]), ease(u)); p[1] += 0.45 * math.sin(math.pi * u)
         ex = {}
         if t > T.SPIN1: ex["cheer"] = True
         return p, math.atan2(TPOS[0] - away[0], TPOS[1] - away[2]), u < 1 or t > T.SPIN1, 0.0, False, ex
@@ -369,19 +392,19 @@ def pip_state(t, st, mats):
         a, b = SH[n]
         top = apply(arms[0], FOXD["arm0"]["hand"]) + np.array([0, PAW_TOP, 0]) + UP
         sway = math.sin(2 * math.pi * (t - a) / (2 * BEAT))
-        hf = clampu(t, T.HIGH_FIVE - 0.35, T.HIGH_FIVE + 0.35)
+        hc = hf_curves(t)
         ex = {"sway": sway}
-        if 0 < hf < 1:                                                      # hops up, wing down to slap the rising paw
-            top = top + np.array([0, 0.42 * math.sin(math.pi * hf), 0]); ex["highfive"] = True
+        if hc:                                                              # hops up; the rising paw meets his wing at the top
+            top = top + np.array([0, hc[0] - hc[1], 0]); ex["highfive"] = True
             return top, 0.35, True, 0.0, False, ex
         return top, 0.35, False, 0.0, True, ex
     # button: Pip grabs the loose string end and flies the kite up
     a, b = SH["button_crane"]
     u = clampu(t, a, b)
     p0 = apply(arms[0], FOXD["arm0"]["hand"]) + np.array([0, PAW_TOP, 0]) + UP if t < a + 0.05 else apply(fox_mats(tumble(a - 0.01))[2][0], FOXD["arm0"]["hand"]) + np.array([0, PAW_TOP, 0]) + UP
-    p1 = np.array([TPOS[0] + 0.7, 2.7, TPOS[1] + 0.2])
+    p1 = np.array([TPOS[0] - 0.55, 2.5, TPOS[1] + 0.6])                      # in front of the kite's climb, never in its way
     p = lerp(p0, p1, ease(u)) + np.array([0, 0.08 * math.sin(t * 9), 0]) * u
-    p += np.array([0.55, 0.15, 0.25]) * math.sin(math.pi * min(1.0, u * 1.6))     # out and away from his face first
+    p += np.array([0.35, 0.9, 0.1]) * math.sin(math.pi * min(1.0, u * 1.25))      # up and over his head, away from his face
     return p, lerp(0.35, -0.3, ease(clampu(t, a + 0.3, a + 0.9))), True, -0.15 * clampu(t, a + 0.2, a + 0.5), False, {"beak": True}   # keeps the chorus heading until clear
 
 # ---------------- camera (aspect-fitted) ----------------
@@ -428,7 +451,7 @@ def camera(t):
         pg, kc = knot_ground(R)
         tgt = lerp(kc, pg, 0.5); tgt[1] = 0.4
         ax = math.degrees(math.atan2(kc[0] - pg[0], kc[2] - pg[2]))          # Pip-to-knot axis; film it side-on
-        yaw = min((ax + 118, ax - 118), key=lambda y: -math.cos(math.radians(y)))   # three-quarter front of Pip, knot in profile
+        yaw = min((ax + 104, ax - 104), key=lambda y: -math.cos(math.radians(y)))   # three-quarter front of Pip, knot in profile
         return fit_cam(tgt, yaw + lerp(-6, 6, e), 8, 0.62, 0.62, fov=34, lift=0.12)
     if name == "spin_out":                                                  # wide: spins up like a top
         e = ease(clampu(t, SH[name][0], T.SPIN1))
@@ -495,8 +518,8 @@ def build_draws(t):
     if g > 0.01:                                                            # blowing leaves show the gust
         for k in range(16):
             ph = (t * 0.55 + k / 16.0) % 1.0
-            x = TPOS[0] - 4.5 + 9.0 * ph; z = TPOS[1] - 0.9 - 2.4 * ((k * 0.37) % 1.0)          # a band behind him, clear of faces
-            y = 0.3 + 1.9 * ((k * 0.61) % 1.0) + 0.25 * math.sin(t * 4 + k)
+            x = TPOS[0] - 4.5 + 9.0 * ph; z = TPOS[1] - 1.5 - 2.4 * ((k * 0.37) % 1.0)          # a band behind him, clear of faces
+            y = 0.25 + 1.4 * ((k * 0.61) % 1.0) + 0.2 * math.sin(t * 4 + k)
             draws.append((SC["leaf"], trans(x, y, z) @ rotz(t * 7 + k) @ rotx(t * 5 + k) @ scale(1.6 * g),
                           U(mat=0, bump=0.0, tint=(0.55, 0.8, 0.45) if k % 3 else (0.95, 0.75, 0.4), tintMix=1.0), False))
     # ---- Tumble ----
@@ -514,7 +537,7 @@ def build_draws(t):
     fi_ = min(int(t * FPS), len(MOUTH["tumble"]) - 1)
     mo = MOUTH["tumble"][fi_]
     if mo > 0.06:
-        draws.append((PR["mouth"], Mh @ trans(*(np.array(FOXD["mouth"]["c"]) + np.array([0, 0, 0.015]))) @ scale(0.085, 0.07 * mo, 0.035), U(mat=0, bump=0.0), False))
+        draws.append((PR["mouth"], Mh @ trans(*(np.array(FOXD["mouth"]["c"]) + np.array([0, 0.005, 0.03]))) @ scale(0.095, 0.075 * mo, 0.04), U(mat=2, bump=0.0), False))
     if st["lie"] < 0.5: contacts.append((st["x"], st["z"], 0.75, max(0.0, 1 - st["y"] * 1.5)))
     else: contacts.append((st["x"] - 0.4, st["z"], 1.0, 1.0))
     # ---- Pip ----
@@ -558,7 +581,8 @@ def build_draws(t):
         s = (k + 1) / 5.0
         sway = 0.25 * math.sin(t * 3 + k * 0.8) * s
         on_ground = kp[1] < 0.5
-        p = tail_top + (np.array([0.22 * s, 0.0, 0.55 * s]) if on_ground else np.array([sway, -0.42 * s * 3, 0.1 * s]))
+        near = T.GUST0 - 0.2 < t < SH["topple"][0] + 0.5
+        p = tail_top + (np.array([0.22 * s, 0.0, 0.55 * s]) if on_ground else (kR[:3, :3] @ np.array([sway, -0.42 * s * (1.4 if near else 3), 0.1 * s])))
         if on_ground: p[1] = surf(p[0], p[2]) + 0.04
         draws.append((PR["ball"], trans(*p) @ scale(0.06, 0.045, 0.06), U(mat=0, bump=0.0, tint=(1.0, 0.55, 0.65) if k % 2 else (1.0, 0.85, 0.35), tintMix=1.0), False))
     pts = string_path(t, st, mats, kp, beak)
@@ -577,10 +601,10 @@ def build_draws(t):
                           U(mat=0, bump=0.0, tint=(0.98, 0.96, 0.9), tintMix=1.0), False))
         if 0 <= t - T.KNOT_POP < 0.45:                                      # pop puff
             d = t - T.KNOT_POP
-            for k in range(7):
-                a_ = k * 2 * math.pi / 7
-                p = kc + np.array([math.cos(a_), math.sin(a_), 0.5]) * (0.1 + 0.9 * d)
-                draws.append((PR["ball"], trans(*p) @ scale(0.055 * (1 - d / 0.45)), U(mat=0, bump=0.0, tint=(1.0, 0.95, 0.7), tintMix=1.0), False))
+            for k in range(12):
+                a_ = k * 2 * math.pi / 12
+                p = kc + np.array([math.cos(a_), math.sin(a_), 0.5]) * (0.1 + 1.1 * d)
+                draws.append((PR["ball"], trans(*p) @ scale(0.085 * (1 - d / 0.45)), U(mat=0, bump=0.0, tint=(1.0, 0.95, 0.7), tintMix=1.0), False))
     return draws, contacts
 
 def draw_pass(draws, contacts, eye, tgt, fov, vp):
