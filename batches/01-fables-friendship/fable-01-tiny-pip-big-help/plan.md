@@ -1,8 +1,9 @@
 # Tumble & Pip Fables 1: Tiny Pip, Big Help!
 
 - **job:** batch 01, fable 01 (`fable-01-tiny-pip-big-help`)
-- **status:** animatic stage. Visuals built and checked in both aspects on the planned grid. Waiting for the ElevenLabs
-  song (no key or network in the build session), then the final render on the Mac.
+- **status:** animatic done. Visuals built in both aspects on the planned grid; geometry QA 0; reviewer PASS (round 6).
+  Waiting for the ElevenLabs song (the build session had no key and no network access to ElevenLabs), then the final
+  render on the Mac.
 - **series:** Tumble & Pip (Fables About Friendship). Batch plan: [../plan.md](../plan.md)
 - **source:** Aesop's fable *The Lion and the Mouse* (public domain), retold with our cast, gags and song
 - **lesson (SEL):** small friends can be big helpers; don't judge help by size
@@ -76,7 +77,9 @@ Shortest shot 2.4 s.
 
 - Stills and contact sheets in both aspects looked at; fixes made: a camera below the ground in the gust shot, Tumble
   falling into the stump, Pip seen from behind in two shots, the string crossing Pip, overhead framing, coil readability.
-- Geometry QA and the reviewer agent: see `review.md`.
+- Geometry QA: 0 issues at 15 fps (started at 45).
+- Reviewer agent: PASS in round 6, after 5 FAIL rounds (see `review.md`).
+- Stills: 8 per aspect in `stills/`, plus contact sheets.
 - Still to do once the song exists: take recall 95%+ with lines inside sections, diarization (Tumble, Pip, duet),
   tempo within 2 BPM of 100, bar-line joins at chroma 0.9+, full-mix recall 90%+, -14 LUFS, final Mac render, 2 frames
   from the MP4.

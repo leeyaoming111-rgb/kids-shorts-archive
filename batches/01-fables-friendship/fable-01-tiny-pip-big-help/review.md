@@ -36,6 +36,66 @@ at the animatic stage: there is no audio yet and word times are estimated on the
   - Foreground tail in the 16:9 Pip close-up: Tumble turns towards the kite and that camera is re-angled.
   - The mouth reading as a smear: it is a little larger and sits in front of the smile line.
 
-## Round 2
+## Round 2: FAIL (1 HIGH, 6 MED)
 
-See below once it has run.
+- **HIGH:** the kite still crossed his face as it fell at the end of the gust.
+- **MED:**
+  - the kite tail beads hung across his face;
+  - the button string crossed his face;
+  - the high-five had no contact.
+- **Fixes:**
+  - The kite falls on a curve behind him.
+  - The tail follows the kite's own down axis and is shorter near him.
+  - In the button, Pip and the kite take separate paths.
+  - The high-five was re-choreographed: Pip hops up and lands back on the paw as it bumps up to meet him, with a star
+    puff on the contact. The paw can only rise 0.11 before Pip would touch Tumble's head; that limit was solved
+    numerically.
+
+## Round 3: FAIL (3 MED)
+
+- **MED:**
+  - the gust string crossed his face from the paw;
+  - the button string crossed his head;
+  - Pip overlapped Tumble at the start of the spin-out.
+- **Fixes:**
+  - The kite flies on his paw side.
+  - Pip hops clear on a high arc before Tumble rises.
+  - In the button, Pip picks up the loose string end on the grass.
+
+## Round 4: FAIL (2 MED)
+
+- **MED:**
+  - the gust string still crossed his face later in each loop;
+  - the button string formed a V across his body.
+- **Fixes (geometry):**
+  - Tumble clutches the string low at his waist and the kite circles low, so the string always passes below his
+    face. The camera is a little higher.
+  - In the button, Pip flies high behind Tumble's head (three explicit legs, after a curved path cut through his head)
+    and picks the string up beside the kite on Tumble's left. The slack stays on the grass round his feet.
+
+## Round 5: FAIL (2 MED, framing)
+
+- **MED:**
+  - in 9:16, the climbing kite and Pip left the frame;
+  - in 16:9, Pip landed in the caption band.
+- **Fixes:**
+  - The button camera follows Tumble, Pip and the kite together.
+  - Tumble's head is re-meshed at twice the resolution. The jagged "mouth with teeth" was the carved smile line
+    breaking up at the old mesh step.
+  - The singing mouth is a single glossy shape that covers the smile line.
+
+## Round 6: PASS
+
+LOW items left:
+- Pip half behind the "Bye-bye!" caption for about 0.2 s in 16:9.
+- The kite corner passing just behind Tumble's ear at 19.8 s.
+- Tumble small in the 9:16 gust.
+- The kite's tail beads crossing the top edge at 16.0 s.
+- Tumble's paw at the edge of the 16:9 Pip close-up.
+
+After the pass, Pip was moved clear of the kite's tail at the end (he read as upside-down there). Geometry QA was rerun:
+0 issues.
+
+**Final checks:** geometry QA 0 issues at 15 fps; reviewer PASS (round 6) on both aspects.
+
+Audio checks are still to do, once the ElevenLabs song exists.

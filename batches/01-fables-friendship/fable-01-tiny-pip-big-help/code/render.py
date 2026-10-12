@@ -243,7 +243,7 @@ def kite_state(t, st):
             return p, roty(0.6) @ rotx(-math.pi / 2 * e - 0.3 * (1 - e))
         return rest, Mrest
     u = ease(clampu(t, SH["button_crane"][0] + GRAB + 0.1, SH["button_crane"][1]))     # Pip pulls it up into the sky again, on his left
-    p = lerp(rest, np.array([TPOS[0] - 1.9, 4.0, TPOS[1] + 0.5]), u) + bob * u
+    p = lerp(rest, np.array([TPOS[0] - 2.2, 4.3, TPOS[1] + 0.1]), u) + bob * u
     p[1] = lerp(rest[1], 4.2, u ** 0.45)                                      # lifts straight up first, clear of his head
     return p, roty(0.6 * (1 - u) + 0.2 * u) @ rotx(-math.pi / 2 * (1 - u) - 0.35 * u)
 def orbit_pos(t):
@@ -415,9 +415,9 @@ def pip_state(t, st, mats):
         yaw = math.atan2(g[0] - p0[0], g[2] - p0[2]) if u < 0.85 else -math.pi / 2
         return p, yaw, u < 0.9, 0.35 * clampu(u, 0.85, 1.0), False, {"beak": u > 0.92}
     u = clampu(t, a + GRAB, b)                                              # then flies it up on the kite's side, away from Tumble
-    p1 = np.array([TPOS[0] - 1.75, 2.9, TPOS[1] + 1.3])
+    p1 = np.array([TPOS[0] - 0.95, 2.45, TPOS[1] + 1.4])                      # below and in front of the kite, clear of its tail
     p = lerp(g, p1, ease(u)) + np.array([0, 0.06 * math.sin(t * 9), 0]) * u
-    return p, lerp(-math.pi / 2, 0.3, ease(clampu(u, 0.0, 0.4))), True, 0.35 * (1 - clampu(u, 0.0, 0.2) / 0.2), False, {"beak": True}
+    return p, lerp(-math.pi / 2, 0.0, ease(clampu(u, 0.0, 0.4))), True, 0.35 * (1 - clampu(u, 0.0, 0.2) / 0.2), False, {"beak": True}
 
 # ---------------- camera (aspect-fitted) ----------------
 def fit_cam(tgt, yaw_deg, pitch_deg, fit_w, fit_h, fov=38.0, lift=None):

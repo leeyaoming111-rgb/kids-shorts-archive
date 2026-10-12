@@ -24,7 +24,7 @@ Themed sets of Shorts that also join into one long-form episode.
 
 | Batch | Series | Shorts | Episode | Status |
 |---|---|---|---|---|
-| [01: Fables About Friendship](batches/01-fables-friendship/plan.md) | Tumble & Pip | 10 Aesop retellings | Story Stump episode, about 9 min, 16:9 | Fable 1 at animatic stage (visuals done, waiting for the song) |
+| [01: Fables About Friendship](batches/01-fables-friendship/plan.md) | Tumble & Pip | 10 Aesop retellings | Story Stump episode, about 9 min, 16:9 | Fable 1 animatic done (QA 0, reviewer PASS), waiting for the song |
 
 ## Layout
 
