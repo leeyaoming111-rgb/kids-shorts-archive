@@ -8,7 +8,7 @@ word time comes from it. Until then the planned grid below is used with estimate
 staging, stills and an animatic. Nothing else in the code changes when the real song arrives.
 
 ASPECT=short (default) renders the 1080x1920 Short; ASPECT=wide renders the 1920x1080 episode framing."""
-import json, os, re
+import json, math, os, re
 
 FPS = 30
 ASPECT = os.environ.get("ASPECT", "short")
@@ -103,11 +103,16 @@ SPOKEN = [dict(file="s00_tumble", who="tumble", t0=GAG_UHOH, caption="Uh-oh! Hel
 _h, _s, _sa, _sb = sec("Hook"), sec("Sting"), sec("Setup A"), sec("Setup B")
 _pa, _m, _c, _bt = sec("Problem A"), sec("Moral"), sec("Chorus"), sec("Button")
 PB_SPLIT = _pb[0] + 1.5 * BAR              # topple seen from the side, then overhead once he's down
-TW_SPLIT = _tw[0] + 1.5 * BAR              # peck close-up, then the wide spin-out
+# peck close-up, then the wide spin-out. The cut is the first bar line after the last sung "peck"; the real take sings
+# the pecks late in the Twist (after its instrumental break), so the spin-out runs on over the Moral's first bars and
+# the moral shot starts on the bar line just before "Tiny".
+_pk = word_times("peck", "Twist")
+TW_SPLIT = _tw[0] + 1.5 * BAR if not _pk else _tw[0] + math.ceil((_pk[-1] + 0.2 - _tw[0]) / BAR * 2) * BAR / 2
+MORAL_CUT = max(_m[0], TW_SPLIT + BAR)     # spin-out lasts at least a bar
 SHOTS = [(0.0, _h[1], "hook_track"), (_s[0], _s[1], "title_wide"), (_sa[0], _sa[1], "pip_ask"),
          (_sb[0], _sb[1], "tumble_no"), (_pa[0], _pa[1], "gust"), (_pb[0], PB_SPLIT, "topple"),
-         (PB_SPLIT, _pb[1], "overhead_tangled"), (_tw[0], TW_SPLIT, "peck"), (TW_SPLIT, _tw[1], "spin_out"),
-         (_m[0], _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
+         (PB_SPLIT, _pb[1], "overhead_tangled"), (_tw[0], TW_SPLIT, "peck"), (TW_SPLIT, MORAL_CUT, "spin_out"),
+         (MORAL_CUT, _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):
     for i, (a, b, n) in enumerate(SHOTS):
         if a <= t < b: return i, n, (t - a) / max(b - a, 1e-6), t - a
@@ -116,8 +121,9 @@ def shot_at(t):
 # story events, all from word times so they follow the real alignment
 PECKS = word_times("peck", "Twist")
 WHOOSH = (word_times("whoosh", "Problem A") or [_pa[0] + 0.2])[0]
-KNOT_POP = (PECKS[-1] if PECKS else _tw[0] + 2.5) + 0.45
+KNOT_POP = (PECKS[-1] if PECKS else _tw[0] + 2.5) + (0.45 if TW_SPLIT - PECKS[-1] > 0.9 else 0.3)   # pops before the cut
 GUST0, GUST1 = WHOOSH - 0.2, _pa[1] - 0.3             # kite swoops and circles Tumble
 TOPPLE = (word_times("tangled", "Problem B") or [_pb[0] + 1.4])[0]   # he tips over on "tangled", lands by "ground"
-SPIN0, SPIN1 = TW_SPLIT + 0.45, TW_SPLIT + 2.2              # Pip hops clear first, then Tumble rises and spins
+SPIN0 = TW_SPLIT + 0.45                                     # Pip hops clear first, then Tumble rises and spins
+SPIN1 = min(TW_SPLIT + 2.2, MORAL_CUT - 0.5)                # and is dizzy for at least half a second before the cut
 HIGH_FIVE = _c[1] - 0.9

@@ -107,7 +107,8 @@ def tumble(t):
             ph = t * 2 * math.pi * 2.3
             st["y"] += 0.06 * abs(math.sin(ph)); st["legs"] = [0.1 * max(0, math.sin(ph)), 0.1 * max(0, -math.sin(ph))]
             st["yaw"] = math.atan2(p1[0] - p0[0], p1[1] - p0[1]) * (1 - ease(clampu(t, 2.5, 3.0))) - 0.25 * ease(clampu(t, 2.5, 3.0))
-        lift = clampu(t, 2.55, 3.45)                                        # the kite tugs him up on "kite!"
+        k_ = (T.word_times("kite", "Hook") or [2.65])[0]
+        lift = clampu(t, k_ - 0.1, k_ + 0.8)                                # the kite tugs him up on the sung "kite!"
         if 0 < lift < 1:
             st["y"] += 0.62 * math.sin(math.pi * lift); st["legs"] = [0.12, 0.05]; st["sq"] += 0.06 * math.sin(math.pi * lift)
         st["arms"][0] = [0.45, 1.35 + 0.15 * lift]
@@ -362,7 +363,7 @@ def pip_state(t, st, mats):
         dest, kc = knot_ground(R)
         u = clampu(t, a + 0.5, a + 1.8)
         if u < 1:
-            p = lerp(STUMP_PIP, dest, ease(u)); p[1] += 0.9 * math.sin(math.pi * u)
+            p = lerp(STUMP_PIP, dest, ease(u)); p[1] += 1.2 * math.sin(math.pi * u)   # high enough to drop in clear of his arm (real "tangled" timing)
             return p, math.atan2(dest[0] - STUMP_PIP[0], dest[2] - STUMP_PIP[2]), u > 0, 0.0, False, {}
         kc = knot_ground(R)[1]
         return dest, math.atan2(kc[0] - dest[0], kc[2] - dest[2]), False, 0.0, False, {}
@@ -372,7 +373,9 @@ def pip_state(t, st, mats):
         for pt in T.PECKS:
             d = t - pt
             if -0.12 < d < 0.18: pitch = 0.65 * math.sin(math.pi * (d + 0.12) / 0.3)
-        return dest, math.atan2(c[0] - dest[0], c[2] - dest[2]), False, pitch, False, {}
+        L = T.line("Twist"); hw = next((w for w in L["words"] if w["w"].lower().startswith("help")), None)
+        ex = {"point": True} if hw and L["t0"] - 0.1 < t < hw["t1"] + 0.15 else {}     # wing up on "I can help!"
+        return dest, math.atan2(c[0] - dest[0], c[2] - dest[2]), False, pitch, False, ex
     if n == "spin_out":
         a, b = SH[n]
         dest, _ = knot_ground(fox_mats(dict(tumble(SH["peck"][1] - 0.01)))[0])
