@@ -33,7 +33,7 @@
 | Leitmotifs | low reed (bassoon-like) doubles Tumble's lines, tin whistle doubles Pip's lines, as in Episode 2. |
 | Theme sting | 2 s: "Tumble and Pip!" sung on a fixed 4-note figure, with the two leitmotifs. Recorded once, reused in every Short and the episode. |
 | Moral chorus | fixed melody and lyrics, 6 to 9 s, recorded once (see "Song plan"). Ends every Short. |
-| Copyable move | in the moral chorus, Tumble and Pip link paw and wing and sway twice, then a high-five. Same move in every Short. |
+| Copyable move | in the moral chorus, Pip rides Tumble's outstretched paw and they sway together on every second beat, then Pip hops up for a paw-to-wing high-five (star puff). Same move in every Short. Children copy it with one hand out, a sway and a high-five. |
 | Captions | big, rounded, bottom third. The moral line gets a yellow "moral card" style used only for morals. |
 | Look | SDF clay with the thumbprint shader, soft shadows, saturated characters, softer backgrounds, as in Episode 2. |
 

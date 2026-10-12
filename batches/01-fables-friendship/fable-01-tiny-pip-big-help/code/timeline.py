@@ -119,5 +119,5 @@ WHOOSH = (word_times("whoosh", "Problem A") or [_pa[0] + 0.2])[0]
 KNOT_POP = (PECKS[-1] if PECKS else _tw[0] + 2.5) + 0.45
 GUST0, GUST1 = WHOOSH - 0.2, _pa[1] - 0.3             # kite swoops and circles Tumble
 TOPPLE = (word_times("tangled", "Problem B") or [_pb[0] + 1.4])[0]   # he tips over on "tangled", lands by "ground"
-SPIN0, SPIN1 = TW_SPLIT + 0.25, TW_SPLIT + 1.9
+SPIN0, SPIN1 = TW_SPLIT + 0.05, TW_SPLIT + 1.9
 HIGH_FIVE = _c[1] - 0.9

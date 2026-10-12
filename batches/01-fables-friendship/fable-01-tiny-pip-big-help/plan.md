@@ -16,7 +16,7 @@ Picnic Meadow, and the wind tugs him off his feet. His tiny bird friend Pip, per
 and Tumble kindly says the kite is too big for tiny wings. A gust swings the kite round and round him until he is wrapped
 up like a parcel and topples over in the grass. Pip flies down and pecks the knot, peck, peck, peck, and Tumble spins
 free like a top, dizzy and laughing. With Pip sitting on his paw, Tumble sings the moral: tiny friends can be big
-helpers. They do the series dance (link paw and wing, sway, high-five), and Pip flies the kite back up into the sky.
+helpers. They do the series dance (Pip rides Tumble's paw, they sway, then a paw-to-wing high-five), and Pip flies the kite back up into the sky.
 Gentle storybook folk at 100 BPM in D major with acoustic guitar, glockenspiel, bassoon for Tumble and tin whistle for Pip.
 
 ## Change from the batch plan
@@ -58,8 +58,8 @@ Syllable budget: every line at or under 3 syllables per second.
 | 8 | 27.6-31.2 | macro, side-on | Pip pecks the knot on each sung "peck"; the knot pops open with a puff |
 | 9 | 31.2-34.8 | wide | Tumble rises and spins three times as the string unwinds onto the grass ("Wheee!"), dizzy, laughs; Pip cheers |
 | 10 | 34.8-38.4 | push-in two-shot | Pip hops onto Tumble's raised paw; the moral card |
-| 11 | 38.4-45.6 | medium front | the series dance: paw and wing linked, sway on every second beat, high-five |
-| 12 | 45.6-48.0 | crane up | Pip takes the string in his beak and flies the kite back up; Tumble cheers |
+| 11 | 38.4-45.6 | medium front | the series dance: Pip rides Tumble's outstretched paw, they sway on every second beat, then a paw-to-wing high-five with a star puff |
+| 12 | 45.6-48.0 | crane up | Pip takes off from the paw with the string in his beak and flies the kite back up; Tumble cheers |
 
 Camera types: tracking, wide, macro, over-the-shoulder, low angle push-in, medium, overhead, crane. 11 hard cuts.
 Shortest shot 2.4 s.
