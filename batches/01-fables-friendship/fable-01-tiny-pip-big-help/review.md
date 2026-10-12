@@ -99,3 +99,37 @@ After the pass, Pip was moved clear of the kite's tail at the end (he read as up
 **Final checks:** geometry QA 0 issues at 15 fps; reviewer PASS (round 6) on both aspects.
 
 Audio checks are still to do, once the ElevenLabs song exists.
+
+## Song sync (real ElevenLabs song, aligned word times)
+
+The real take differs from the planned grid in one place that matters. The Twist opens with an instrumental whistle
+break (27.6-31.4 s), so Pip sings "I can help! Peck, peck, peck!" late (pecks at 32.42, 32.74, 33.06). On the old
+shot split, Tumble was already spinning free at 31.7 s and the knot popped after the spin. Fixes (all in
+`timeline.py` and `render.py`, driven by word times):
+
+- **Twist retimed:** the peck close-up runs from 27.6 s to the first half-bar line at least 0.5 s after the last
+  "peck" (33.6 s). The knot pops at 33.25 s, so the pop and puff show before the cut. The spin-out runs from 33.6 to
+  36.0 s (rises at 34.05, spins until 35.5, dizzy, Pip cheers). The moral shot starts on the half-bar line at the
+  sung "Tiny" (36.0 s), clamped to at least 1.9 s of spin-out and a bar before the Moral ends.
+- **Whistle break:** Pip studies the knot, looking one way and then the other, with a small hop every two beats.
+  From 30.8 s his wing goes up ("idea", then "I can help!") until just before the first peck.
+- **Hook:** the kite's tug follows the sung "kite!" (1.86 s), not the planned 2.55 s.
+- **Overhead:** Pip's flight down arcs higher (1.2 instead of 0.9), clearing a 1.2 cm wing-into-arm clip that the
+  real "tangled" time caused at 25.4 s.
+- **Unchanged:** captions, mouths and the spoken gags already ran from the aligned times. "Uh-oh! Help!" (24.9),
+  "Wheee!" (31.9) and "Bye-bye!" (46.3) match the mix.
+
+**Open (audio, not fixable in the visuals):** the mix puts Tumble's "Wheee!" at 31.9 s, inside the peck close-up and
+over Pip's "help!", while Tumble is still tied up. Its caption is hidden behind Pip's sung line. To fix it, remix with
+the gag at about 34.3 s (0.25 s after Tumble starts to rise). `GAG_WHEE` in `timeline.py` would then follow.
+
+**Independent reviewer (song sync): PASS.**
+- **MED, fixed:** dead air in the whistle break; the pop shown for only 0.24 s; `KNOT_POP` and `MORAL_CUT`
+  robustness (an empty `PECKS`, a moral cut not tied to "Tiny").
+- **LOW, left as is:**
+  - Pip's 0.42 s hop clear at 33.6 is quick.
+  - The wing-up is small in the close-up.
+  - The moral caption covers Tumble's legs at the end of the push-in.
+  - A cropped kite corner at the 16:9 peck-shot edge.
+
+Geometry QA after the fixes: 0 issues (15 fps).

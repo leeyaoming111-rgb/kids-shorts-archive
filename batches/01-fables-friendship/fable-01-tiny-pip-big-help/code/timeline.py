@@ -103,12 +103,16 @@ SPOKEN = [dict(file="s00_tumble", who="tumble", t0=GAG_UHOH, caption="Uh-oh! Hel
 _h, _s, _sa, _sb = sec("Hook"), sec("Sting"), sec("Setup A"), sec("Setup B")
 _pa, _m, _c, _bt = sec("Problem A"), sec("Moral"), sec("Chorus"), sec("Button")
 PB_SPLIT = _pb[0] + 1.5 * BAR              # topple seen from the side, then overhead once he's down
-# peck close-up, then the wide spin-out. The cut is the first bar line after the last sung "peck"; the real take sings
-# the pecks late in the Twist (after its instrumental break), so the spin-out runs on over the Moral's first bars and
-# the moral shot starts on the bar line just before "Tiny".
+# peck close-up, then the wide spin-out. The cut is the first half-bar line at least 0.5 s after the last sung "peck"
+# (room for the knot to pop). The real take sings the pecks late in the Twist (after its instrumental break), so the
+# spin-out runs on over the Moral's first bars and the moral shot starts on the last half-bar line at or just before
+# the sung "Tiny", at least 1.9 s after the spin-out starts and a bar before the Moral ends.
+HALF = BAR / 2
 _pk = word_times("peck", "Twist")
-TW_SPLIT = _tw[0] + 1.5 * BAR if not _pk else _tw[0] + math.ceil((_pk[-1] + 0.2 - _tw[0]) / BAR * 2) * BAR / 2
-MORAL_CUT = max(_m[0], TW_SPLIT + BAR)     # spin-out lasts at least a bar
+TW_SPLIT = _tw[0] + 1.5 * BAR if not _pk else _tw[0] + math.ceil((_pk[-1] + 0.5 - _tw[0]) / HALF - 1e-6) * HALF
+_tiny = line("Moral")["t0"]
+MORAL_CUT = math.floor((_tiny + 0.1) / HALF + 1e-6) * HALF
+MORAL_CUT = min(max(MORAL_CUT, _m[0], TW_SPLIT + 1.9), _m[1] - BAR)
 SHOTS = [(0.0, _h[1], "hook_track"), (_s[0], _s[1], "title_wide"), (_sa[0], _sa[1], "pip_ask"),
          (_sb[0], _sb[1], "tumble_no"), (_pa[0], _pa[1], "gust"), (_pb[0], PB_SPLIT, "topple"),
          (PB_SPLIT, _pb[1], "overhead_tangled"), (_tw[0], TW_SPLIT, "peck"), (TW_SPLIT, MORAL_CUT, "spin_out"),
@@ -121,7 +125,7 @@ def shot_at(t):
 # story events, all from word times so they follow the real alignment
 PECKS = word_times("peck", "Twist")
 WHOOSH = (word_times("whoosh", "Problem A") or [_pa[0] + 0.2])[0]
-KNOT_POP = (PECKS[-1] if PECKS else _tw[0] + 2.5) + (0.45 if TW_SPLIT - PECKS[-1] > 0.9 else 0.3)   # pops before the cut
+KNOT_POP = min((PECKS[-1] if PECKS else _tw[0] + 2.5) + 0.45, TW_SPLIT - 0.35)   # pop and puff seen before the cut
 GUST0, GUST1 = WHOOSH - 0.2, _pa[1] - 0.3             # kite swoops and circles Tumble
 TOPPLE = (word_times("tangled", "Problem B") or [_pb[0] + 1.4])[0]   # he tips over on "tangled", lands by "ground"
 SPIN0 = TW_SPLIT + 0.45                                     # Pip hops clear first, then Tumble rises and spins

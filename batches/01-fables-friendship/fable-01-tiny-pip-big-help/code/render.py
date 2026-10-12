@@ -374,8 +374,14 @@ def pip_state(t, st, mats):
             d = t - pt
             if -0.12 < d < 0.18: pitch = 0.65 * math.sin(math.pi * (d + 0.12) / 0.3)
         L = T.line("Twist"); hw = next((w for w in L["words"] if w["w"].lower().startswith("help")), None)
-        ex = {"point": True} if hw and L["t0"] - 0.1 < t < hw["t1"] + 0.15 else {}     # wing up on "I can help!"
-        return dest, math.atan2(c[0] - dest[0], c[2] - dest[2]), False, pitch, False, ex
+        a, b = SH[n]; yaw = math.atan2(c[0] - dest[0], c[2] - dest[2]); p = dest.copy()
+        if a + 0.6 <= t < L["t0"] - 0.6:                                   # instrumental break: studies the knot, hops round it
+            k = int((t - a - 0.6) / (2 * BEAT)); d = t - a - 0.6 - k * 2 * BEAT
+            if d < 0.3 and t - d + 0.3 <= L["t0"] - 0.6: p[1] += 0.08 * math.sin(math.pi * d / 0.3)   # only whole hops
+            yaw += 0.35 * math.sin(math.pi * (t - a - 0.6) / (2 * BEAT)) * (1 - clampu(t, L["t0"] - 1.2, L["t0"] - 0.6))   # looks one side, then the other
+        end = min(hw["t1"] + 0.15, T.PECKS[0] - 0.15) if hw and T.PECKS else L["t0"]
+        ex = {"point": True} if L["t0"] - 0.6 < t < end else {}               # wing up: an idea, then "I can help!"
+        return p, yaw, False, pitch, False, ex
     if n == "spin_out":
         a, b = SH[n]
         dest, _ = knot_ground(fox_mats(dict(tumble(SH["peck"][1] - 0.01)))[0])
