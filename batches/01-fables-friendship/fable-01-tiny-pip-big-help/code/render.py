@@ -36,12 +36,12 @@ EYE_W, EYE_P = Mesh(D["eye_w"]), Mesh(D["eye_p"])
 
 # ---------------- world layout (Picnic Meadow, a new corner by the stump) ----------------
 STUMP = (2.7, -1.0); STUMP_TOP = 0.55 - 0.02
-TPOS = (1.45, -0.45)                         # Tumble's kite-flying spot
+TPOS = (1.2, -0.35)                         # Tumble's kite-flying spot
 APPLE_TREE = (-3.6, -3.4)
 COTTAGE_FAR = (7.5, -17.0)
 MUSH = [(3.5, -0.2, 0.2), (3.2, 0.25, 0.14), (0.2, -1.6, 0.18)]
 KITE_SKY = np.array([TPOS[0] - 1.3, 4.7, TPOS[1] - 3.2])
-KITE_REST = (TPOS[0] - 1.6, TPOS[1] - 1.1)
+KITE_REST = (TPOS[0] - 1.3, TPOS[1] + 1.6)          # in front of his head side, clear of the body when he falls
 STRING_END = (TPOS[0] + 0.55, TPOS[1] + 0.55)          # where the loose end lies after the spin-out
 rng = np.random.default_rng(21)
 FLOWERS = []
@@ -90,7 +90,7 @@ def wrap_amt(t):
 def lying_amt(t):
     if t < T.TOPPLE: return 0.0
     if t < T.SPIN0: return clampu(t, T.TOPPLE, T.TOPPLE + 0.55) ** 2       # falls with gravity
-    return 1.0 - ease(clampu(t, T.SPIN0, T.SPIN0 + 0.6))
+    return 1.0 - ease(clampu(t, T.SPIN0, T.SPIN0 + 0.4))
 
 def tumble(t):
     st = dict(x=TPOS[0], z=TPOS[1], yaw=-0.25, y=0.0, sq=0.015 * math.sin(t * 3.7), roll=0.0, lie=0.0,
@@ -133,7 +133,7 @@ def tumble(t):
         st["roll"] = 0.07 * g * math.sin(t * 11); st["head"][0] = -0.15
         ang = kite_orbit_angle(t)
         if ang is not None:                                                 # he turns as the kite circles him
-            st["yaw"] = -0.25 + 0.35 * math.sin(ang) * (1 - w)
+            st["yaw"] = 0.15 + 0.3 * math.sin(ang) * (1 - w)                # turns away from the stump side
         st["arms"][0] = lerp([0.45, 1.3], [0.06, 0.05], ease(clampu(w, 0.0, 0.5)))
         st["arms"][1] = lerp([0.15, 0.0], [0.06, 0.05], ease(clampu(w, 0.0, 0.5)))
         st["legs"] = [0.04 * g * max(0, math.sin(t * 13)), 0.04 * g * max(0, -math.sin(t * 13))]
@@ -156,7 +156,7 @@ def tumble(t):
         a, b = SH[n]
         st["arms"] = [[0.06 + 1.6 * ease(clampu(t, T.SPIN1 - 0.3, T.SPIN1 + 0.2)), 0.3], [0.06 + 1.6 * ease(clampu(t, T.SPIN1 - 0.3, T.SPIN1 + 0.2)), 0.3]]
         st["hold"] = False; st["lie"] = lying_amt(t)
-        u = clampu(t, T.SPIN0, T.SPIN1)
+        u = clampu(t, T.SPIN0 + 0.4, T.SPIN1)                              # stands up first, then spins
         st["yaw"] = -0.25 + 2 * math.pi * 3 * (1 - (1 - u) ** 2)              # unwinds like a top, slowing down
         st["y"] += 0.35 * math.sin(math.pi * clampu(t, T.SPIN0 + 0.3, T.SPIN1))
         d = t - T.SPIN1
@@ -167,8 +167,8 @@ def tumble(t):
     elif n == "moral":
         a, b = SH[n]
         st["yaw"] = -0.05; st["hold"] = False
-        st["arms"] = [[0.3, 1.25], [0.15, 0.0]]                            # Pip sits on his raised paw
-        st["head"][0] = -0.05; st["head"][1] = 0.12
+        st["arms"] = [[1.3, 0.35], [0.15, 0.0]]                           # Pip sits on his raised paw, clear of his face
+        st["head"][0] = -0.05; st["head"][2] = -0.07          # paw out at shoulder height, head tipped away (pose solved for clearance)
         L = T.line("Moral")
         if L and L["t0"] < t < L["t1"] + 0.3: st["y"] += 0.025 * abs(math.sin((t - L["t0"]) * 8))
     elif n == "chorus":
@@ -236,12 +236,13 @@ def kite_state(t, st):
             return p, roty(0.6) @ rotx(-math.pi / 2 * ease(u) - 0.3 * (1 - ease(u)))
         return rest, Mrest
     u = ease(clampu(t, SH["button_crane"][0] + 0.4, SH["button_crane"][1]))     # Pip pulls it up into the sky again
-    p = lerp(rest, np.array([TPOS[0] + 0.2, 4.2, TPOS[1] - 1.4]), u) + bob * u
+    p = lerp(rest, np.array([TPOS[0] - 0.6, 4.2, TPOS[1] - 1.4]), u) + bob * u
+    p[1] = lerp(rest[1], 4.2, u ** 0.45)                                      # lifts straight up first, clear of his head
     return p, roty(0.6 * (1 - u) + 0.2 * u) @ rotx(-math.pi / 2 * (1 - u) - 0.35 * u)
 def orbit_pos(t):
     ang = kite_orbit_angle(min(max(t, ORBIT_A), ORBIT_B))
     u = clampu(t, ORBIT_A, ORBIT_B)
-    r = lerp(2.6, 1.05, u); hgt = lerp(3.2, 1.5, u)
+    r = lerp(2.6, 1.4, u); hgt = lerp(3.2, 1.7, u)
     return np.array([TPOS[0] + r * math.sin(ang), hgt + 0.15 * math.sin(t * 5), TPOS[1] + r * math.cos(ang)])
 
 # ---------------- string ----------------
@@ -289,7 +290,7 @@ def string_path(t, st, mats, kite_p, pip_beak):
 # ---------------- Pip ----------------
 PIP_FOOT = 0.060
 UP = np.array([0, PIP_FOOT, 0])
-STUMP_PIP = np.array([STUMP[0] - 0.3, surf(*STUMP) + STUMP_TOP, STUMP[1] + 0.2]) + UP
+STUMP_PIP = np.array([STUMP[0] - 0.4, surf(*STUMP) + STUMP_TOP, STUMP[1] + 0.12]) + UP
 def knot_ground(R):
     c = apply(R, (0.0, 0.78, COIL_RZ + 0.3))                                 # in front of his chest while he lies down
     return np.array([c[0], surf(c[0], c[2]), c[2]]) + UP, c
@@ -316,7 +317,7 @@ def pip_state(t, st, mats):
             d = t - w["t0"]
             if w["w"].lower().startswith(("help", "good", "things")) and 0 <= d < 0.3: p[1] += 0.12 * math.sin(math.pi * d / 0.3)
         if L["t0"] - 0.1 < t < L["t1"] + 0.4: ex["point"] = True             # wing up: "me! me!"
-        return p, 0.1, False, 0.0, True, ex
+        return p, 0.1, False, 0.0, p[1] <= STUMP_PIP[1] + 1e-6, ex
     if n == "tumble_no":
         L = T.line("Setup B")
         sad = ease(clampu(t, L["t1"] - 0.3, L["t1"] + 0.5))
@@ -356,14 +357,14 @@ def pip_state(t, st, mats):
         if u < 1:
             start = on_ground(TPOS[0] + 1.25, TPOS[1] + 0.9)
             p = lerp(start, top, ease(u)); p[1] += 0.4 * math.sin(math.pi * u)
-            return p, -0.4, True, 0.0, False, {}
-        return top, -0.5, False, 0.0, True, {}
+            return p, 0.35, True, 0.0, False, {}
+        return top, 0.35, False, 0.0, True, {}
     if n == "chorus":
         a, b = SH[n]
         u = clampu(t, a, a + 0.6)
         if u < 1:
             hand = apply(fox_mats(tumble(SH["moral"][1] - 0.01))[2][0], FOXD["arm0"]["hand"]) + np.array([0, 0.095, 0]) + UP
-            p = lerp(hand, STUMP_PIP, ease(u)); p[1] += 0.3 * math.sin(math.pi * u)
+            p = lerp(hand, STUMP_PIP, ease(u)); p[1] += 0.3 * math.sin(math.pi * u); p[0] += 0.25 * math.sin(math.pi * min(1.0, 2 * u))   # out, away from his face
             return p, 0.6, True, 0.0, False, {}
         p = STUMP_PIP.copy()
         sway = math.sin(2 * math.pi * (t - a) / (2 * BEAT))
@@ -430,7 +431,7 @@ def camera(t):
         return fit_cam(np.array([TPOS[0] + 0.35, 1.05, TPOS[1]]), -6, 6, 1.9, 1.7)
     if name == "moral":                                                     # slow push-in two-shot
         e = ease(u)
-        return fit_cam(np.array([TPOS[0] + 0.15, lerp(1.35, 1.45, e), TPOS[1]]), lerp(12, 6, e), 5, lerp(1.2, 0.95, e), lerp(1.4, 1.1, e))
+        return fit_cam(np.array([TPOS[0] + 0.35, lerp(1.35, 1.45, e), TPOS[1]]), lerp(12, 6, e), 5, lerp(1.25, 1.05, e), lerp(1.4, 1.1, e))
     if name == "chorus":                                                    # medium front, both in frame for the dance
         return fit_cam(np.array([(TPOS[0] + STUMP_PIP[0]) / 2, 1.05, (TPOS[1] + STUMP_PIP[2]) / 2]), 6, 6, 1.45, 1.35)
     # button: crane up following the kite
