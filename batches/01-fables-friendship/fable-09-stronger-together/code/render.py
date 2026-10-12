@@ -15,7 +15,7 @@ BR = 0.15                                                  # bundle radius (7 st
 B0 = np.array([-2.3, SUP_Y + BR + 0.004, BZ]); B1 = B0 + np.array([BL, 0, 0])
 SA, SB = (STUMP[0] + 0.62 - B0[0]) / BL, (ROCK[0] - 0.42 - B0[0]) / BL   # inner edges of the supports: the bundle bends between them
 SPOT = (-3.1, -1.9)                                       # Tumble's hook spot, in front of the bench
-PULLP = (-1.0, -4.27)                                      # behind the bench (stream side), facing the camera
+PULLP = (-1.0, -4.05)                                      # behind the bench (stream side), facing the camera
 LANDP = (0.5, -1.95)                                       # where he lands on his bottom after the boing
 BRX = 2.6                                                  # the bridge line (along z) across the stream
 BZ0, BZ1 = -4.2, -6.8
@@ -132,7 +132,7 @@ def twig_draws(draws, t, arms):
     hl, hr = hand_pos(arms, 1), hand_pos(arms, 0)
     drop0, drop1 = T.SNAP + 0.55, T.SNAP + 0.95
     if t < T.SNAP:
-        mid = (hl + hr) / 2 + np.array([0, 0.11, 0.0])
+        mid = (hl + hr) / 2 + np.array([0, 0.1 + TWIG_R + 0.004, 0.0])
         bow = 0.06 * ease(clampu(t, T.SNAP - 0.45, T.SNAP))
         dirv = (hr - hl) / np.linalg.norm(hr - hl)
         a_, b_ = mid - dirv * 0.55, mid + dirv * 0.55
@@ -142,7 +142,7 @@ def twig_draws(draws, t, arms):
         return
     for i, (h, sgn) in enumerate(((hl, -1), (hr, 1))):
         if t < drop0:                                       # one half in each paw, broken ends up
-            base = h + np.array([0, 0.11, 0])
+            base = h + np.array([0, 0.1 + TWIG_R + 0.004, 0])
             tip = base + np.array([-sgn * 0.12, 0.42, 0.1])
             p, q = base + (base - tip) * 0.08, tip
         else:
@@ -150,7 +150,7 @@ def twig_draws(draws, t, arms):
             gp = np.array([x, surf(x, z) + TWIG_R + 0.004, z]); d = np.array([math.cos(yw), 0, math.sin(yw)]) * 0.25
             if t < drop1:
                 u = clampu(t, drop0, drop1)
-                base0 = h + np.array([0, 0.11, 0])
+                base0 = h + np.array([0, 0.1 + TWIG_R + 0.004, 0])
                 c = lerp(base0 + np.array([-sgn * 0.06, 0.21, 0.05]), gp, u * u)
                 ang = lerp(0.0, 1.0, u)
                 dd = lerp(np.array([-sgn * 0.12, 0.42, 0.1]) * 0.55, d, ang)
@@ -161,10 +161,10 @@ def twig_draws(draws, t, arms):
 
 # ---------------- Tumble ----------------
 def hand_table():
-    """hand position (relative to the root, facing +z) for arms [side, fwd]"""
+    """hand position (relative to the root, facing +z) for the two-paw grip [0.3, fwd, 0.62]"""
     out = {}
     for fwd in np.linspace(0.0, 2.6, 53):
-        st = tumble_base(0.0); st["arms"] = [[0.15, fwd], [0.15, fwd]]; st["sq"] = 0.0
+        st = tumble_base(0.0); st["arms"] = [[0.3, fwd, 0.62], [0.3, fwd, 0.62]]; st["sq"] = 0.0
         out[round(float(fwd), 3)] = hand_pos(fox_mats(st)[2]) - np.array([0, surf(0, 0), 0])
     return out
 HT = hand_table()
@@ -180,7 +180,7 @@ def fox_mats_x(st):
     """fox_mats plus the sitting legs and a pitch about the middle of the body (the flight)"""
     R, Mh, arms, legs = fox_mats(st)
     if st.get("sit"):
-        legs = [R @ trans(0, 0.15, 0.3) for _ in range(2)]
+        legs = [R @ trans(0, 0.15, st.get("sit_fwd", 0.3)) for _ in range(2)]
     p = st.get("pitch", 0.0)
     if p == 0.0: return R, Mh, arms, legs
     root = trans(st["x"], surf(st["x"], st["z"]) + st.get("stand_h", 0.0) - 0.01 + st["y"], st["z"]) @ roty(st["yaw"])
@@ -188,8 +188,12 @@ def fox_mats_x(st):
     return P @ R, P @ Mh, [P @ a for a in arms], [P @ l for l in legs]
 
 def seat_y_bench(t):
-    st = bundle_state(t)
-    return float(top_at(st, s_of_x(-1.0))[1]) + 0.004
+    """his body's underside (an ellipsoid, half-width 0.42, half-height 0.5) resting on the bent bundle"""
+    st = bundle_state(t); best = -9.0
+    for dx in np.linspace(-0.4, 0.4, 17):
+        prof = 0.5 * (1 - math.sqrt(max(0.0, 1 - (dx / 0.42) ** 2)))
+        best = max(best, float(top_at(st, s_of_x(-1.0 + dx))[1]) - prof)
+    return best + 0.006
 def flight(t):
     """launch from the bench seat to LANDP: (x, z, seat_y_world)"""
     y0 = seat_y_bench(T.LAUNCH); y1 = surf(*LANDP) + 0.0
@@ -209,16 +213,16 @@ def tumble(t):
     st = tumble_base(t); n = T.shot_at(t)[1]
     st["x"], st["z"] = SPOT; st["yaw"] = 0.0
     if n == "hook_snap":                                    # the twig in both paws at chest height
-        st["arms"] = [[0.15, 1.35], [0.15, 1.35]]
+        st["arms"] = [[0.3, 1.25, 0.62], [0.3, 1.25, 0.62]]
         d = t - T.SNAP
         if -0.45 < d < 0:                                   # effort...
             st["sq"] -= 0.04 * ease(clampu(t, T.SNAP - 0.45, T.SNAP)); st["head"][0] = 0.12
         if 0 <= d < 0.55:                                   # SNAP: paws fly apart
-            st["arms"] = [[0.15 + 0.45 * ease(clampu(d, 0, 0.12)), 1.35], [0.15 + 0.45 * ease(clampu(d, 0, 0.12)), 1.35]]
+            v = ease(clampu(d, 0, 0.12)); st["arms"] = [[0.3 + 0.3 * v, 1.25, 0.62 * (1 - v)] for _ in range(2)]
             st["sq"] += 0.06 * math.exp(-d * 8) * math.cos(d * 25); st["head"][0] = -0.08
         if d >= 0.55:                                       # drops the halves, then a proud "so easy"
             u = ease(clampu(t, T.SNAP + 0.55, T.SNAP + 0.95))
-            st["arms"] = [lerp([0.6, 1.35], [0.35, 0.3], u).tolist(), lerp([0.6, 1.35], [0.35, 0.3], u).tolist()]
+            st["arms"] = [lerp([0.6, 1.25, 0.0], [0.35, 0.3, 0.0], u).tolist() for _ in range(2)]
             st["head"][0] = -0.12 * u; st["head"][2] = 0.12 * u
     elif n == "title_wide":                                 # waves
         a = SH[n][0]
@@ -234,7 +238,7 @@ def tumble(t):
         j0, j1 = w0 + 0.25, w0 + 1.15
         if t < j0:
             ph = t * 14
-            st["arms"] = [[0.0, 1.2 + 0.12 * math.sin(ph)], [0.0, 1.2 - 0.12 * math.sin(ph)]]
+            st["arms"] = [[0.3, 1.2 + 0.12 * math.sin(ph), 0.6], [0.3, 1.2 - 0.12 * math.sin(ph), 0.6]]
             st["head"][2] = 0.08 * math.sin(t * 4)
             crouch = ease(clampu(t, j0 - 0.35, j0)); st["sq"] -= 0.1 * crouch
         elif t < j1:                                        # a show-off spin over the bundle
@@ -254,20 +258,21 @@ def tumble(t):
         hy = top + 0.1 + 0.004
         f = fwd_for_height(hy)
         a = SH[n][0]; grip = ease(clampu(t, a, a + 0.5))
-        st["arms"] = [lerp([0.3, 0.5], [0.15, f], grip).tolist(), lerp([0.3, 0.5], [0.15, f], grip).tolist()]
+        st["arms"] = [lerp([0.3, 0.5, 0.0], [0.3, f, 0.62], grip).tolist(), lerp([0.3, 0.5, 0.0], [0.3, f, 0.62], grip).tolist()]
         r = strain(t)
         st["sq"] += 0.05 * r * (1 if t < T.PUSH - 0.1 else -1); st["head"][0] = 0.1 * r
         st["y"] += 0.03 * r * abs(math.sin(t * 40))
         L = T.line("Problem A")
         if t > L["t1"] + 0.2:                               # lets go and scratches his head
             v = ease(clampu(t, L["t1"] + 0.2, L["t1"] + 0.6))
-            st["arms"][0] = lerp([0.15, f], [0.5, 2.6], v).tolist(); st["head"][2] = -0.15 * v
+            st["arms"][0] = lerp([0.3, f, 0.62], [0.5, 2.6, 0.0], v).tolist(); st["head"][2] = -0.15 * v
     elif n in ("sit_boing", "land", "pip_idea"):
         if t < T.SAT:                                       # hops up onto the bundle and turns to sit
             a = SH["sit_boing"][0]; u = clampu(t, a + 0.15, T.SAT)
             st["x"], st["z"] = lerp(PULLP, (-1.0, BZ), ease(clampu(u, 0.35, 0.85)))   # up first, then over, then down
             if u > 0:                                       # a tucked hop: legs forward like sitting
                 sit_pose(st, lerp(surf(*PULLP) + FOX_SEAT + 0.01, seat_y_bench(t), ease(u)) + 0.95 * math.sin(math.pi * u))
+                st["sit_fwd"] = 0.3 * ease(clampu(u, 0.7, 1.0))   # legs tucked under until he is over the bundle
             st["arms"] = [[1.4, 0.4], [1.4, 0.4]]
         elif t < T.LAUNCH:                                  # sitting on the bundle, bouncing with it
             st["x"], st["z"] = (-1.0, BZ)
@@ -408,14 +413,14 @@ def camera(t):
     i, name, u, lt = T.shot_at(t); e = ease(u)
     st = tumble(t)
     if name == "hook_snap":                                 # medium front, slow push-in on the twig
-        return fit_cam(np.array([SPOT[0] + 1.2, lerp(1.15, 1.2, e), SPOT[1] - 0.8]), lerp(4, 0, e), 7, lerp(2.45, 2.25, e), lerp(1.55, 1.4, e))
+        return fit_cam(np.array([SPOT[0] + 1.2, lerp(1.15, 1.2, e), SPOT[1] - 0.8]), lerp(4, 0, e), 7, lerp(2.2, 1.95, e), lerp(1.55, 1.4, e))
     if name == "title_wide":                                # high wide: bench, stream, far bank
         return fit_cam(np.array([-1.5, 1.2, -3.6]), 10, 16, 3.3, 2.6 if not WIDE else 2.5, lift=0.05)
     if name == "pip_ask":                                   # low macro along the bundle on Pip
         pp = bench_perch(t)
         return fit_cam(pp + np.array([-0.05, 0.25, 0]), lerp(58, 50, e), 4, 0.55, 0.62, fov=34)
     if name == "watch_me":                                  # medium three-quarter, wide enough for the leap
-        return fit_cam(np.array([-1.3, 1.35, -3.1]), -22, 7, 2.0, 2.05)
+        return fit_cam(np.array([-1.95, 1.35, -3.0]), -18, 7, 2.35, 2.05)
     if name == "pull_push":                                 # medium front, the bundle in the foreground
         return fit_cam(np.array([-0.85, 1.15, -3.9]), lerp(10, 4, e), 8, 1.45, 1.35)
     if name == "sit_boing":                                 # side-on low angle, tilting up with the launch
