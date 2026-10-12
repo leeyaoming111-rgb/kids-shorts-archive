@@ -132,7 +132,7 @@ def make_fox():
         ring = np.abs(np.sqrt(q_y ** 2 + q_x ** 2) - 0.07); ang = np.arctan2(q_y, q_x)
         arcd = np.where((ang < -0.4) & (ang > -2.75), ring, 9.0)
         return mixc(c, PLUM, sstep(0.03, 0.018, arcd) * (P[..., 2] > 0.38))
-    parts["head"] = dict(mesh=mesh_sdf(head_f, head_col, (-0.75, 0.9, -0.6), (0.75, 2.3, 0.75), step=0.018), pivot=(0.0, 1.1, 0.0))
+    parts["head"] = dict(mesh=mesh_sdf(head_f, head_col, (-0.75, 0.9, -0.6), (0.75, 2.3, 0.75), step=0.009), pivot=(0.0, 1.1, 0.0))
     parts["eyes"] = dict(centers=[(0.17, 1.52, 0.37), (-0.17, 1.52, 0.37)], r=0.085, pivot=(0.0, 1.1, 0.0))
     parts["mouth"] = dict(c=(0.0, 1.235, 0.43), pivot=(0.0, 1.1, 0.0))
     pts = [(0.0, 0.42, -0.3), (0.12, 0.42, -0.62), (0.26, 0.7, -0.82), (0.3, 1.05, -0.84)]

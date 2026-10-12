@@ -299,7 +299,7 @@ def string_path(t, st, mats, kite_p, pip_beak):
 # ---------------- Pip ----------------
 PIP_FOOT = 0.060
 UP = np.array([0, PIP_FOOT, 0])
-PAW_TOP = 0.088
+PAW_TOP = 0.072
 HF_H = 0.42                                    # Pip's high-five hop height
 def _paw_table():
     """local hand height for arm0 side angles (fwd 0.35), to solve the paw raise that meets Pip"""
@@ -385,7 +385,7 @@ def pip_state(t, st, mats):
     if n == "moral":
         a, b = SH[n]
         hand = apply(arms[0], FOXD["arm0"]["hand"])
-        top = hand + np.array([0, 0.095, 0]) + UP
+        top = hand + np.array([0, PAW_TOP, 0]) + UP
         u = clampu(t, a, a + 0.6)
         if u < 1:
             start = on_ground(TPOS[0] + 1.3, TPOS[1] + 0.6)
@@ -404,7 +404,7 @@ def pip_state(t, st, mats):
         return top, 0.35, False, 0.0, True, ex
     # button: Pip grabs the loose string end and flies the kite up
     a, b = SH["button_crane"]
-    p0 = apply(fox_mats(tumble(a - 0.01))[2][0], FOXD["arm0"]["hand"]) + np.array([0, PAW_TOP, 0]) + UP
+    p0 = apply(fox_mats(tumble(a))[2][0], FOXD["arm0"]["hand"]) + np.array([0, PAW_TOP + 0.01, 0]) + UP
     g = GRAB_PT + UP + np.array([0.25, 0.03, 0.0])                           # just beside the string, next to the kite
     if t < a + GRAB:                                                        # round behind his head, then down to the string by the kite
         u = clampu(t, a, a + GRAB)
@@ -450,7 +450,7 @@ def camera(t):
         return fit_cam(tgt, lerp(64, 58, e), 14, 0.95, 1.3, fov=36, lift=0.1 if not WIDE else 0.06)
     if name == "gust":                                                      # wide low angle, slow push-in
         e = ease(u)
-        return fit_cam(np.array([TPOS[0], lerp(1.6, 1.3, e), TPOS[1]]), 4, lerp(16, 20, e), lerp(3.0, 2.3, e), lerp(2.6, 2.0, e))
+        return fit_cam(np.array([TPOS[0], lerp(1.5, 1.25, e), TPOS[1]]), 4, lerp(16, 20, e), lerp(2.6, 2.0, e), lerp(2.6, 2.0, e))
     if name == "topple":                                                    # medium side
         return fit_cam(np.array([TPOS[0], 0.85, TPOS[1]]), 28, 6, 1.5, 1.35)
     if name == "overhead_tangled":                                          # top-down: wrapped like a parcel
@@ -473,9 +473,13 @@ def camera(t):
         return fit_cam(np.array([TPOS[0] + 0.35, lerp(1.35, 1.45, e), TPOS[1]]), lerp(12, 6, e), 5, lerp(1.25, 1.05, e), lerp(1.4, 1.1, e))
     if name == "chorus":                                                    # medium front, both in frame for the dance
         return fit_cam(np.array([TPOS[0] + 0.35, 1.2, TPOS[1]]), 6, 6, 1.3, 1.35)
-    # button: crane up following the kite
+    # button: crane up, keeping Tumble, Pip and the climbing kite all in frame
     e = ease(u)
-    return fit_cam(np.array([TPOS[0] + 0.1, lerp(1.2, 2.6, e), TPOS[1] - 0.5]), 4, lerp(4, 18, e), lerp(1.7, 2.6, e), lerp(1.8, 2.6, e), lift=0.06)
+    kp, _ = kite_state(t, st)
+    cx = (st["x"] + kp[0]) / 2; cz = (st["z"] + kp[2]) / 2
+    hw = max(1.7, abs(kp[0] - st["x"]) / 2 + 0.9)
+    top = max(2.4, kp[1] + 0.7)
+    return fit_cam(np.array([cx, top / 2, cz]), 4, lerp(4, 10, e), hw, top / 2 + 0.25, lift=0.0 if not WIDE else -0.08)
 
 # ---------------- render ----------------
 LDIR = np.array([-0.55, 0.85, 0.5]); LDIR /= np.linalg.norm(LDIR)
@@ -549,7 +553,7 @@ def build_draws(t):
     fi_ = min(int(t * FPS), len(MOUTH["tumble"]) - 1)
     mo = MOUTH["tumble"][fi_]
     if mo > 0.06:
-        draws.append((PR["mouth"], Mh @ trans(*(np.array(FOXD["mouth"]["c"]) + np.array([0, 0.005, 0.03]))) @ scale(0.095, 0.075 * mo, 0.04), U(mat=2, bump=0.0), False))
+        draws.append((PR["mouth"], Mh @ trans(*(np.array(FOXD["mouth"]["c"]) + np.array([0, -0.025, 0.035]))) @ scale(0.1, 0.035 + 0.05 * mo, 0.045), U(mat=2, bump=0.0), False))   # one mouth, covering the carved smile while singing
     if st["lie"] < 0.5: contacts.append((st["x"], st["z"], 0.75, max(0.0, 1 - st["y"] * 1.5)))
     else: contacts.append((st["x"] - 0.4, st["z"], 1.0, 1.0))
     # ---- Pip ----
