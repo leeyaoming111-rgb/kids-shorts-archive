@@ -2,6 +2,16 @@
 Shared renderer: fablekit.py. python3 render.py [--wide] [--preview] [out.mp4] | x <secs...> | sheet | qa"""
 from fablekit import *
 
+# KIT FIX (local override, reported to the coordinator): render_base.Mesh builds its shadow VAO with "3f 36x" but a
+# vertex is 10 floats (40 bytes), so shadow casters read scrambled vertices. Rebuild every shadow VAO with "3f 28x".
+def _fix_shadow_vaos():
+    seen = set()
+    for group in (FOXP, PIPP, PR, SC, E2, {"w": EYE_W, "p": EYE_P}):
+        for m in group.values():
+            if id(m) in seen: continue
+            seen.add(id(m)); m.svao = ctx.vertex_array(sprog, [(m.vbo, "3f 28x", "in_pos")], m.ibo)
+_fix_shadow_vaos()
+
 # ---------------- world: the stream bank (a new corner of Picnic Meadow) ----------------
 # A bundle of 7 twigs lies like a bench across the old stump and a round rock, with the stream behind.
 BZ = -3.6                                                  # the bench line (along x)
@@ -15,7 +25,7 @@ BR = 0.15                                                  # bundle radius (7 st
 B0 = np.array([-2.3, SUP_Y + BR + 0.004, BZ]); B1 = B0 + np.array([BL, 0, 0])
 SA, SB = (STUMP[0] + 0.62 - B0[0]) / BL, (ROCK[0] - 0.42 - B0[0]) / BL   # inner edges of the supports: the bundle bends between them
 SPOT = (-3.1, -1.9)                                       # Tumble's hook spot, in front of the bench
-PULLP = (-1.0, -4.05)                                      # behind the bench (stream side), facing the camera
+PULLP = (-1.0, -4.3)                                      # behind the bench (stream side), facing the camera
 LANDP = (0.5, -1.95)                                       # where he lands on his bottom after the boing
 BRX = 2.6                                                  # the bridge line (along z) across the stream
 BZ0, BZ1 = -4.2, -6.8
