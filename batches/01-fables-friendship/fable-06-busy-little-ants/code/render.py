@@ -2,6 +2,11 @@
 Shared renderer: fablekit.py. python3 render.py [--wide] [--preview] [out.mp4] | x <secs...> | sheet | qa"""
 from fablekit import *
 
+# kit bug override: render_base builds the shadow VAO with "3f 36x" but vertices are 40 bytes ("3f 28x" is right)
+def _fix_svao(meshes):
+    for m in meshes: m.svao = ctx.vertex_array(sprog, [(m.vbo, "3f 28x", "in_pos")], m.ibo)
+_fix_svao([*FOXP.values(), *PIPP.values(), *PR.values(), *SC.values(), *E2.values(), EYE_W, EYE_P])
+
 COLORS["ant"] = (205, 95, 60)                             # caption colour for "ant(s)" (the ants' cocoa-red)
 
 # =====================================================================================================================
@@ -172,8 +177,8 @@ def sky(t):
 def cold(t): return 0.0 if t >= SH["next_day"][0] else ease(clampu(t, SH["snowflake"][0] + 0.2, SH["snowflake"][0] + 2.6))
 
 # ---------------- Tumble ----------------
-CARRY_ARM = [0.25, 1.15]                                   # both paws out in front, holding something
-TOSS_ARM = [0.45, 2.3]                                     # paws flung up after the toss
+CARRY_ARM = [0.3, 1.25, 0.62]                                   # both paws out in front, holding something
+TOSS_ARM = [0.45, 2.3, 0.0]                                     # paws flung up after the toss
 def lie_pose(st, spot, yaw):
     """on his tummy, chin up (pitched forward about the middle of the body; fox_mats_p applies it)"""
     st["x"], st["z"] = spot; st["yaw"] = yaw; st["pitch"] = 1.45; st["y"] = -0.36
@@ -201,19 +206,19 @@ def tumble(t):
         st["x"], st["z"] = GAG; st["yaw"] = math.pi / 2; st["splay"] = 0.3; st["y"] += 0.1; st["legs"] = [-0.1, -0.1]
         dip = math.sin(math.pi * clampu(t, T.SEED_LIFT, T.TOSS))
         up = ease(clampu(t, T.TOSS - 0.05, T.TOSS + 0.15))
-        arm = lerp(lerp(CARRY_ARM, [0.2, 0.75], dip), TOSS_ARM, up)
+        arm = lerp(lerp(CARRY_ARM, [0.2, 0.75, 0.3], dip), TOSS_ARM, up)
         st["arms"] = [arm.tolist(), arm.tolist()]; st["head"][0] = -0.25 * up
         st["sq"] += 0.05 * dip
         if t > T.SEED_ON:                                    # lands on his crown: arms out for balance, wobbles
             out = ease(clampu(t, T.SEED_ON, T.SEED_ON + 0.4))
-            st["arms"] = [lerp(TOSS_ARM, [1.5, 0.2], out).tolist(), lerp(TOSS_ARM, [1.5, 0.2], out).tolist()]
+            st["arms"] = [lerp(TOSS_ARM, [1.5, 0.2, 0.0], out).tolist(), lerp(TOSS_ARM, [1.5, 0.2, 0.0], out).tolist()]
             st["head"][0] = -0.25 * (1 - out)
             w = clampu(t, T.SEED_ON + 0.3, T.SEED_ON + 0.8)
             st["roll"] = 0.07 * w * math.sin((t - T.SEED_ON) * 7.5)
             st["head"][2] = -0.08 * w * math.sin((t - T.SEED_ON) * 7.5)
         if t > T.TIP_OFF - 0.25:                             # arms drop as it slides off his far side
             dn = ease(clampu(t, T.TIP_OFF - 0.25, T.TIP_OFF + 0.1))
-            st["arms"] = [lerp([1.5, 0.2], [0.35, 0.2], dn).tolist(), lerp([1.5, 0.2], [0.35, 0.2], dn).tolist()]
+            st["arms"] = [lerp([1.5, 0.2, 0.0], [0.35, 0.2, 0.0], dn).tolist(), lerp([1.5, 0.2, 0.0], [0.35, 0.2, 0.0], dn).tolist()]
             st["head"][0] = 0.25 * ease(clampu(t, T.TIP_OFF, T.TIP_OFF + 0.4)); st["roll"] *= 1 - clampu(t, T.TIP_OFF, T.TIP_OFF + 0.4)
     elif n in ("snowflake", "chilly"):
         st["x"], st["z"] = GAG2; st["yaw"] = 0.55
@@ -249,7 +254,7 @@ def tumble(t):
         if t >= T.SET_DOWN - 0.15:
             st["yaw"] = math.pi / 2; st["head"][0] = 0.25
             down = ease(clampu(t, T.SET_DOWN - 0.15, T.SET_DOWN + 0.25))
-            st["arms"] = [lerp(CARRY_ARM, [0.3, 0.3], down).tolist(), lerp(CARRY_ARM, [0.3, 0.3], down).tolist()]
+            st["arms"] = [lerp(CARRY_ARM, [0.3, 0.3, 0.0], down).tolist(), lerp(CARRY_ARM, [0.3, 0.3, 0.0], down).tolist()]
     elif n in ("moral", "chorus"):
         st["x"], st["z"] = MSPOT
         dance_tumble(st, t, n)
@@ -276,7 +281,7 @@ CROWN = (0.0, 1.88, 0.0); NOSE = (0.0, 1.368, 0.59)
 
 # ---------------- props: seeds, the head seed, the biggest seed ----------------
 HEAD_SEED_R = (0.18, 0.13, 0.27)
-HELD_FWD = 0.16                                            # the held seed sits out in front of his tummy (he faces +x)
+HELD_FWD = 0.2                                            # the held seed sits out in front of his tummy (he faces +x)
 def head_seed(t, mats):
     """the seed Tumble balances on his head: (matrix, state) or None. Paws reach only 1.36 high, so he tosses it up:
     out in front of his snout, up, back over the crown (explicit straight legs), then it sits on his crown."""
