@@ -26,7 +26,10 @@ for a, b in [("uniform float fade; uniform float keyI;", "uniform float fade; un
     assert a in FS2, a
     FS2 = FS2.replace(a, b)
 prog2 = ctx.program(vertex_shader=VS, fragment_shader=FS2)
-def _rebind(m): m.vao = ctx.vertex_array(prog2, [(m.vbo, "3f 3f 3f 1f", "in_pos", "in_nrm", "in_col", "in_ao")], m.ibo)
+def _rebind(m):
+    m.vao = ctx.vertex_array(prog2, [(m.vbo, "3f 3f 3f 1f", "in_pos", "in_nrm", "in_col", "in_ao")], m.ibo)
+    # kit bug: render_base builds the shadow VAO with "3f 36x" but a vertex is 40 bytes (3f 3f 3f 1f); 3f + 28x is right
+    m.svao = ctx.vertex_array(sprog, [(m.vbo, "3f 28x", "in_pos")], m.ibo)
 for _d in (FOXP, PIPP, PR, SC, E2):
     for _m in _d.values(): _rebind(_m)
 _rebind(EYE_W); _rebind(EYE_P)
@@ -193,16 +196,19 @@ def spread_index(t):
 # ================= Tumble =================
 @lru_cache(maxsize=4096)
 def _ik(i, tx, ty, tz):
+    """arm angles [side, fwd, inward] (the kit's 3-angle arm) that put the paw at the target, in Tumble's frame.
+    Tumble's arms are short and set wide; the inward swing brings the paws in to the book edges."""
     pv = np.array(FOXD[f"arm{i}"]["pivot"]); hd = np.array(FOXD[f"arm{i}"]["hand"]); sgn = 1 if i == 0 else -1
     tgt = np.array([tx, ty, tz])
     def hand(x):
-        M = trans(*pv) @ rotz(sgn * x[0]) @ rotx(-x[1]) @ trans(*(-pv)); return apply(M, hd)
-    f = lambda x: float(np.sum((hand(x) - tgt) ** 2))
-    best = min(((s, fw) for s in np.linspace(-0.8, 2.0, 15) for fw in np.linspace(-0.3, 2.6, 15)), key=lambda x: f(x))
-    r = minimize(f, best, method="Nelder-Mead", options=dict(xatol=1e-4, fatol=1e-8))
-    return float(r.x[0]), float(r.x[1]), math.sqrt(r.fun)
+        M = trans(*pv) @ roty(-sgn * x[2]) @ rotz(sgn * x[0]) @ rotx(-x[1]) @ trans(*(-pv)); return apply(M, hd)
+    f = lambda x: float(np.sum((hand(x) - tgt) ** 2)) + 1e-4 * x[2] ** 2
+    grid = ((s_, fw, iw) for s_ in np.linspace(-0.4, 1.6, 9) for fw in np.linspace(0.0, 2.2, 10) for iw in np.linspace(0.0, 1.5, 7))
+    best = min(grid, key=f)
+    r = minimize(f, best, method="Nelder-Mead", options=dict(xatol=1e-4, fatol=1e-9, maxiter=800))
+    return float(r.x[0]), float(r.x[1]), float(r.x[2]), math.sqrt(float(np.sum((hand(r.x) - tgt) ** 2)))
 def ik(i, tgt_local):
-    s, fw, err = _ik(i, *[round(float(v), 3) for v in tgt_local]); return [s, fw]
+    s, fw, iw, err = _ik(i, *[round(float(v), 3) for v in tgt_local]); return [s, fw, iw]
 def fox_root(st):
     gy = surf(st["x"], st["z"]) + st.get("stand_h", 0.0)
     sq = st["sq"]; lift = 0.22 * abs(math.sin(st["roll"]))
@@ -458,11 +464,12 @@ def page_image(kind, n):
         cv.drawCircle(78, 78, 54, skia.Paint(AntiAlias=True, Color=skia.Color(255, 214, 80)))
         _text(cv, str(n), 78, 104, 74, (255, 250, 240), 10)
     if kind == "hook" and still:                                        # title banner along the bottom
-        t_ = EP.FABLES[n]["title"]; size = _fit_title(t_, w - 160, 80)
+        t_ = EP.FABLES[n]["title"]; size = _fit_title(t_, w - 260, 80)
         tw = skia.Font(TF7, size).measureText(t_)
-        cv.drawRRect(skia.RRect.MakeRectXY(skia.Rect.MakeXYWH((w - tw) / 2 - 36, h - 128, tw + 72, 104), 52, 52),
+        cx = (w + 150) / 2                                                 # banner along the top, right of the badge
+        cv.drawRRect(skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(cx - tw / 2 - 36, 28, tw + 72, 104), 52, 52),
                      skia.Paint(AntiAlias=True, Color=skia.Color(255, 250, 240, 235)))
-        _text(cv, t_, w / 2, h - 50, size, (240, 110, 60), 0)
+        _text(cv, t_, cx, 28 + 78, size, (240, 110, 60), 0)
     g = np.linspace(-1, 1, w)[None, :, None]                             # the gutter: a soft fold down the middle
     fold = 1 - 0.28 * np.exp(-(g / 0.035) ** 2)
     arr[..., :3] = (arr[..., :3] * fold).astype(np.uint8)
