@@ -98,9 +98,14 @@ def fox_mats(st):
     Mh = R @ trans(*hp) @ rotx(hd[0]) @ roty(hd[1]) @ rotz(hd[2]) @ trans(*(-np.array(hp)))
     arms = []
     for ai in range(2):
+        # arm pose [side, fwd] or [side, fwd, inward]. Tumble's arms are short (paw reach about 1.36 high) and set
+        # wide: swinging them forward leaves the paws at shoulder width (x about +-0.5). To bring the paws together in
+        # front of him (crossed arms, a two-paw catch, holding something to his mouth) use inward (about 0.6-1.0).
+        # Note arm0 is Tumble's LEFT paw (screen right when he faces the camera), arm1 his right.
         pv = FOXD[f"arm{ai}"]["pivot"]; sgn = 1 if ai == 0 else -1
-        side, fwd = st["arms"][ai]
-        arms.append(R @ trans(*pv) @ rotz(sgn * side) @ rotx(-fwd) @ trans(*(-np.array(pv))))
+        side, fwd = st["arms"][ai][0], st["arms"][ai][1]
+        inward = st["arms"][ai][2] if len(st["arms"][ai]) > 2 else 0.0
+        arms.append(R @ trans(*pv) @ roty(-sgn * inward) @ rotz(sgn * side) @ rotx(-fwd) @ trans(*(-np.array(pv))))
     legs = []
     for li in range(2):
         pv = FOXD[f"leg{li}"]["pivot"]
@@ -114,7 +119,7 @@ UP = np.array([0, PIP_FOOT, 0])
 PAW_TOP = 0.072                               # Pip's feet on Tumble's paw (paw radius 0.1, minus a little so they rest on the clay)
 
 # ---------------- series dance (same in every fable) ----------------
-# Moral and chorus: Tumble's right paw out at shoulder height (pose solved for clearance from his face in Fable 1),
+# Moral and chorus: Tumble's left paw (arm0, screen right) out at shoulder height (pose solved for clearance from his face in Fable 1),
 # head tipped away from Pip (positive roll moves his crown away), Pip riding the paw. High-five: Pip hops up and lands
 # back on the paw as it bumps up to meet him (the paw can only rise 0.11 before Pip would touch his head), star puff.
 DANCE_ARM = [1.3, 0.35]
@@ -260,7 +265,7 @@ def draw_pip(draws, contacts, t, pip, arms=None):
         draws.append((PR["mouth"], Mp @ trans(0, 0.295, 0.19) @ scale(0.028, 0.022 * mp_, 0.02), U(mat=0, bump=0.0), False))
     if not pfly: contacts.append((pp[0], pp[2], 0.2, 1.0))
     if arms is not None and T.shot_at(t)[1] == "chorus":                    # star puff on the series high-five
-        puff(draws, hand_pos(arms) + np.array([0, 0.2, 0]), T.HIGH_FIVE, t, n=8, size=0.05, spread=0.7, dur=0.4, tint=(1.0, 0.88, 0.35), axis=(0, 0, 0.3))
+        puff(draws, hand_pos(arms) + np.array([0.12, 0.24, 0.12]), T.HIGH_FIVE, t, n=8, size=0.05, spread=0.7, dur=0.4, tint=(1.0, 0.88, 0.35), axis=(0, 0, 0.3))   # where wing meets paw
     return Mp
 def beak_pos(Mp): return apply(Mp, (0, 0.31, 0.27))
 
