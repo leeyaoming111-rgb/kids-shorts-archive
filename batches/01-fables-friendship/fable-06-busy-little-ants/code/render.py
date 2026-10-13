@@ -118,7 +118,7 @@ DOOR_GROUND = np.array([DOOR_P[0], DOOR_P[2]]) + DOOR_DIR * 0.12
 A2 = tuple(DOOR_GROUND + DOOR_DIR * 1.25)
 ROAD = AntPath([A0, A1, A2, tuple(DOOR_GROUND), tuple(HILL + DOOR_DIR * 0.05)])
 S_DOOR = ROAD.total - float(np.linalg.norm(DOOR_GROUND - (HILL + DOOR_DIR * 0.05)))
-HILL_TOP = apply(HILL_M, (0, 1.0, 0)) + UP + np.array([0, -0.01, 0])
+HILL_TOP = apply(HILL_M, (0, 1.0, 0)) + UP + np.array([0, -0.004, 0])
 GAG = (-2.2, NOSE_Z)                                       # Tumble straddles the ant road here, facing along it
 GAG2 = (-2.0, NOSE_Z - 0.95)                               # ...and steps back off it at the cut
 LIE = (-1.7, 0.45)                                         # hook: on his tummy at the front of the pile, nose to the road
@@ -276,6 +276,7 @@ CROWN = (0.0, 1.88, 0.0); NOSE = (0.0, 1.368, 0.59)
 
 # ---------------- props: seeds, the head seed, the biggest seed ----------------
 HEAD_SEED_R = (0.18, 0.13, 0.27)
+HELD_FWD = 0.16                                            # the held seed sits out in front of his tummy (he faces +x)
 def head_seed(t, mats):
     """the seed Tumble balances on his head: (matrix, state) or None. Paws reach only 1.36 high, so he tosses it up:
     out in front of his snout, up, back over the crown (explicit straight legs), then it sits on his crown."""
@@ -284,26 +285,28 @@ def head_seed(t, mats):
     R, Mh, arms, legs = mats
     on = Mh @ trans(*CROWN) @ trans(0, HEAD_SEED_R[1] - 0.006, 0)
     if t < T.TOSS:
-        held = (hand_pos(arms, 0) + hand_pos(arms, 1)) / 2 + np.array([0, 0.05, 0])
-        return trans(*held) @ roty(math.pi / 2), "held"
+        held = (hand_pos(arms, 0) + hand_pos(arms, 1)) / 2 + np.array([HELD_FWD, 0.05, 0])
+        return trans(*held), "held"
     if t < T.SEED_ON:
         st0 = tumble(T.TOSS); a0 = fox_mats_p(st0)[2]
-        p0 = (hand_pos(a0, 0) + hand_pos(a0, 1)) / 2 + np.array([0, 0.05, 0])
+        p0 = (hand_pos(a0, 0) + hand_pos(a0, 1)) / 2 + np.array([HELD_FWD, 0.05, 0])
         legs_ = [p0, apply(Mh, (0, 1.3, 1.05)), apply(Mh, (0, 2.55, 0.95)), apply(on, (0, 0, 0))]
         u = clampu(t, T.TOSS, T.SEED_ON) * 3; i = min(int(u), 2)
         p = lerp(legs_[i], legs_[i + 1], ease(u - i) if i == 2 else u - i)
-        return trans(*p) @ roty(math.pi / 2 * (1 - clampu(t, T.TOSS, T.SEED_ON))) @ rotx(2 * math.pi * clampu(t, T.TOSS, T.SEED_ON)), "toss"
+        return trans(*p) @ rotx(2 * math.pi * clampu(t, T.TOSS, T.SEED_ON)), "toss"
     if t < T.TIP_OFF:
         w = clampu(t, T.SEED_ON + 0.3, T.SEED_ON + 0.8)
         return on @ rotz(-0.15 * w * math.sin((t - T.SEED_ON) * 7.5)), "head"
     # slides off his far side (out past the shoulder first), then drops into the leaves and bounces once
     st0 = tumble(T.TIP_OFF); M0 = fox_mats_p(st0)[1] @ trans(*CROWN) @ trans(0, HEAD_SEED_R[1] - 0.006, 0)
     p0 = apply(M0, (0, 0, 0)); side = np.array([0, 0, 1.0])
-    p1 = p0 + side * 0.85 + np.array([0, -0.25, 0])
+    pu = p0 + np.array([0, 0.48, 0])                         # up clear of his ears first
+    p1 = p0 + side * 0.85 + np.array([0, 0.1, 0])
     land = np.array([SEED_ON_GROUND[0], surf(*SEED_ON_GROUND) + HEAD_SEED_R[1] - 0.01, SEED_ON_GROUND[1]])
     u = clampu(t, T.TIP_OFF, T.TIP_OFF + 0.6)
-    if u < 0.4: p = lerp(p0, p1, u / 0.4)
-    else: p = lerp(p1, land, ((u - 0.4) / 0.6) ** 1.6)
+    if u < 0.2: p = lerp(p0, pu, u / 0.2)
+    elif u < 0.45: p = lerp(pu, p1, (u - 0.2) / 0.25)
+    else: p = lerp(p1, land, ((u - 0.45) / 0.55) ** 1.6)
     p[1] += 0.06 * math.sin(math.pi * clampu(t, T.TIP_OFF + 0.6, T.TIP_OFF + 0.85))
     return trans(*p) @ rotx(-1.2 * u), "fall"
 SEED_ON_GROUND = np.array([GAG[0], GAG[1] + 0.9])
@@ -313,7 +316,7 @@ BIG_SEED_R = (0.22, 0.16, 0.34)
 def pip_ground(xz): return np.array([xz[0], surf(xz[0], xz[1]), xz[1]]) + UP
 def hop_path(p0, p1, u, h=0.35):
     p = lerp(p0, p1, ease(u)); p[1] += h * math.sin(math.pi * u); return p
-def pip_state(t, st, mats):
+def _pip_state(t, st, mats):
     n = T.shot_at(t)[1]
     R, Mh, arms, legs = mats
     face = apply(Mh, (0, 1.5, 0.6))
@@ -387,6 +390,12 @@ def pip_state(t, st, mats):
     roll = 0.0
     if 0 <= d < 0.6: roll = 0.25 * math.sin(d * 30) * (1 - d / 0.6)
     return top, 0.35 + roll, False, 0.0, True, {"cheer": d > 0.7}
+
+def pip_state(t, st, mats):
+    r = _pip_state(t, st, mats)
+    if r[4] and abs(r[0][1] - (surf(r[0][0], r[0][2]) + PIP_FOOT)) < 0.03:
+        r = (r[0], r[1], r[2], r[3], False, r[5])
+    return r
 
 def big_seed_M(t, st, mats):
     """the biggest seed (matrix of the unit ball): carried in both paws, then set down beside the door"""
@@ -575,7 +584,7 @@ def build_draws(t):
         Mp = trans(*pip[0]) @ roty(pip[1]) @ rotx(pip[3]) @ scale(1.1)
         draws.append((PR["ball"], Mp @ trans(0, 0.3, 0.33) @ roty(math.pi / 2) @ scale(0.03, 0.022, 0.045), U(mat=0, bump=0.3, tint=SEED_C, tintMix=1.0, obj="pip"), False))
     hs = head_seed(t, mats)
-    if hs: draws.append((PR["ball"], hs[0] @ scale(*HEAD_SEED_R), U(mat=0, bump=0.4, tint=(0.93, 0.74, 0.45), tintMix=1.0, obj="hseed_held" if hs[1] == "held" else "hseed"), True))
+    if hs: draws.append((PR["ball"], hs[0] @ scale(*HEAD_SEED_R), U(mat=0, bump=0.4, tint=(0.93, 0.74, 0.45), tintMix=1.0, obj="hseed"), True))
     if n in ("snowflake", "chilly"):
         p = SEED_ON_GROUND
         draws.append((PR["ball"], trans(p[0], surf(*p) + HEAD_SEED_R[1] - 0.01, p[1]) @ rotx(-1.2) @ scale(*HEAD_SEED_R), U(mat=0, bump=0.4, tint=(0.93, 0.74, 0.45), tintMix=1.0, obj="hseed"), True))
@@ -630,6 +639,6 @@ def ground_objs(t):
     n = T.shot_at(t)[1]
     return ("pip",) if n in ("hook_ants", "snack") else ("fox", "pip")
 HOOKS.update(build=build_draws, camera=camera, tumble=tumble, sky=sky, ground_objs=ground_objs,
-             qa_ignore={("ant", "hill"), ("hill", "ant"), ("hseed_held", "fox"), ("fox", "hseed_held"), ("bigseed", "fox"), ("fox", "bigseed")})   # ants walk in at their door; seeds held in his paws / on his head
+             qa_ignore={("ant", "hill"), ("hill", "ant"), ("bigseed", "fox"), ("fox", "bigseed")})   # ants walk in at their door; seeds held in his paws / on his head
 if __name__ == "__main__":
     main()
