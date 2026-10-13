@@ -5,13 +5,16 @@ from fablekit import *
 # ---------------- world: under the big apple tree (a new corner of Picnic Meadow) ----------------
 TREE = (-0.9, -1.7); TREE_S = 2.2
 APPLE_S = 0.5
-A = np.array([TREE[0] + 1.03, 2.95, TREE[1] + 0.78])     # the red apple under the canopy (underside ~3.05): just above his jumping ears
+A = np.array([TREE[0] + 1.03, 2.85, TREE[1] + 0.78])     # the red apple under the canopy (underside ~3.05): just above his jumping ears
 APPLE_TOP = 0.61 * APPLE_S; APPLE_BOT = 0.41 * APPLE_S
 SPOT0 = (A[0] - 0.05, A[2] + 0.12)
 STUMP = (SPOT0[0] + 1.95, SPOT0[1] - 0.95); STUMP_TOP = 0.55 - 0.02     # back-right, clear of him and the tree
 PILE = (SPOT0[0] + 1.62, SPOT0[1] + 0.6)                  # autumn leaf pile, front-right
 MSPOT = (SPOT0[0] + 0.5, SPOT0[1] + 0.9)                  # where they do the moral and the dance (clear of the pile)
-REACH_ARM = [0.4, 3.0]                                     # paw straight up: Tumble's highest reach (paw at 1.36)
+REACH_ARM = [2.0, 0.3]                                     # paw up and out: a reach that reads from the front (paw at 1.22)
+CROSS0, CROSS1 = [0.1, 1.5, 1.3], [0.1, 1.35, 1.3]         # arms crossed in front of his chest (inward swing)
+CATCH = [0.3, 1.25, 0.62]                                  # both paws in front, 0.44 apart: holds the apple
+BITE = [0.2, 1.6, 0.6]
 def _reach_offset():
     st = tumble_base(0.0); st["arms"][0] = REACH_ARM; st["yaw"] = 0.0
     return hand_pos(fox_mats(st)[2])
@@ -23,7 +26,7 @@ DIVE_YAW = math.atan2(DIVE_DIR[0], DIVE_DIR[1])
 BURIED = (PILE[0] - DIVE_DIR[0] * 0.35, PILE[1] - DIVE_DIR[1] * 0.35)
 POPPED = (PILE[0] - DIVE_DIR[0] * 0.95, PILE[1] - DIVE_DIR[1] * 0.95 + 0.15)
 STUMP_PIP = np.array([STUMP[0] + 0.25, surf(*STUMP) + STUMP_TOP, STUMP[1] + 0.25]) + UP
-FLOWERS = make_flowers([(TREE[0], TREE[1], 2.0), (STUMP[0], STUMP[1], 1.3), (PILE[0], PILE[1], 1.3), (SPOT[0], SPOT[1], 1.2),
+FLOWERS = make_flowers([(TREE[0], TREE[1], 2.0), (STUMP[0], STUMP[1], 1.3), (PILE[0], PILE[1], 2.6), (SPOT[0], SPOT[1], 1.2),
                         (MSPOT[0], MSPOT[1], 1.5), ("box", RUN0[0] - 0.6, SPOT[0] + 0.3, RUN0[1] - 0.7, RUN0[1] + 0.6),
                         ("box", SPOT[0] - 0.3, PILE[0] + 0.5, SPOT[1] - 0.6, PILE[1] + 0.6)], seed=37)
 _rng = np.random.default_rng(5)
@@ -42,18 +45,18 @@ def tumble(t):
     st = tumble_base(t); n = T.shot_at(t)[1]
     st["x"], st["z"] = SPOT; st["yaw"] = 0.0
     if n == "hook_reach":                                   # on tiptoe, stretching for the apple
-        st["arms"][0] = REACH_ARM; st["arms"][1] = [0.5, 0.4]
-        st["y"] += 0.05 + 0.04 * math.sin(t * 5); st["head"][0] = -0.35; st["sq"] += 0.03
+        st["arms"][0] = REACH_ARM; st["arms"][1] = [2.0 - 0.25 * math.sin(t * 5), 0.3]
+        st["y"] += 0.08 + 0.05 * math.sin(t * 5); st["legs"] = [0.04, 0.04]; st["head"][0] = -0.35; st["sq"] += 0.03
     elif n == "title_wide":
         st["head"][0] = -0.3; st["arms"] = [[0.5, 0.6], [0.5, 0.6]]
     elif n == "jumps":                                      # three jumps on the three sung "jump"s
         st["head"][0] = -0.3
         for j in T.JUMPS:
-            y = jump_y(t, j)
+            y = jump_y(t, j, hgt=0.42, dur=0.55)
             if y > 0: st["y"] += y; st["arms"][0] = REACH_ARM; st["legs"] = [0.1, 0.1]
-            d = t - (j + 0.5)
+            d = t - (j + 0.55)
             if 0 <= d < 0.3: st["sq"] -= 0.1 * math.exp(-d * 9) * math.cos(d * 25)
-        if not any(0 <= t - j < 0.5 for j in T.JUMPS): st["arms"][0] = [0.5, 1.6]
+        if not any(0 <= t - j < 0.55 for j in T.JUMPS): st["arms"][0] = [1.6, 0.4]
     elif n in ("big_jump", "leaf_pile"):
         if t < T.LEAP:                                      # run-up
             walk_to(st, t, RUN0, SPOT, SH["big_jump"][0], T.LEAP, rate=3.0); st["arms"] = [[0.6, 0.8], [0.6, 0.8]]
@@ -67,23 +70,23 @@ def tumble(t):
                 d = t - T.LAND
                 st["x"], st["z"] = BURIED; st["yaw"] = DIVE_YAW; st["pitch"] = 2.6; st["y"] = 0.3
                 st["sq"] = -0.12 * math.exp(-d * 6) * math.cos(d * 20)
-                st["legs"] = [0.1 * max(0, math.sin(d * 12)), 0.1 * max(0, -math.sin(d * 12))]; st["tail"] = 0.5 * math.sin(d * 9)
+                st["legs"] = [0.22 * max(0, math.sin(d * 11)), 0.22 * max(0, -math.sin(d * 11))]; st["tail"] = 0.9 * math.sin(d * 8)
     elif n == "sour_face":
         a = SH[n][0]; u = clampu(t, a, a + 0.7)              # pops out, then grumps: arms crossed, nose in the air
         st["x"], st["z"] = lerp(BURIED, POPPED, ease(u)); st["yaw"] = lerp(DIVE_YAW, -0.35, ease(u))
         st["pitch"] = 2.6 * (1 - ease(u)); st["y"] = 0.3 * (1 - ease(u)) + 0.35 * math.sin(math.pi * u)
         L = T.line("Problem A")
         cross = ease(clampu(t, L["t0"] - 0.3, L["t0"] + 0.2))
-        st["arms"] = [lerp([0.3, 0.3], [0.05, 1.45], cross).tolist(), lerp([0.3, 0.3], [0.05, 1.45], cross).tolist()]
-        st["head"][0] = -0.25 * cross; st["head"][1] = 0.45 * cross
+        st["arms"] = [lerp([0.3, 0.3, 0.0], CROSS0, cross).tolist(), lerp([0.3, 0.3, 0.0], CROSS1, cross).tolist()]
+        st["head"][0] = -0.35 * cross; st["head"][1] = 0.5 * cross; st["yaw"] = st["yaw"] - 0.25 * cross   # turns away, nose in the air
         if L["t0"] < t < L["t1"]: st["y"] += 0.02 * abs(math.sin((t - L["t0"]) * 7))
     elif n == "pip_idea":
         st["x"], st["z"] = POPPED; st["yaw"] = -0.35
         L = T.line("Problem B")
         un = ease(clampu(t, L["t0"], L["t0"] + 0.6))         # uncrosses his arms, turns to Pip, nods
-        st["arms"] = [lerp([0.05, 1.45], [0.3, 0.3], un).tolist(), lerp([0.05, 1.45], [0.3, 0.3], un).tolist()]
-        st["head"][1] = lerp(0.45, -0.3, un)
-        if t > L["t1"]: st["head"][0] = 0.15 * math.sin((t - L["t1"]) * 9) * math.exp(-(t - L["t1"]) * 2)
+        st["arms"] = [lerp(CROSS0, [0.3, 0.3, 0.0], un).tolist(), lerp(CROSS1, [0.3, 0.3, 0.0], un).tolist()]
+        st["head"][1] = lerp(0.5, -0.35, un); st["head"][0] = lerp(-0.35, 0.0, un); st["yaw"] = -0.35 - 0.25 * (1 - un)
+        if t > L["t1"]: st["head"][0] = 0.22 * math.sin((t - L["t1"]) * 8) * math.exp(-(t - L["t1"]) * 1.5)   # a big nod
     elif n == "climb":
         a = SH[n][0]
         base = (STUMP[0] - 1.05, STUMP[1] + 0.55)           # clear of the roots
@@ -97,12 +100,12 @@ def tumble(t):
             if u >= 1: st["head"][0] = -0.35; st["arms"] = [[0.4, 1.9], [0.4, 1.9]]
     elif n in ("tug", "catch"):
         st["x"], st["z"] = STUMP; st["stand_h"] = STUMP_TOP; st["yaw"] = -0.4; st["head"][0] = -0.35
-        st["arms"] = [[0.35, 1.25], [0.35, 1.25]]           # paws out, ready to catch
+        st["arms"] = [list(CATCH), list(CATCH)]             # both paws together in front, ready to catch
         if t > T.CATCH:
             d = t - T.CATCH
             st["head"][0] = -0.05; st["sq"] -= 0.08 * math.exp(-d * 7) * math.cos(d * 20)
             if T.GAG_SWEET - 0.4 < t < T.GAG_SWEET + 0.9:    # brings it up for a big crunchy bite, happy wiggle
-                st["arms"] = [[0.3, 1.5], [0.3, 1.5]]; st["roll"] = 0.08 * math.sin((t - T.GAG_SWEET) * 14)
+                st["arms"] = [list(BITE), list(BITE)]; st["roll"] = 0.08 * math.sin((t - T.GAG_SWEET) * 14)
                 st["y"] += 0.04 * abs(math.sin((t - T.GAG_SWEET) * 10))
     elif n in ("moral", "chorus"):
         st["x"], st["z"] = MSPOT
@@ -130,11 +133,7 @@ def fox_mats_p(st):
 def apple_state(t, mats):
     """apple position; None while it hangs (drawn on its stem)"""
     if t < T.RELEASE:
-        sw = 0.0
-        for k, tg in enumerate(T.TUGS):                     # each tug swings it a little more
-            d = t - tg
-            if d >= 0: sw = (0.12 + 0.1 * k) * math.sin(d * 9) * math.exp(-d * 2)
-        return "hang", sw
+        return "hang", tug_pull(t)
     arms = mats[2]
     if t < T.CATCH:                                         # drops into Tumble's paws on the stump
         u = clampu(t, T.RELEASE, T.CATCH)
@@ -146,6 +145,14 @@ def apple_state(t, mats):
     if n == "catch":
         return "held2", (hand_pos(arms, 0) + hand_pos(arms, 1)) / 2 + np.array([0, 0.1, 0])
     return "held1", hand_pos(arms, 1) + np.array([0, 0.1 + APPLE_BOT - 0.01, 0])
+
+def tug_pull(t):
+    """how far Pip has the apple pulled out on its stem (the apple follows his beak, so they stay attached)"""
+    back = 0.0
+    for k, tg in enumerate(T.TUGS):
+        d = t - tg
+        if 0 <= d < 0.4: back = max(back, (0.06 + 0.03 * k) * math.sin(math.pi * d / 0.4))
+    return back
 
 # ---------------- Pip ----------------
 OUT = np.array([A[0] - TREE[0], A[2] - TREE[1]]); OUT /= np.linalg.norm(OUT)    # away from the tree's middle (higher canopy)
@@ -168,27 +175,25 @@ def pip_state(t, st, mats):
         return STUMP_PIP, to_tumble, False, 0.0, True, ex
     if n == "sour_face":
         a = SH[n][0]; L = T.line("Problem A")
-        hov = np.array([POPPED[0] + 0.75, 1.75, POPPED[1] + 0.35]) + np.array([0, 0.06 * math.sin(t * 6), 0])
+        hov = apply(Mh, (0.62, 1.5, 0.55)) + np.array([0, 0.05 * math.sin(t * 6), 0])
         u = clampu(t, L["t1"] - 0.2, L["t1"] + 0.9)
         if u <= 0: return STUMP_PIP, to_tumble, False, 0.0, True, {}
         p = lerp(STUMP_PIP, hov, ease(u)); p[1] += 0.4 * math.sin(math.pi * u)
         return p, math.atan2(face[0] - p[0], face[2] - p[2]), True, 0.0, False, {}
     if n == "pip_idea":
-        hov = np.array([POPPED[0] + 0.75, 1.75, POPPED[1] + 0.35]) + np.array([0, 0.06 * math.sin(t * 6), 0])
+        hov = apply(Mh, (0.62, 1.5, 0.55)) + np.array([0, 0.05 * math.sin(t * 6), 0])   # right at his face
         L = T.line("Problem B")
         ex = {"wings": (1.4 + 0.1 * math.sin(t * 10), 0.9 * math.sin(t * 28))} if L["t0"] < t < L["t1"] + 0.3 else {}
         return hov, math.atan2(face[0] - hov[0], face[2] - hov[2]), True, 0.0, False, ex
     if n == "climb":
-        a = SH[n][0]; hov = np.array([POPPED[0] + 0.75, 1.75, POPPED[1] + 0.35])
+        a = SH[n][0]; hov = apply(fox_mats_p(tumble(a - 0.01))[1], (0.62, 1.5, 0.55))
         u = clampu(t, a + 0.8, a + 2.8)
         p = lerp(hov, tug_spot, ease(u)); p[1] += 0.3 * math.sin(math.pi * u)
         return p, math.atan2(stem_pt[0] - p[0], stem_pt[2] - p[2]) if u > 0.5 else 0.6, True, 0.0, False, {"gentle": True}
     if n == "tug":
-        pitch, back = 0.0, 0.0
-        for tg in T.TUGS:
-            d = t - tg
-            if 0 <= d < 0.35: back = 0.08 * math.sin(math.pi * d / 0.35); pitch = -0.35 * math.sin(math.pi * d / 0.35)
-        p = tug_body(back) + np.array([0, 0.03 * math.sin(t * 6), 0])
+        back = tug_pull(t) if t < T.RELEASE else 0.0
+        pitch = -0.35 * back / 0.12
+        p = tug_body(0.0) + np.array([OUT[0] * back, 0.0, OUT[1] * back])   # the apple moves with him: beak stays on it
         if t > T.RELEASE: p = p + np.array([OUT[0] * 0.25, -0.1, OUT[1] * 0.25]) * clampu(t, T.RELEASE, T.RELEASE + 0.3)
         return p, TUG_YAW, True, pitch, False, {"beak": t < T.RELEASE, "gentle": True}
     if n == "catch":
@@ -206,7 +211,7 @@ def pip_state(t, st, mats):
     p0 = paw_seat(fox_mats_p(tumble(a))[2])
     u = clampu(t, a, a + 0.7)
     if u < 1:
-        p = lerp(p0, top, ease(u)); p[1] += 1.0 * math.sin(math.pi * u); p[2] += 0.5 * math.sin(math.pi * u)   # high arc in front of him, over to the apple paw
+        p = lerp(p0, top, ease(u)); p[1] += 0.55 * math.sin(math.pi * u); p[2] += 0.5 * math.sin(math.pi * u)   # high arc in front of him, over to the apple paw
         return p, -0.6, True, 0.0, False, ({"wings": (0.15, 0.15)} if u < 0.3 else {"gentle": True})   # wings tucked as he hops off, clear of Tumble's cheek
     pk = 0.0
     for k in range(3):
@@ -215,29 +220,48 @@ def pip_state(t, st, mats):
     return top, 0.0, False, pk, True, {}
 
 # ---------------- camera ----------------
+def _tug_cam_yaw():
+    """side-on-ish yaw for the tug close-up that keeps Tumble (standing on the stump) well away from the apple on
+    screen: search yaws within 45 degrees of side-on and maximise the angle between apple and Tumble's head"""
+    pb = tug_body(0.0) + np.array([0, 0.3, 0])
+    head = np.array([STUMP[0], surf(*STUMP) + STUMP_TOP + 1.6, STUMP[1]])
+    best = None
+    for base in (side_on_yaw(pb, A, 90), side_on_yaw(pb, A, 90) + 180):
+        for dy in range(-45, 50, 5):
+            yw = base + dy
+            eye, tgt, _ = fit_cam(lerp(A, pb, 0.45), yw, -4, 0.62, 0.62, fov=34, lift=0.1)
+            v1, v2 = tgt - eye, head - eye
+            if np.dot(v2, v1) < 0: sep = math.pi                      # Tumble behind the camera: ideal
+            else: sep = math.acos(np.dot(v1, v2) / np.linalg.norm(v1) / np.linalg.norm(v2))
+            facing = abs(math.cos(math.radians(yw) - TUG_YAW))        # keep Pip's face side-on, not his back
+            score = min(sep, 0.6) + 0.3 * (1 - facing)
+            if best is None or score > best[0]: best = (score, yw)
+    return best[1]
+TUG_CAM_YAW = _tug_cam_yaw()
 def camera(t):
     i, name, u, lt = T.shot_at(t); e = ease(u)
     st = tumble(t)
     if name == "hook_reach":                                # low angle, looking up past him at the apple
-        return fit_cam(np.array([SPOT[0] + 0.1, lerp(1.45, 1.6, e), SPOT[1]]), lerp(18, 10, e), -14, 0.85, 1.35, lift=0.08)
+        return fit_cam(np.array([SPOT[0] + 0.1, lerp(1.55, 1.7, e), SPOT[1]]), lerp(18, 10, e), -12, 0.95, 1.6, lift=0.06)
     if name == "title_wide":
         return fit_cam(np.array([0.7, 1.6, -1.0]), -6, 10, 2.9, 2.6 if not WIDE else 2.0, lift=0.05)
     if name == "jumps":                                     # medium side, apple at the top of frame
-        return fit_cam(np.array([SPOT[0], 1.85, SPOT[1]]), 62, 4, 1.0, 1.75, lift=0.1)
+        return fit_cam(np.array([SPOT[0], 1.55, SPOT[1]]), 62, 4, 1.05, 1.9, lift=0.1)
     if name == "big_jump":                                  # wide, following the run and the leap
         cx = lerp(RUN0[0] + 1.0, PILE[0] - 0.4, e)
         return fit_cam(np.array([cx, 1.2, lerp(RUN0[1], PILE[1], e) - 0.2]), 6, 6, 2.1, 1.7)
     if name == "leaf_pile":                                 # close on the pile: legs and tail sticking out
-        return fit_cam(np.array([PILE[0], 0.75, PILE[1]]), lerp(30, 22, e), 12, 1.0, 1.0)
+        return fit_cam(np.array([PILE[0], 0.85, PILE[1]]), lerp(30, 22, e), 12, 1.05, 1.25)
     if name == "sour_face":
         return fit_cam(np.array([POPPED[0] + 0.25, 1.35, POPPED[1]]), lerp(-14, -8, e), 5, 1.0, 1.25)
     if name == "pip_idea":                                  # two-shot, Pip at his face
-        return fit_cam(np.array([POPPED[0] + 0.4, 1.55, POPPED[1] + 0.2]), lerp(-28, -20, e), 4, 0.8, 0.95)
+        fc = apply(fox_mats_p(st)[1], (0.3, 1.5, 0.4))
+        return fit_cam(fc, lerp(-14, -8, e), 4, 0.9, 0.95)
     if name == "climb":
         return fit_cam(np.array([lerp(POPPED[0], STUMP[0], 0.55), 1.4, (POPPED[1] + STUMP[1]) / 2 + 0.1]), -2, 8, 1.9, 1.7)
     if name == "tug":                                       # up in the tree with Pip and the apple
         pb = tug_body(0.0) + np.array([0, 0.3, 0])
-        return fit_cam(lerp(A, pb, 0.45) - np.array([0, 0.05, 0]), side_on_yaw(pb, A, 90) + lerp(-6, 6, e), -4, 0.62, 0.62, fov=34, lift=0.1)   # side-on to Pip and the apple
+        return fit_cam(lerp(A, pb, 0.55) - np.array([0, 0.05, 0]), TUG_CAM_YAW + lerp(-4, 4, e), -4, 0.72, 0.66, fov=34, lift=0.1)   # angle solved so Tumble stays out of line
     if name == "catch":                                     # low medium on the stump
         return fit_cam(np.array([STUMP[0] + 0.15, lerp(1.5, 1.4, e), STUMP[1] + 0.1]), lerp(-16, -10, e), -6, 1.05, 1.4)
     if name == "moral":
@@ -273,8 +297,8 @@ def build_draws(t):
     kind, val = apple_state(t, mats)
     stem_top = A + np.array([0, APPLE_TOP + 0.16, 0])
     if kind == "hang":
-        sw = val
-        Mpiv = trans(*stem_top) @ rotz(sw) @ rotx(sw * 0.6) @ trans(*(-stem_top))
+        back = val; ang = back / (APPLE_TOP + 0.16)            # swings out on its stem towards Pip
+        Mpiv = trans(*stem_top) @ rotz(-OUT[0] * ang) @ rotx(OUT[1] * ang) @ trans(*(-stem_top))
         Ma = Mpiv @ trans(*A) @ scale(APPLE_S)
         draws.append((PR["stick"], Mpiv @ trans(*(A + np.array([0, APPLE_TOP - 0.03, 0]))) @ scale(0.25, 0.2, 0.25), U(mat=0, bump=0.0, tint=(0.48, 0.32, 0.2), tintMix=1.0), False))
     else:
