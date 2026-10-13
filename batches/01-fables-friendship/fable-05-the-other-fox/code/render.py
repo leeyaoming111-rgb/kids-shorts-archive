@@ -22,8 +22,8 @@ PIP_Z = -6.3
 PIP_SPOT = np.array([LX, log_top(PIP_Z), PIP_Z]) + UP
 BS = 0.12                                                  # berry scale (mesh y -0.5..0.58)
 BERRY_LOG = np.array([LX, log_top(-6.6) + 0.5 * BS - 0.004, -6.6])
-APPLE_S = 0.5; APPLE_TOP = 0.61 * APPLE_S; APPLE_BOT = 0.41 * APPLE_S
-HOLD1 = [0.45, 1.1]                                        # apple paw held out in front
+APPLE_S = 0.44; APPLE_TOP = 0.61 * APPLE_S; APPLE_BOT = 0.41 * APPLE_S
+HOLD1 = [0.3, 1.25, 0.62]                                  # two-paw hold: both paws under the apple (coordinator pose)
 PAW_OUT = [0.85, 0.95]                                     # berry paw: out to the side, towards Pip
 def half_w(x):
     """the stream's half width: 0.7 at the bridge, opening into a pool downstream (towards the low camera)"""
@@ -82,19 +82,20 @@ def face_amt(t):
 def tumble(t):
     st = tumble_base(t); n = T.shot_at(t)[1]
     st["x"], st["z"] = TP; st["stand_h"] = STAND; st["yaw"] = FACE_YAW
+    if t < T.SLIP: st["arms"][0] = list(HOLD1)
     st["arms"][1] = list(HOLD1)
     if n in ("hook_mirror", "title_wide"):                     # peering down at the other fox; startles on "Hey!"
         st["head"][0] = 0.38; st["lean"] = 0.12
         st["y"] += hop_y(t, T.HEY - 0.05, 0.12, 0.3)
         pt = ease(clampu(t, T.HEY + 0.15, T.HEY + 0.5)) * (1 - ease(clampu(t, 2.9, 3.4)))
-        st["arms"][0] = lerp([0.15, 0.0], [0.25, 0.85], pt).tolist()      # points down at the water
+        st["arms"][0] = lerp(HOLD1, [0.25, 0.85, 0.0], pt).tolist()      # points down at the water
         if n == "title_wide":                                   # looks round as Pip flies in
             u = ease(clampu(t, 4.3, 5.0)); st["head"][1] = 0.55 * u; st["head"][0] = 0.38 * (1 - u); st["lean"] = 0.12 * (1 - u)
     elif n == "proud":                                          # turns to Pip and lifts his apple high
         a = SH[n][0]; u = ease(clampu(t, a, a + 0.6))
         st["yaw"] = FACE_YAW + 0.55 * u; st["head"][1] = 0.25 * u; st["head"][0] = -0.12 * u
         up = ease(clampu(t, T.SHINY[0] - 0.4, T.SHINY[0]) if T.SHINY else u)
-        st["arms"][1] = lerp(HOLD1, [0.6, 1.75], up).tolist()
+        st["arms"][1] = lerp(HOLD1, [0.6, 1.75, 0.0], up).tolist()
         for w in T.SHINY: st["y"] += hop_y(t, w - 0.05, 0.06, 0.3)
         dn = ease(clampu(t, SH[n][1] - 0.8, SH[n][1] - 0.2))     # back to facing the water before the cut
         st["yaw"] = lerp(st["yaw"], FACE_YAW, dn); st["arms"][1] = lerp(st["arms"][1], HOLD1, dn).tolist()
@@ -106,14 +107,14 @@ def tumble(t):
     elif n in ("silly_face", "copycat"):
         f = face_amt(t); st["head"][0] = 0.3; st["lean"] = 0.1
         st["head"][2] = 0.22 * f * math.sin((t - T.FACE) * 8.5)
-        st["arms"][0] = lerp([0.15, 0.0], [2.1 + 0.18 * math.sin(t * 22), 0.55], f).tolist()   # paw waggling by his cheek
+        st["arms"][0] = lerp(HOLD1, [2.1 + 0.18 * math.sin(t * 22), 0.55, 0.0], f).tolist()   # paw waggling by his cheek
         st["face"] = f
         if t > T.BLEH: st["y"] += 0.025 * abs(math.sin((t - T.BLEH) * 9)) * (1 - clampu(t, T.BLEH + 1.4, T.BLEH + 1.6))
     elif n == "reach":                                          # "I want THAT one!": leans and reaches down with both paws
         u = ease(clampu(t, T.REACH - 0.1, T.REACH + 0.5))
         st["lean"] = 0.1 + 0.2 * u; st["head"][0] = 0.3 + 0.2 * u
-        st["arms"][0] = lerp([0.15, 0.0], [0.12, 0.75], u).tolist()
-        st["arms"][1] = lerp(HOLD1, [0.12, 0.75], u).tolist()
+        st["arms"][0] = lerp(HOLD1, [0.12, 0.75, 0.0], u).tolist()
+        st["arms"][1] = lerp(HOLD1, [0.12, 0.75, 0.0], u).tolist()
         if t > T.SLIP:                                          # the apple slips: paws fly up in surprise
             v = ease(clampu(t, T.SLIP, T.SLIP + 0.3))
             st["arms"] = [lerp([0.12, 0.75], [0.7, 1.3], v).tolist(), lerp([0.12, 0.75], [0.7, 1.3], v).tolist()]
@@ -164,7 +165,11 @@ def fox_mats_p(st):
     return P @ R, P @ Mh, [P @ a for a in arms], [P @ l for l in legs]
 
 # ---------------- the apple ----------------
-def apple_held(arms): return hand_pos(arms, 1) + np.array([0, 0.1 + APPLE_BOT - 0.01, 0])
+def apple_held(arms):
+    """on both paws while they are together (two-paw hold); rides the right paw when the left one gestures"""
+    h0, h1 = hand_pos(arms, 0), hand_pos(arms, 1)
+    w = 1 - ease(clampu(np.linalg.norm(h0 - h1), 0.3, 0.7))
+    return lerp(h1, 0.5 * (h0 + h1), w) + np.array([0, 0.0 + APPLE_BOT, 0.04])
 _slip_from = {}
 def apple_state(t, mats):
     """('held', p) | ('fall', p) | ('float', p, spin) | None (gone, after the wobble shot)"""
@@ -299,9 +304,9 @@ def camera(t):
     if name == "title_wide":
         return fit_cam(np.array([LX + 0.4, 0.7, TZ - 0.2]), 38, 20, 3.0, 2.7 if not WIDE else 2.1, lift=0.0)
     if name == "proud":                                         # medium, eye level, three-quarter
-        return fit_cam(np.array([LX + 0.1, 1.25, TZ - 0.3]), lerp(62, 70, e), 5, 1.1, 1.35)
+        return fit_cam(np.array([LX + 0.1, 1.45 if WIDE else 1.25, TZ - 0.3]), lerp(62, 70, e), 5, 1.1, 1.75 if WIDE else 1.35)
     if name == "bigger":                                        # down at the water: real apple above, bigger water apple below
-        return fit_cam(np.array([LX + 0.5, lerp(-0.6, -0.7, e), TZ + 0.15]), 86, 3, lerp(1.0, 0.85, e), lerp(1.7, 1.45, e), lift=0.0)
+        return fit_cam(np.array([LX + 0.4, lerp(-0.1, -0.3, e), TZ + 0.15]), lerp(78, 86, e), 4, 1.25, lerp(3.4, 3.0, e), lift=0.0)
     if name == "silly_face":                                    # close front
         return fit_cam(np.array([LX + 0.3, 1.6, TZ]), 96, 10, 0.75, 0.85)
     if name == "copycat":
