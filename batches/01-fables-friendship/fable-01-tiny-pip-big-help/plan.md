@@ -1,9 +1,14 @@
 # Tumble & Pip Fables 1: Tiny Pip, Big Help!
 
 - **job:** batch 01, fable 01 (`fable-01-tiny-pip-big-help`)
-- **status:** animatic done. Visuals built in both aspects on the planned grid; geometry QA 0; reviewer PASS (round 6).
-  Waiting for the ElevenLabs song (the build session had no key and no network access to ElevenLabs), then the final
-  render on the Mac.
+- **status:** rendered on the real song. ElevenLabs song synced: word-aligned captions, mouths and story beats, with
+  the Twist retimed to the take (see review.md, "Song sync"). Geometry QA 0; song-sync reviewer PASS. Final renders
+  at 30 fps, 1440 frames each: `../renders/fable-01_short.mp4` (1080x1920, 23.9 MB) and `../renders/fable-01_wide.mp4`
+  (1920x1080, 25.9 MB). H.264 crf 23, AAC 192k, -14.4 LUFS integrated, peak -1.2 dBFS. Render time 68 min wall on a
+  4-core cloud CPU (8 parallel segments, llvmpipe), plus 82 s for the encode. Frames from both MP4s were checked and
+  the 8 stills per aspect re-archived from them. Open: "Wheee!" sits at 31.9 s in the mix, during the peck close-up
+  while Tumble is still tied up. It needs a remix with the line at about 34.3 s (not done; awaiting the owner's
+  go-ahead).
 - **series:** Tumble & Pip (Fables About Friendship). Batch plan: [../plan.md](../plan.md)
 - **source:** Aesop's fable *The Lion and the Mouse* (public domain), retold with our cast, gags and song
 - **lesson (SEL):** small friends can be big helpers; don't judge help by size
