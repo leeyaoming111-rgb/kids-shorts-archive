@@ -41,7 +41,7 @@ PEB_TOP = 0.07 * 3.0
 FIN_T = C(6.5, 2.2)                                        # Tumble skids in here
 FIN_LOOK = (NRM - DIR * 0.6) / np.linalg.norm(NRM - DIR * 0.6)   # the finish camera's side
 MSPOT = np.array([4.3, -0.85])                              # moral, chorus and button: Tumble here, Bo on his left
-BO_M = np.array([2.8, -0.35])
+BO_M = np.array([3.0, 0.1])
 def _on_course(x, z):
     q = np.array([x, z]) - START; sa, la = float(np.dot(q, DIR)), float(np.dot(q, NRM))
     return -1.5 < sa < 11.5 and abs(la) < 3.0
@@ -333,11 +333,12 @@ def camera(t):
         c = (C(S_TOUCH + 1.0, LANE_B) + FIN_T) / 2
         return fit_cam(np.array([c[0], 0.95, c[1]]), yaw_of(NRM) + lerp(-6, 6, e), 10, 3.0 if not WIDE else 4.2, 1.9, lift=0.03)
     mid = (MSPOT + BO_M) / 2
+    hk = 1.4 if WIDE else 1.0; lf = 0.24 if WIDE else None            # wide: Bo whole and clear of the caption
     if name == "moral":
-        return fit_cam(np.array([mid[0] + 0.2, lerp(1.3, 1.35, e), mid[1]]), lerp(10, 4, e), 6, lerp(2.0, 1.75, e), lerp(1.45, 1.3, e))
+        return fit_cam(np.array([mid[0] + 0.2, lerp(1.3, 1.35, e), mid[1]]), lerp(10, 4, e), 6, lerp(2.0, 1.75, e), lerp(1.45, 1.3, e) * hk, lift=lf)
     if name == "chorus":
-        return fit_cam(np.array([mid[0] + 0.2, 1.2, mid[1]]), 4, 6, 1.9, 1.45)
-    return fit_cam(np.array([mid[0] + 0.1, lerp(1.2, 2.0, e), mid[1]]), 4, lerp(6, 16, e), lerp(1.9, 2.6, e), lerp(1.45, 2.2, e), lift=0.04)
+        return fit_cam(np.array([mid[0] + 0.2, 1.2, mid[1]]), 4, 6, 1.9, 1.45 * hk, lift=lf)
+    return fit_cam(np.array([mid[0] + 0.1, lerp(1.2, 2.0, e), mid[1]]), 4, lerp(6, 16, e), lerp(1.9, 2.6, e), lerp(1.45, 2.2, e) * hk, lift=0.04 if not WIDE else 0.15)
 
 def _cam_clear():
     """drop flowers that any camera passes close to (a flower in front of the lens fills the frame)"""
