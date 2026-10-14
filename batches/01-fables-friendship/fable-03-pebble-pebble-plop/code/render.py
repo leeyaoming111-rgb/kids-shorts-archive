@@ -10,6 +10,12 @@ P3 = props_f3.ensure()
 JUGM = Mesh(P3["jug"]); D["f3"] = P3                     # D: the QA bank finds the jug mesh by name
 COLORS["water"] = (40, 160, 225)
 
+# Kit fix (no fablekit edit): render_base builds the shadow-pass VAOs as "3f 36x" but a vertex is 40 bytes, so
+# shadows were drawn from scrambled vertices. Rebuild them with the right stride ("3f 28x").
+for _grp in (FOXP, PIPP, PR, SC, E2, {"w": EYE_W, "p": EYE_P}, {"jug": JUGM}):
+    for _m in _grp.values():
+        _m.svao = ctx.vertex_array(sprog, [(_m.vbo, "3f 28x", "in_pos")], _m.ibo)
+
 # ---------------- world: Tumble's cottage doorstep on a hot day (a new corner of Picnic Meadow) ----------------
 J = (0.55, 0.0)                                            # the tall jug
 JUG_YAW = -2.36                                            # handle at the back right, away from Tumble and the camera
@@ -27,11 +33,15 @@ def _stuck_offset():
 _so = _stuck_offset()
 TS = (J[0] - _so[0], J[1] - _so[1])                        # where Tumble stands with his paw in the jug (facing +z)
 LAND = (TS[0] - 0.1, TS[1] - 1.35)                         # after the backward roll
-WALL_X = LAND[0] + 0.85                                    # dry stone wall, chest high to Tumble, pebbles on a leaf on top
+HOLD = [0.3, 1.25, 0.62]                                   # two-paw hold (kit pose: paws together in front of the belly)
+HOLD_UP = [0.3, 1.5, 0.62]                                 # the same, lifted a little
+LEAF_FWD = 0.56                                            # the leaf sits this far in front of Tumble's feet (paws are at 0.448)
+WALL_X = LAND[0] + 0.68                                    # dry stone wall: its top is where the paws hold the leaf
 WALL_ZS = (LAND[1] - 0.55, LAND[1], LAND[1] + 0.55)
-WALL_TOP = 0.07 + 0.13 * 5 + 0.07
+WALL_TOP = 0.96                                            # leaf rests at 0.986: paw 0.894 + PAW_TOP 0.072 + leaf thickness 0.02
+WALL_N = 7
 CT = (WALL_X + 0.9, LAND[1] - 3.2)                         # the cottage behind the wall
-TRAY_ARM_LOW, TRAY_ARM_UP = [-0.3, 1.2], [-0.3, 1.5]       # both paws under the leaf: on the wall, then lifted
+TRAY_ARM_LOW, TRAY_ARM_UP = HOLD, HOLD_UP                   # both paws under the leaf: on the wall, then lifted
 CUP_D = 1.12                                               # count shot: jug axis this far in front of Tumble
 CUP_YAW = math.atan2(1.0, 0.35)
 CUP = (J[0] - CUP_D * math.sin(CUP_YAW), J[1] - CUP_D * math.cos(CUP_YAW))
@@ -160,15 +170,16 @@ def roll_back(st, t):
         st["pitch"] = p; st["sq"] = -0.12 * math.sin(math.pi * u); st["y"] += pitch_lift(p) + 0.05 * math.sin(math.pi * u)
         st["legs"] = [0.12, 0.12]; st["arms"] = [[0.4, 2.2], [0.4, 2.2]]
     if t >= T.ROLL_END:
-        d = t - T.ROLL_END
-        st["roll"] = 0.12 * math.sin(d * 7) * math.exp(-d * 1.5); st["head"][2] = 0.15 * math.sin(d * 6) * math.exp(-d * 1.2)
-        st["sq"] -= 0.1 * math.exp(-d * 8) * math.cos(d * 22)
+        d = t - T.ROLL_END; fade = 1 - ease(clampu(t, T.ROLL_END + 0.5, T.ROLL_END + 0.8))   # wobble settles before the leaf is held
+        st["roll"] = 0.12 * math.sin(d * 7) * math.exp(-d * 1.5) * fade; st["head"][2] = 0.15 * math.sin(d * 6) * math.exp(-d * 1.2) * fade
+        st["sq"] = st["sq"] * fade - 0.1 * math.exp(-d * 8) * math.cos(d * 22)
         if t > T.IDEA:                                     # turns to the wall and lifts the leaf of pebbles
             v = ease(clampu(t, T.IDEA, T.IDEA + 0.5)); st["yaw"] = lerp(0.0, math.pi / 2, v)
+            st["head"][0] = 0.1
             st["arms"] = [list(TRAY_ARM_LOW), list(TRAY_ARM_LOW)] if t > T.IDEA + 0.35 else st["arms"]
             if t > T.SCOOP:
                 w = ease(clampu(t, T.SCOOP, T.SCOOP + 0.4))
-                st["arms"] = [lerp(TRAY_ARM_LOW, TRAY_ARM_UP, w).tolist()] * 2
+                st["arms"] = [lerp(TRAY_ARM_LOW, TRAY_ARM_UP, w).tolist() for _ in range(2)]
                 st["x"] = LAND[0] - 0.12 * ease(clampu(t, T.SCOOP + 0.3, T.SCOOP + 0.8))   # steps back from the wall with it
 
 def tumble_mats(t):
@@ -212,20 +223,28 @@ def rim_far():
     return best
 RIM_FAR = rim_far()
 HOVER_R = np.array([J[0] + 0.62, 1.38, TS[1] + 0.25])    # beside the jug at Tumble's depth, clear of his head
+LEAF_SX, LEAF_SZ = 0.34, 0.27                              # the leaf is 0.7 long and 0.22 wide, a tray for five pebbles
+def _hold_c():
+    """leaf centre when held in the two-paw hold, Tumble facing +x at the wall"""
+    st = tumble_base(0.0); st["x"], st["z"] = LAND; st["yaw"] = math.pi / 2; st["sq"] = 0.0; st["arms"] = [list(HOLD), list(HOLD)]
+    m = fox_mats(st); return (hand_pos(m[2], 0) + hand_pos(m[2], 1)) / 2
+_HC = _hold_c()
 def tray_mats(t, st, mats):
     """the leaf tray: on top of the wall, then on Tumble's two paws (count), then on the grass after the cut.
     Returns its matrix and the five pebble seats on it (world)"""
     n = T.shot_at(t)[1]
     if n == "count" or (n == "roll_back" and t > T.SCOOP):
+        R = mats[0]
         h0, h1 = hand_pos(mats[2], 0), hand_pos(mats[2], 1)
-        side = h0 - h1; side /= np.linalg.norm(side)
-        c = (h0 + h1) / 2 + np.array([0, PAW_TOP + 0.01, 0])
+        side = h0 - h1; side[1] = 0; side /= np.linalg.norm(side)
+        fwd = R[:3, 2].copy(); fwd[1] = 0; fwd /= np.linalg.norm(fwd)
+        c = (h0 + h1) / 2 + np.array([0, PAW_TOP + 0.02, 0]) + fwd * (LEAF_FWD - 0.448)
     elif n in ("drink", "moral", "chorus", "button_crane"):
-        c = np.array([LEAF_REST[0], ground_h(*LEAF_REST) + 0.005, LEAF_REST[1]]); side = np.array([math.cos(0.4), 0, -math.sin(0.4)])
+        c = np.array([LEAF_REST[0], ground_h(*LEAF_REST) + 0.02, LEAF_REST[1]]); side = np.array([math.cos(0.4), 0, -math.sin(0.4)])
     else:
-        c = np.array([WALL_X - 0.22, WALL_TOP + 0.005, LAND[1]]); side = np.array([0, 0, -1.0])
-    M = trans(*c) @ roty(math.atan2(-side[2], side[0])) @ scale(0.5, 0.5, 0.7) @ trans(0.26, 0, 0)
-    seats = [apply(M, ((x - 0.0) / 0.5 - 0.26, (0.03 + PEB_R * 0.8) / 0.5, 0.0)) for x in (-0.24, -0.12, 0.0, 0.12, 0.24)]
+        c = np.array([_HC[0] + LEAF_FWD - 0.448, _HC[1] + PAW_TOP + 0.02, LAND[1]]); side = np.array([0, 0, -1.0])
+    M = trans(*c) @ roty(math.atan2(-side[2], side[0])) @ scale(LEAF_SX, 0.5, LEAF_SZ) @ trans(0.265, 0, 0)
+    seats = [c + side * x + np.array([0, 0.03 + PEB_R * 0.8, 0]) for x in (-0.24, -0.12, 0.0, 0.12, 0.24)]
     return M, seats
 
 def pip_state(t, st, mats):
@@ -256,7 +275,7 @@ def pip_state(t, st, mats):
         p = HOVER_R + np.array([0, 0.05 * math.sin(t * 6), 0])
         return p, facing(p, face), True, 0.0, False, ({"cheer": False} if t < T.POP else {"gentle": True})
     if n == "roll_back":                                   # flies to the wall (up, across, down) and points at the pebbles
-        top = np.array([WALL_X + 0.12, WALL_TOP + 0.06, LAND[1] + 0.32]) + UP * 0
+        top = np.array([WALL_X + 0.1, WALL_TOP + PIP_FOOT, LAND[1] + 0.34])
         up1 = HOVER_R + np.array([0, 0.6, 0]); up2 = top + np.array([0, 0.75, 0])
         u = clampu(t, T.ROLL_END, T.IDEA)
         if u < 1:
@@ -395,9 +414,9 @@ def build_draws(t):
     meadow_backdrop(draws, t, cottage=None)
     draws.append((SC["cottage"], trans(CT[0], ground_h(*CT) - 0.05, CT[1]) @ roty(-0.35), U(mat=0, bump=0.6, obj="cottage"), True))
     for zi, z in enumerate(WALL_ZS):                       # dry stone wall: flat stones, staggered
-        for k in range(6):
-            x = WALL_X + 0.03 * math.sin(k * 2.1 + zi); zz = z + 0.05 * math.sin(k * 1.7 + zi * 2)
-            draws.append((SC["stone"], trans(x, ground_h(WALL_X, z) + 0.07 + 0.13 * k, zz) @ roty(math.pi / 2 + 0.15 * math.sin(k + zi)) @ scale(0.95, 1.0, 1.15),
+        for k in range(WALL_N):
+            x = WALL_X + 0.02 * math.sin(k * 2.1 + zi) * (k < WALL_N - 1); zz = z + 0.03 * math.sin(k * 1.7 + zi * 2) * (k < WALL_N - 1)
+            draws.append((SC["stone"], trans(x, ground_h(WALL_X, z) + 0.07 + (WALL_TOP - 0.14) / (WALL_N - 1) * k, zz) @ roty(math.pi / 2 + 0.1 * math.sin(k + zi) * (k < WALL_N - 1)) @ scale(0.85, 1.05, 0.75),
                           U(mat=0, bump=0.9, tint=tuple(c * (0.92 + 0.08 * ((k + zi) % 3)) for c in STONE_T), tintMix=1.0, obj="wall"), True))
     for (x, z, s) in [(CT[0] - 2.0, CT[1] + 1.6, 0.2), (J[0] + 1.3, J[1] - 0.6, 0.16), (MSPOT[0] - 1.3, MSPOT[1] - 0.2, 0.18)]:
         draws.append((E2["mushroom"], trans(x, ground_h(x, z) - 0.01, z) @ scale(s), U(mat=0, bump=0.6), True))
