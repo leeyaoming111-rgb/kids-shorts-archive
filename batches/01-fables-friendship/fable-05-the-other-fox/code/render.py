@@ -41,36 +41,51 @@ LILY = (LX + 3.0, -6.05)
 
 # ---------------- ground with a clean channel, the water plane ----------------
 def _ground5():
-    nx, nz = 260, 300
-    xs = np.linspace(-16, 16, nx); zs = np.linspace(-24, 12, nz)
-    X, Z = np.meshgrid(xs, zs, indexing="ij"); G = ground_h(X, Z)
-    hw = half_w(X); zr = Z + 5.5
-    b = sstep(-hw - 0.16, -hw + 0.04, zr) * sstep(hw + 0.16, hw - 0.04, zr)     # steep banks: a crisp water edge
-    Y = G - 0.3 * b
-    P = np.stack([X, Y, Z], -1)
-    gy, gx = np.gradient(Y, zs, axis=1), np.gradient(Y, xs, axis=0)
-    N = np.stack([-gx, np.ones_like(gx), -gy], -1); N /= np.linalg.norm(N, axis=-1, keepdims=True)
+    """terrain as two strips that follow the channel edge exactly (rows run along the bank), so the water line is a clean
+    mesh line instead of a grid staircase; the first row is a short earth wall dropping under the water"""
     from meshes import hexc, mixc
+    xs = np.linspace(-16, 16, 700)
+    os_ = np.array([-0.12, 0.0, 0.03, 0.07, 0.12, 0.2, 0.32, 0.5, 0.75, 1.1, 1.6, 2.3, 3.2, 4.5, 6.3, 8.6, 11.5, 15.0, 19.5])
     g1, g2, g3 = hexc("#A6D27F"), hexc("#8FC46E"), hexc("#CFE6A0")
-    n1 = 0.5 + 0.5 * np.sin(X * 1.1 + np.sin(Z * 0.9) * 2) * np.sin(Z * 1.4 + np.sin(X * 0.5) * 1.5)
-    C = mixc(np.broadcast_to(g1, P.shape), g2, n1 * 0.7)
-    C = mixc(C, g3, sstep(-8, -16, Z) * 0.6)
-    bank = sstep(-hw - 0.5, -hw - 0.15, zr) * sstep(hw + 0.5, hw + 0.15, zr)
-    C = mixc(C, hexc("#B8B98A"), bank * 0.4)                # sandy banks down to the water line
-    C = mixc(C, hexc("#3E6E78"), sstep(YW + 0.01, YW - 0.08, Y))    # under the water: dark teal walls
-    idx = np.arange(nx * nz).reshape(nx, nz)
-    a, b_, c, d = idx[:-1, :-1], idx[1:, :-1], idx[1:, 1:], idx[:-1, 1:]
-    F = np.concatenate([np.stack([a, d, c], -1).reshape(-1, 3), np.stack([a, c, b_], -1).reshape(-1, 3)])
-    Yf = Y.reshape(-1)
-    F = F[~(Yf[F] < YW - 0.012).all(1)]                     # the bed under the water is cut out (the reflection shows there)
-    return Mesh(dict(v=P.reshape(-1, 3).astype(np.float32), n=N.reshape(-1, 3).astype(np.float32), c=C.reshape(-1, 3).astype(np.float32),
-                     ao=np.ones(nx * nz, np.float32), f=F.astype(np.uint32), name="ground5"))
+    Ps, Ns, Cs, Fs = [], [], [], []
+    for side in (-1, 1):
+        X, O = np.meshgrid(xs, os_, indexing="ij")
+        hw = half_w(X); Z = -5.5 + side * (hw + O)
+        zmax = 12.0 if side > 0 else -24.0
+        Z = np.clip(Z, -24.0, 12.0)
+        G = ground_h(X, Z)
+        Y = G - 0.3 * (O < -0.01)
+        P = np.stack([X, Y, Z], -1)
+        gy, gx = np.gradient(Y, os_, axis=1) * side, np.gradient(Y, xs, axis=0)
+        N = np.stack([-gx, np.ones_like(gx), -gy], -1); N /= np.linalg.norm(N, axis=-1, keepdims=True)
+        n1 = 0.5 + 0.5 * np.sin(X * 1.1 + np.sin(Z * 0.9) * 2) * np.sin(Z * 1.4 + np.sin(X * 0.5) * 1.5)
+        C = mixc(np.broadcast_to(g1, P.shape), g2, n1 * 0.7)
+        C = mixc(C, g3, sstep(-8, -16, Z) * 0.6)
+        C = mixc(C, hexc("#B8B98A"), sstep(0.5, 0.15, O) * 0.4)         # sandy banks down to the water line
+        C = mixc(C, hexc("#8A7656"), (O < 0.01) * 1.0)                  # the earth wall under the lip
+        nx, no = len(xs), len(os_); idx = np.arange(nx * no).reshape(nx, no)
+        a, b_, c, d = idx[:-1, :-1], idx[1:, :-1], idx[1:, 1:], idx[:-1, 1:]
+        F = np.concatenate([np.stack([a, d, c], -1).reshape(-1, 3), np.stack([a, c, b_], -1).reshape(-1, 3)])
+        if side < 0: F = F[:, ::-1]
+        Fs.append(F + sum(len(p) for p in Ps)); Ps.append(P.reshape(-1, 3)); Ns.append(N.reshape(-1, 3)); Cs.append(C.reshape(-1, 3))
+    P = np.concatenate(Ps); n_ = len(P)
+    return Mesh(dict(v=P.astype(np.float32), n=np.concatenate(Ns).astype(np.float32), c=np.concatenate(Cs).astype(np.float32),
+                     ao=np.ones(n_, np.float32), f=np.concatenate(Fs).astype(np.uint32), name="ground5"))
 GROUND5 = _ground5()
 def _quad(x0, x1, z0, z1, y):
     v = np.array([[x0, y, z0], [x1, y, z0], [x1, y, z1], [x0, y, z1]], np.float32)
     return Mesh(dict(v=v, n=np.tile([0, 1, 0], (4, 1)).astype(np.float32), c=np.ones((4, 3), np.float32), ao=np.ones(4, np.float32),
                      f=np.array([[0, 2, 1], [0, 3, 2]], np.uint32), name="water"))
-WATER = _quad(-16, 16, -8.0, -3.0, YW)
+def _water_strip():
+    """the water plane clipped to the channel footprint (a full quad z-fights the bank at grazing angles and shows as a translucent sheet)"""
+    xs = np.linspace(-16, 16, 640); hw = half_w(xs) - 0.03
+    top = np.stack([xs, np.full_like(xs, YW), -5.5 - hw], -1); bot = np.stack([xs, np.full_like(xs, YW), -5.5 + hw], -1)
+    v = np.concatenate([top, bot]).astype(np.float32); n_ = len(xs)
+    i = np.arange(n_ - 1)
+    f = np.concatenate([np.stack([i, i + n_, i + 1], -1), np.stack([i + 1, i + n_, i + n_ + 1], -1)])
+    return Mesh(dict(v=v, n=np.tile([0, 1, 0], (len(v), 1)).astype(np.float32), c=np.ones((len(v), 3), np.float32),
+                     ao=np.ones(len(v), np.float32), f=f.astype(np.uint32), name="water"))
+WATER = _water_strip()
 WATER_U = U(mat=0, bump=0.0, tint=(0.36, 0.62, 0.82), tintMix=1.0, alpha=0.28)
 SKYDOWN = _quad(-120, 120, -60, 40, YW - 3.0)             # the sky seen in the water (flat colour, under the mirror world)
 SKYDOWN_U = U(mat=3, bump=0.0, tint=(0.5, 0.68, 0.85), tintMix=1.0)
