@@ -2,6 +2,20 @@
 Shared renderer: fablekit.py. python3 render.py [--wide] [--preview] [out.mp4] | x <secs...> | sheet | qa
 Bo the turtle comes from the Lulu & Bo one-off; his meshes live in this fable's meshes.py copy (keys "bo", "ep4")."""
 from fablekit import *
+import gc, render_base as _rb
+
+def _fix_shadow_vaos():
+    """Kit bug: render_base builds the shadow VAO with "3f 36x" but vertices are 40 bytes; the right skip is "28x"
+    (override here, common/ is not edited). Rebuilds the shadow VAO of every Mesh already created."""
+    for o in gc.get_objects():
+        if isinstance(o, _rb.Mesh):
+            o.svao = _rb.ctx.vertex_array(_rb.sprog, [(o.vbo, "3f 28x", "in_pos")], o.ibo)
+_orig_mesh_init = _rb.Mesh.__init__
+def _mesh_init(self, m):
+    _orig_mesh_init(self, m)
+    self.svao = _rb.ctx.vertex_array(_rb.sprog, [(self.vbo, "3f 28x", "in_pos")], self.ibo)
+_rb.Mesh.__init__ = _mesh_init
+_fix_shadow_vaos()
 
 COLORS.update(slow=(60, 170, 140), bo=(240, 140, 50))
 BOP = {k: Mesh(p["mesh"]) for k, p in D["bo"]["parts"].items() if "mesh" in p}
@@ -286,7 +300,7 @@ def camera(t):
     st = tumble(t); b = bo(t)
     if name == "start_line":                                 # low front of the line: Pip, Tumble, Bo
         c = C(0.15, -0.45)
-        return fit_cam(np.array([c[0], 0.8, c[1]]), yaw_of(DIR) + lerp(-4, -10, e), 4, 2.25, 1.2, lift=0.05)
+        return fit_cam(np.array([c[0], 0.8, c[1]]), yaw_of(DIR) - lerp(55, 62, e), 4, 3.0 if not WIDE else 4.6, 1.5, lift=0.05)
     if name == "title_wide":                                 # high behind the start, the whole course ahead
         c = C(4.2, -0.4)
         return fit_cam(np.array([c[0], 0.7, c[1]]), yaw_of(-DIR) + 22, 24, 3.6 if not WIDE else 5.6, 3.2 if not WIDE else 2.9, lift=0.0)
