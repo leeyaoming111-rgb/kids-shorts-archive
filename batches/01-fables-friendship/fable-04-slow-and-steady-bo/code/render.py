@@ -28,17 +28,17 @@ START = np.array([-3.6, 2.6])
 DIR = np.array([0.8, -0.6]); NRM = np.array([0.6, 0.8])      # along the course; across it (towards the front camera)
 YAW_RUN = math.atan2(DIR[0], DIR[1]); YAW_BACK = math.atan2(-DIR[0], -DIR[1])
 def C(s, lane): return START + DIR * s + NRM * lane
-LANE_T, LANE_B = -0.7, 0.75
+LANE_T, LANE_B = -0.7, 1.2
 BO_S = 1.15
 STUMP_S = 1.3; STUMP = C(9.95, 0.55); STUMP_TOP = 0.55 * STUMP_S - 0.02; STUMP_ROT = 1.2
 S_TOUCH = 7.94                                               # Bo's nose on the stump
 RUN_S = 6.0                                                  # where Tumble skids to a stop
-NAP = C(8.4, -1.9); NAP_YAW = math.atan2(NRM[0], NRM[1])   # lying on his side, face to the course-side cameras, head up-course under the mushroom, head towards the finish
-MUSH1 = C(6.95, -2.85); MUSH1_S = 1.5                        # the giant mushroom his snores puff
+NAP = C(8.4, -1.35); NAP_YAW = math.atan2(NRM[0], NRM[1])   # lying on his side, face to the course-side cameras, head up-course under the mushroom, head towards the finish
+MUSH1 = C(6.95, -3.5); MUSH1_S = 1.5                        # the giant mushroom his snores puff
 MUSH2 = C(8.3, -3.8); MUSH2_S = 1.05
 PEB = C(0.25, -2.0)                                          # Pip's referee pebble
 PEB_TOP = 0.07 * 3.0
-FIN_T = C(9.3, 2.35)                                        # Tumble skids in here
+FIN_T = C(6.5, 2.2)                                        # Tumble skids in here
 FIN_LOOK = (NRM - DIR * 0.6) / np.linalg.norm(NRM - DIR * 0.6)   # the finish camera's side
 MSPOT = np.array([4.3, -0.85])                              # moral, chorus and button: Tumble here, Bo on his left
 BO_M = np.array([2.8, -0.35])
@@ -327,11 +327,11 @@ def camera(t):
         c = (STUMP + b["p"]) / 2 + NRM * 0.1
         return fit_cam(np.array([c[0], 0.95, c[1]]), yaw_of(-DIR) + 50, -4, 2.2, 1.4, lift=0.06)
     if name == "wake":                                       # medium side: the jolt and the spinning legs
-        c = NAP + DIR * 0.4
-        return fit_cam(np.array([c[0], 1.0, c[1]]), yaw_of(-NRM) + 8, 6, 2.2, 1.6)
+        c = NAP - DIR * 0.2
+        return fit_cam(np.array([c[0], 1.1, c[1]]), yaw_of(NRM) - SG * 12, 34, 2.6 if not WIDE else 3.4, 2.1)
     if name == "finish":                                     # low wide past the stump: Bo touches, Tumble skids in
-        c = (C(S_TOUCH, LANE_B) + FIN_T) / 2 + DIR * 0.2
-        return fit_cam(np.array([c[0], 0.85, c[1]]), yaw_of(FIN_LOOK) + lerp(-4, 4, e), 8, 2.05, 1.3, lift=0.03)
+        c = (C(S_TOUCH + 1.0, LANE_B) + FIN_T) / 2
+        return fit_cam(np.array([c[0], 0.95, c[1]]), yaw_of(NRM) + lerp(-6, 6, e), 10, 3.0 if not WIDE else 4.2, 1.9, lift=0.03)
     mid = (MSPOT + BO_M) / 2
     if name == "moral":
         return fit_cam(np.array([mid[0] + 0.2, lerp(1.3, 1.35, e), mid[1]]), lerp(10, 4, e), 6, lerp(2.0, 1.75, e), lerp(1.45, 1.3, e))
