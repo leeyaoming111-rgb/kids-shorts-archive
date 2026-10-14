@@ -32,20 +32,21 @@ def _stuck_offset():
     h = hand_pos(fox_mats(st)[2]); return np.array([h[0] + 0.06, h[2]])
 _so = _stuck_offset()
 TS = (J[0] - _so[0], J[1] - _so[1])                        # where Tumble stands with his paw in the jug (facing +z)
-LAND = (TS[0] - 0.1, TS[1] - 1.35)                         # after the backward roll
+LAND = (TS[0] - 0.4, TS[1] - 1.9)
+PICK = (LAND[0] + 0.3, LAND[1])                              # where he stands to lift the leaf off the wall                         # after the backward roll
 HOLD = [0.3, 1.25, 0.62]                                   # two-paw hold (kit pose: paws together in front of the belly)
 HOLD_UP = [0.3, 1.5, 0.62]                                 # the same, lifted a little
-LEAF_FWD = 0.56                                            # the leaf sits this far in front of Tumble's feet (paws are at 0.448)
-WALL_X = LAND[0] + 0.68                                    # dry stone wall: its top is where the paws hold the leaf
-WALL_ZS = (LAND[1] - 0.55, LAND[1], LAND[1] + 0.55)
+LEAF_FWD = 0.59                                            # the leaf sits this far in front of Tumble's feet (paws are at 0.448)
+WALL_X = PICK[0] + 0.76                                   # dry stone wall: its top is where the paws hold the leaf
+WALL_ZS = (LAND[1] + 0.0, LAND[1] - 0.55, LAND[1] - 1.1)
 WALL_TOP = 0.96                                            # leaf rests at 0.986: paw 0.894 + PAW_TOP 0.072 + leaf thickness 0.02
 WALL_N = 7
 CT = (WALL_X + 0.9, LAND[1] - 3.2)                         # the cottage behind the wall
 TRAY_ARM_LOW, TRAY_ARM_UP = HOLD, HOLD_UP                   # both paws under the leaf: on the wall, then lifted
-CUP_D = 1.12                                               # count shot: jug axis this far in front of Tumble
+CUP_D = 1.3                                               # count shot: jug axis this far in front of Tumble
 CUP_YAW = math.atan2(1.0, 0.35)
 CUP = (J[0] - CUP_D * math.sin(CUP_YAW), J[1] - CUP_D * math.cos(CUP_YAW))
-DRINK_D = 0.72
+DRINK_D = 1.4
 DRINK = (J[0] - DRINK_D * math.sin(CUP_YAW), J[1] - DRINK_D * math.cos(CUP_YAW))
 MSPOT = (TS[0] - 0.35, TS[1] + 0.55)                       # moral and dance spot, the jug at his paw side
 LEAF_REST = (TS[0] + 0.15, TS[1] - 0.55)                   # the empty leaf on the grass after the count
@@ -81,7 +82,8 @@ def fox_mats_p(st):
     p = st.get("pitch", 0.0)
     if p == 0.0: return R, Mh, arms, legs
     root = trans(st["x"], surf(st["x"], st["z"]) + st.get("stand_h", 0.0) - 0.01 + st["y"], st["z"]) @ roty(st["yaw"])
-    P = root @ trans(0, 0.8, 0) @ rotx(p) @ trans(0, -0.8, 0) @ np.linalg.inv(root)
+    py = st.get("pivot", 0.8)
+    P = root @ trans(0, py, 0) @ rotx(p) @ trans(0, -py, 0) @ np.linalg.inv(root)
     return P @ R, P @ Mh, [P @ a for a in arms], [P @ l for l in legs]
 
 # ---------------- Tumble ----------------
@@ -110,7 +112,7 @@ def tumble(t):
     elif n == "paw_in":
         a = SH[n][0]
         u = ease(clampu(t, T.PAW_IN - 0.2, T.PAW_IN + 0.7))
-        st["roll"] = STUCK_ROLL * u
+        st["roll"] = STUCK_ROLL * u; st["y"] += 0.036 * u
         st["arms"][0] = lerp([0.5, 1.4], STUCK_ARM, ease(clampu(t, T.PAW_IN - 0.2, T.PAW_IN + 0.4))).tolist() if t > T.PAW_IN - 0.2 else [0.2, 0.3]
         if u >= 1:
             st["arms"][0] = list(STUCK_ARM)
@@ -120,7 +122,7 @@ def tumble(t):
                 st["head"][1] = 0.35 * ease(clampu(t, T.STUCK - 0.2, T.STUCK + 0.2)); st["head"][0] = -0.08
                 st["arms"][1] = [0.7, 0.2] if t > T.STUCK else [0.15, 0.0]
     elif n == "pull":
-        st["roll"] = STUCK_ROLL; st["arms"][0] = list(STUCK_ARM); st["arms"][1] = [0.6, 0.0]
+        st["y"] += 0.036; st["roll"] = STUCK_ROLL; st["arms"][0] = list(STUCK_ARM); st["arms"][1] = [0.6, 0.0]
         for k, pt in enumerate(T.PULLS):                   # each pull leans him further back and lifts the jug
             d = t - pt
             if 0 <= d < 0.5:
@@ -134,15 +136,15 @@ def tumble(t):
     elif n == "roll_back":
         roll_back(st, t)
     elif n == "count":
-        st["x"], st["z"] = CUP; st["yaw"] = CUP_YAW; st["arms"] = [list(TRAY_ARM_UP), list(TRAY_ARM_UP)]
-        st["head"][0] = 0.3                                # watching the jug mouth
+        st["x"], st["z"] = CUP; st["yaw"] = CUP_YAW; st["arms"] = [list(TRAY_ARM_LOW), list(TRAY_ARM_LOW)]
+        st["head"][0] = 0.1                                # watching the jug mouth
         for c in T.COUNT:                                  # a happy bounce on every plop
             d = t - (c + 0.25)
             if 0 <= d < 0.3: st["y"] += 0.03 * math.sin(math.pi * d / 0.3)
     elif n == "drink":
         st["x"], st["z"] = DRINK; st["yaw"] = CUP_YAW
         lean = ease(clampu(t, T.LAP - 0.45, T.LAP)) * (1 - ease(clampu(t, T.LAP + 0.9, T.LAP + 1.3)))
-        st["pitch"] = 0.5 * lean; st["head"][0] = 0.25 + 0.25 * lean
+        st["pivot"] = 0.15; st["pitch"] = 0.55 * lean; st["y"] += 0.09 * lean; st["head"][0] = 0.1 + 0.1 * lean
         st["arms"] = [[0.35, 0.3], [0.35, 0.3]]
         st["tongue"] = 1.0 if T.LAP - 0.1 < t < T.LAP + 0.9 else 0.0
         if t > T.LAP + 1.0: st["head"][0] = 0.05
@@ -175,12 +177,13 @@ def roll_back(st, t):
         st["sq"] = st["sq"] * fade - 0.1 * math.exp(-d * 8) * math.cos(d * 22)
         if t > T.IDEA:                                     # turns to the wall and lifts the leaf of pebbles
             v = ease(clampu(t, T.IDEA, T.IDEA + 0.5)); st["yaw"] = lerp(0.0, math.pi / 2, v)
+            st["x"] = lerp(LAND[0], PICK[0], ease(clampu(t, T.IDEA, T.IDEA + 0.6)))
             st["head"][0] = 0.1
             st["arms"] = [list(TRAY_ARM_LOW), list(TRAY_ARM_LOW)] if t > T.IDEA + 0.35 else st["arms"]
             if t > T.SCOOP:
                 w = ease(clampu(t, T.SCOOP, T.SCOOP + 0.4))
                 st["arms"] = [lerp(TRAY_ARM_LOW, TRAY_ARM_UP, w).tolist() for _ in range(2)]
-                st["x"] = LAND[0] - 0.12 * ease(clampu(t, T.SCOOP + 0.3, T.SCOOP + 0.8))   # steps back from the wall with it
+                st["x"] = PICK[0] - 0.12 * ease(clampu(t, T.SCOOP + 0.3, T.SCOOP + 0.8))   # steps back from the wall with it
 
 def tumble_mats(t):
     st = tumble(t); return st, fox_mats_p(st)
@@ -191,7 +194,7 @@ def jug_mat(t, arms):
     """the jug's world matrix: standing, or riding Tumble's stuck paw during the pulls (drops back on the pop)"""
     global _A_STUCK
     if _A_STUCK is None:
-        s = tumble_base(0.0); s["x"], s["z"] = TS; s["yaw"] = 0.0; s["arms"][0] = list(STUCK_ARM); s["roll"] = STUCK_ROLL; s["sq"] = 0.0
+        s = tumble_base(0.0); s["x"], s["z"] = TS; s["yaw"] = 0.0; s["arms"][0] = list(STUCK_ARM); s["roll"] = STUCK_ROLL; s["sq"] = 0.0; s["y"] = 0.036
         _A_STUCK = fox_mats(s)[2][0]
     if SH["pull"][0] <= t < T.POP + 0.25:
         if t < T.POP:
@@ -211,7 +214,7 @@ def n_in(t):
 # ---------------- Pip ----------------
 def rim_pt(a):
     """a point on top of the rolled lip (jug-local angle a, 0 = towards the jug's local +z), lifted for Pip's feet"""
-    return jw((RIM_R * math.sin(a), RIM_Y, RIM_R * math.cos(a))) + UP
+    return jw((RIM_R * math.sin(a), RIM_Y + 0.057, RIM_R * math.cos(a))) + UP
 def facing(p, q): return math.atan2(q[0] - p[0], q[2] - p[2])
 JC = jw((0, RIM_Y, 0))                                    # centre of the jug mouth
 def rim_far():
@@ -226,7 +229,7 @@ HOVER_R = np.array([J[0] + 0.62, 1.38, TS[1] + 0.25])    # beside the jug at Tum
 LEAF_SX, LEAF_SZ = 0.34, 0.27                              # the leaf is 0.7 long and 0.22 wide, a tray for five pebbles
 def _hold_c():
     """leaf centre when held in the two-paw hold, Tumble facing +x at the wall"""
-    st = tumble_base(0.0); st["x"], st["z"] = LAND; st["yaw"] = math.pi / 2; st["sq"] = 0.0; st["arms"] = [list(HOLD), list(HOLD)]
+    st = tumble_base(0.0); st["x"], st["z"] = PICK; st["yaw"] = math.pi / 2; st["sq"] = 0.0; st["arms"] = [list(HOLD), list(HOLD)]
     m = fox_mats(st); return (hand_pos(m[2], 0) + hand_pos(m[2], 1)) / 2
 _HC = _hold_c()
 def tray_mats(t, st, mats):
@@ -275,7 +278,7 @@ def pip_state(t, st, mats):
         p = HOVER_R + np.array([0, 0.05 * math.sin(t * 6), 0])
         return p, facing(p, face), True, 0.0, False, ({"cheer": False} if t < T.POP else {"gentle": True})
     if n == "roll_back":                                   # flies to the wall (up, across, down) and points at the pebbles
-        top = np.array([WALL_X + 0.1, WALL_TOP + PIP_FOOT, LAND[1] + 0.34])
+        top = np.array([WALL_X + 0.1, WALL_TOP - 0.05 + PIP_FOOT, LAND[1] + 0.34])
         up1 = HOVER_R + np.array([0, 0.6, 0]); up2 = top + np.array([0, 0.75, 0])
         u = clampu(t, T.ROLL_END, T.IDEA)
         if u < 1:
@@ -295,7 +298,8 @@ def pip_state(t, st, mats):
         return dance_pip(t, st, mats, n, arrive_from=RIM_FAR)
     a, b = SH["button_crane"]                              # hops from the paw to the rim and splashes a wing
     p0 = paw_seat(fox_mats_p(tumble(a))[2]); rim = rim_pt_near(p0)
-    u = clampu(t, a, a + 0.6)
+    if t < a + 0.2: return p0, 0.35, False, 0.0, True, {}          # still riding the paw after the cut
+    u = clampu(t, a + 0.2, a + 0.8)
     if u < 1:
         p = lerp(p0, rim, ease(u)); p[1] += 0.35 * math.sin(math.pi * u)
         return p, facing(p, JC), True, 0.0, False, {"gentle": True}
@@ -320,15 +324,15 @@ def count_pip(t, st, mats):
     c = T.COUNT[k]
     seat = seats[4 - k]                                    # works from the jug side of the leaf
     yaw_to = facing(over, seat)
-    grab = seat + np.array([0, 0.03, 0]) - apply(roty(yaw_to) @ rotx(0.3) @ scale(1.1), (0, 0.31, 0.27))
+    grab = seat + np.array([0, 0.03, 0]) - apply(roty(yaw_to) @ rotx(0.6) @ scale(1.1), (0, 0.31, 0.27))
     # timeline per pebble: fly to the seat (c-0.45..c-0.25), grab, back over the mouth (c-0.25..c-0.02), release at c
     if t < T.COUNT[0] - 0.45:
         p = over + np.array([0, 0.04 * math.sin(t * 6), 0]); return p, yaw_to, True, 0.0, False, {"gentle": True}
     if t < c - 0.25:
         u = ease(clampu(t, c - 0.45, c - 0.25)); p = lerp(over, grab, u)
-        return p, yaw_to, True, 0.3 * u, False, {"gentle": True, "beak": True}
+        return p, yaw_to, True, 0.6 * u, False, {"gentle": True, "beak": True}
     u = ease(clampu(t, c - 0.25, c - 0.02)); p = lerp(grab, over, u)
-    return p, yaw_to, True, 0.3 * (1 - u), False, {"gentle": True, "beak": t < c}
+    return p, yaw_to, True, 0.6 * (1 - u), False, {"gentle": True, "beak": t < c}
 
 def pebbles(t, st, mats, Mp, jugM):
     """world centres of the five pebbles and whether each is under water (hidden from QA as it sinks)"""
@@ -382,7 +386,7 @@ def camera(t):
     if name == "pull":                                     # wide low angle: pull, pull, POP
         return fit_cam(np.array([lerp(TS[0], J[0], 0.45), 1.0, TS[1] + 0.1]), 12, -8, 1.9, 1.7, lift=0.06)
     if name == "roll_back":                                # wide side: the roll back to the wall
-        return fit_cam(np.array([lerp(TS[0], WALL_X, 0.45), 1.05, lerp(TS[1], LAND[1], 0.55)]), 30, 8, 2.3, 1.6)
+        return fit_cam(np.array([lerp(LAND[0], WALL_X, 0.5), 1.15, LAND[1] + 0.2]), 6, 8, 2.0, 1.6)
     if name == "count":                                    # high three-quarter close-up into the jug mouth
         tgt = JC + np.array([0, 0.12, 0]) - np.array([math.sin(CUP_YAW), 0, math.cos(CUP_YAW)]) * 0.18
         return fit_cam(tgt, math.degrees(CUP_YAW) - lerp(28, 18, e), 58, 1.0, 1.0, fov=36, lift=0.1)
@@ -404,7 +408,7 @@ class QAIgnore:
             ("fox", "fox_paw"), ("fox_paw", "fox"), ("leaf", "fox_paw"), ("fox_paw", "leaf"), ("leaf", "pebble"), ("pebble", "leaf")}
     def __contains__(self, pair):
         if pair in self.base: return True
-        return pair in (("jug", "fox_paw"), ("fox_paw", "jug")) and T.PAW_IN + 0.3 <= self.t < T.POP + 0.05
+        return pair in (("jug", "fox_paw"), ("fox_paw", "jug")) and T.PAW_IN - 0.1 <= self.t < T.POP + 0.05
 QAI = QAIgnore()
 
 STONE_T = (0.84, 0.8, 0.74)
