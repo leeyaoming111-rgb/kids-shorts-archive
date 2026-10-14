@@ -91,7 +91,8 @@ elif LINK:
     TURN = min(max(A["t1"] + 0.3, 2.6), B["t0"] - 0.7)
     TURNS = [(TURN, 1)]
     k = int(SCENE[4:])
-    SHOTS = [(0.0, TURN - 0.25, f"a_{k:02d}"), (TURN - 0.25, DURATION + 0.1, f"b_{k:02d}")]
+    CT = max(TURN + 1.9, TURN + 1.45)                                   # insert on the new picture, then a medium for the line
+    SHOTS = [(0.0, TURN - 0.25, f"a_{k:02d}"), (TURN - 0.25, CT, f"b_{k:02d}"), (CT, DURATION + 0.1, f"c_{k:02d}")]
 elif SCENE == "break":
     CH = [L for L in LINES if L["section"] == "Chorus"]
     C0 = EP.CHORUS_AT["break"][0]; C1 = EP.CHORUS_AT["break"][1] + 3 * BAR

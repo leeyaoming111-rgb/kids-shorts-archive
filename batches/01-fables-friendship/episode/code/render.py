@@ -390,8 +390,10 @@ def camera(t):
             yaw, pitch, fw, fh, cx, cy = a
             return cam_two(e, yaw + 4 * e, pitch, fw * lerp(1.0, 0.95, e), fh * lerp(1.0, 0.95, e), cx=cx, cy=cy)
         yaw, pitch, fh, cy, cx = b
+        if name.startswith("b_"): return cam_spread(e, yaw + 2 * e, pitch, fh * 0.48, cx=cx * 0.3)   # the new picture
+        fh = fh / 0.66 * 1.22                                           # medium: the spread, Tumble's face and Pip, clear of the caption
         if SCENE == "link09": fh *= lerp(1.0, 0.9, e)                  # slow push in
-        return cam_spread(e, yaw + 2 * e, pitch, fh * 0.48, cx=cx * 0.3)
+        return cam_med(e, yaw + 2 * e, pitch, fh, cx=0.22 + cx, cy=0.92)
     if SCENE == "break":
         tg = np.array([DANCE_SPOT[0] + 0.25, 1.25, DANCE_SPOT[1]])
         if name == "call": return fit_cam(tg, 4, 6, 1.75, 1.55)
