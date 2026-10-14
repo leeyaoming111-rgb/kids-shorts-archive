@@ -24,7 +24,7 @@ FLOOR = BASE_Y + 0.09 * BS                                               # insid
 LX, LY, LZ = 0.98, 0.07, 0.80                                            # lid half-sizes (a flattened clay ball)
 HINGE = np.array([BASKET[0], RIM + 0.06, BASKET[1] - LZ])               # hinged on the basket's back edge
 LID_OPEN = 1.72                                                          # standing open, leaning back a little past upright
-LIFT_A = 0.85                                                            # how far Tumble raises the lid
+LIFT_A = 0.55                                                            # how far Tumble raises the lid
 LID_TINT = (0.80, 0.58, 0.36)
 PIP_IN = np.array([BASKET[0] - 0.1, FLOOR - 0.033, BASKET[1] + 0.05]) + UP      # Pip inside, on the basket floor
 RIM_FRONT = np.array([BASKET[0] - 0.35, RIM, BASKET[1] + 0.385 * BS * 0.98]) + UP   # front rim, left of centre
@@ -33,7 +33,7 @@ TRIPPT = (PUDDLE[0] + 1.15, PUDDLE[1] + 0.15)                             # foot
 FLOPPT = (PUDDLE[0] + 0.75, PUDDLE[1] + 0.05)                            # where his feet end up as he belly-flops
 LEAP_A = (PUDDLE[0] + 1.2, PUDDLE[1] + 0.45); LEAP_B = (PUDDLE[0] - 1.3, PUDDLE[1] + 1.35)
 SPINPT = (FLOWER[0] - 1.35, FLOWER[1] + 2.2)                            # skids past the flower's front, spins here
-LIFTPT = (BASKET[0] + 1.5, BASKET[1] + 0.3)                              # at the basket's right end
+LIFTPT = (BASKET[0] + 1.4, BASKET[1] - 0.55)                              # at the basket's right end
 MSPOT = (BASKET[0] - 1.5, BASKET[1] + 1.9)                               # moral, dance and button
 BERRIES = [(BLANKET[0] - 0.7, BLANKET[1] + 0.3), (BLANKET[0] - 0.55, BLANKET[1] + 0.45), (BLANKET[0] - 0.85, BLANKET[1] + 0.5)]
 FLOWERS = make_flowers([(FLOWER[0], FLOWER[1], 1.2), (PUDDLE[0], PUDDLE[1], 1.3), ("box", PUDDLE[0] - 1.6, PUDDLE[0] + 1.6, PUDDLE[1] - 0.6, PUDDLE[1] + 1.4),
@@ -74,26 +74,29 @@ def lid_front(t):
     return apply(lid_M(t), (0.0, 0.0, LZ))
 
 # ---------------- Tumble ----------------
-def solve_arm(st, i, target, side=(-0.2, 2.0), fwd=(-0.3, 3.0), n=36):
-    """arm angles that put paw i nearest target (grid search on the real rig)"""
+def solve_arm(st, i, target, side=(-0.2, 2.0), fwd=(-0.3, 3.0), n=36, inward=(0.0,)):
+    """arm angles [side, fwd, inward] that put paw i nearest target (grid search on the real rig)"""
     best, arg = 9.0, None
     for s_ in np.linspace(*side, n):
         for f_ in np.linspace(*fwd, n):
-            st["arms"][i] = [s_, f_]; d = np.linalg.norm(hand_pos(fox_mats(st)[2], i) - target)
-            if d < best: best, arg = d, [s_, f_]
+            for w_ in inward:
+                st["arms"][i] = [s_, f_, w_]; d = np.linalg.norm(hand_pos(fox_mats(st)[2], i) - target)
+                if d < best: best, arg = d, [s_, f_, w_]
     st["arms"][i] = arg
     return best
 def yaw_to(a, b): return math.atan2(b[0] - a[0], b[1] - a[1])
 RUN_YAW = yaw_to(T_HOME, TRIPPT)
 LIFT_YAW = -math.pi / 2
 _arm_cache = {}
+DEBUG_LIFT = False
 def lift_arms(st, t):
     """both paws under the lid's front edge (cached per frame time)"""
     k = round(t, 3)
     if k not in _arm_cache:
         F = lid_M(t); s2 = dict(st, arms=[list(a) for a in st["arms"]])
-        tg0 = apply(F, (0.68, -0.05, 0.5)); tg1 = apply(F, (0.95, -0.05, -0.05))   # front-right corner, right end
-        solve_arm(s2, 0, tg0, n=24); solve_arm(s2, 1, tg1, side=(-0.2, 1.2), n=24)
+        tg0 = apply(F, (1.0, 0.0, -0.3)); tg1 = apply(F, (1.0, 0.0, -0.65))   # both paws under the lid's right end (he can't reach higher)
+        d0 = solve_arm(s2, 0, tg0, n=24, fwd=(-0.3, 2.0), inward=(0.0, 0.4, 0.8)); d1 = solve_arm(s2, 1, tg1, side=(-0.2, 1.2), n=24, fwd=(-0.3, 2.0), inward=(0.0, 0.4, 0.8))
+        if DEBUG_LIFT: print('lift', k, round(d0, 3), round(d1, 3))
         _arm_cache[k] = [list(a) for a in s2["arms"]]
     st["arms"] = [list(a) for a in _arm_cache[k]]
 HUG_ARMS = [list(DANCE_ARM) + [0.0], [0.3, 1.0, 0.62]]            # Pip on his left paw (the moral's pose), right paw tucked in around him
@@ -266,8 +269,8 @@ def pip_state(t, st, mats):
         if t < T.POP + 0.5:                                             # squeezes out under the lifted lid: a forward dive
             u = clampu(t, T.POP, T.POP + 0.5)
             x0 = PIP_IN[0] - 0.05
-            p = legs3([PIP_IN, np.array([x0, RIM + 0.38, BASKET[1] + 0.05]), np.array([x0, RIM + 0.38, BASKET[1] + 0.8]), out1], u)
-            pitch = 1.15 * math.sin(math.pi * clampu(u, 0.1, 0.8))
+            p = legs3([PIP_IN, np.array([x0, RIM + 0.05, BASKET[1] + 0.3]), np.array([x0, RIM + 0.28, BASKET[1] + 0.85]), out1], u)
+            pitch = 1.15 * math.sin(math.pi * clampu(u, 0.2, 0.85))
             return p, 0.0, True, pitch, False, {"cling": 1.0 - u, "wings": (0.1, 0.1)}
         seat = paw_seat(arms) + np.array([0, 0.02, 0])
         if t < T.CUDDLE - 0.3:                                          # hovers, a bit wobbly, says sorry
@@ -276,7 +279,7 @@ def pip_state(t, st, mats):
         hov = out1 + np.array([0, 0.25, 0])
         u = clampu(t, T.CUDDLE - 0.3, T.CUDDLE)
         if u < 1:                                                       # flies in low and in front of his face, then lands on the paw
-            mid = seat + np.array([-0.1, 0.1, 0.75])
+            mid = seat + np.array([0.15, 0.1, 0.9])
             return legs3([hov, mid, seat], u), look(hov, face), True, 0.0, False, {"gentle": True}
         return seat, look(seat, face), False, 0.0, True, {"cheer": True}
     if n in ("moral", "chorus"):
@@ -320,8 +323,8 @@ def camera(t):
     if name == "is_it_a_joke":
         return fit_cam(np.array([SPINPT[0] + 0.15, 1.45, SPINPT[1]]), 38, 4, 1.0, 1.15)
     if name == "rescue":                                                # side-on to Tumble and the basket front
-        c = np.array([BASKET[0] + 0.55, 1.05, BASKET[1] + 0.6])
-        return fit_cam(c, -24, 7, 1.9, 1.45)
+        c = np.array([BASKET[0] + 0.95, 1.1, BASKET[1] - 0.1])
+        return fit_cam(c, -16, 7, 2.0, 1.5)
     if name == "moral":
         return fit_cam(np.array([MSPOT[0] + 0.25, lerp(1.35, 1.45, e), MSPOT[1]]), lerp(-12, -6, e), 5, lerp(1.3, 1.1, e), lerp(1.4, 1.15, e))
     if name == "chorus":
