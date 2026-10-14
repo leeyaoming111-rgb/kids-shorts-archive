@@ -36,7 +36,7 @@ HONEY_TOP = 0.03
 PB = 0.5                                                # the ant line runs from Pip back-left, away from the camera, at this angle
 DIRL = np.array([-math.cos(PB), 0.0, -math.sin(PB)])    # unit vector from Pip towards the line (xz)
 PIP_YAW_STUCK = math.atan2(-DIRL[0], -DIRL[2])          # Pip faces away from the line (towards the camera, a bit right)
-TS = (0.65, -4.4)                                       # Tumble behind the line, facing Pip
+TS = (0.05, -4.5)                                       # Tumble behind the line, facing Pip
 TS_YAW = math.atan2(HP[0] - TS[0], HP[1] - TS[1])
 HONEY = (1.0, 0.7, 0.12)
 FLOWERS = make_flowers([(T0[0], T0[1], 1.0), (TS[0], TS[1], 1.6), (FLOWER[0], FLOWER[1], 1.0), (HPC[0], HPC[1], 0.8),
@@ -468,7 +468,7 @@ def camera(t):
         a = SH[name][0]; tp = lerp(np.array([-0.2, 0.35, -3.3]), np.array([1.3, 0.45, -2.9]), ease(u))
         return fit_cam(tp, lerp(-8, -22, e), 13, 2.1, 1.3)
     if name == "tug":                                       # side-on along the line
-        return fit_cam(np.array([HP[0] - 0.55, 0.4, HP[1] - 0.45]), lerp(-8, -20, e), 8, 1.35, 0.9, lift=0.06)
+        return fit_cam(np.array([HP[0] - 0.55, 0.4, HP[1] - 0.45]), lerp(-8, -20, e), 8, 1.35, 0.9 if not WIDE else 1.6, lift=0.06)
     if name == "pop":                                       # wide side: the pop and the somersault onto his nose
         return fit_cam(np.array([0.75, 1.3, -3.4]), -4, 8, 2.4, 2.2, lift=0.05)
     if name == "moral":
