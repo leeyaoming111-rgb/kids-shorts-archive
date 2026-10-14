@@ -322,13 +322,14 @@ def pip_state(t, st, mats):
         u = clampu(t, b - 0.12, b)
         return lerp(PIP_SPOT + np.array([0, 0.12, 0]), PIP_SPOT, u), PIP_YAW, True, 0.0, False, {"gentle": True}
     # ---- small gags, one per scene ----
+    y0 = p[1]
     if SCENE == "intro":
         L4 = T.TALK[3]
         for w in L4["words"][1:]: p[1] += hop(t, w["t0"])               # "Open it, open it!" hops
         if n == "thats_me": ex = {"point": True} if T.TALK[6]["t0"] - 0.1 < t < T.TALK[6]["t1"] + 0.6 else {}
     elif SCENE == "link01":
         A = T.TALK[0]
-        if A["t0"] < t < A["t1"] + 0.4: ex = {"cheer": True}; p[1] += 0.02 * math.sin((t - A["t0"]) * 9)
+        if A["t0"] < t < A["t1"] + 0.4: ex = {"cheer": True}; p[1] += 0.02 * abs(math.sin((t - A["t0"]) * 9))
     elif SCENE == "link03":                                             # one hop per counted pebble
         for k_ in ("one", "two", "three", "four", "five"):
             for tw in T.word_times(k_, [T.TALK[0]]): p[1] += hop(t, tw, 0.12, 0.3)
@@ -352,7 +353,7 @@ def pip_state(t, st, mats):
         G = T.TALK[0]
         if G["t0"] - 0.1 < t < G["t1"] + 0.8: ex = {"wings": (0.04, 1.0 + 0.3 * math.sin(t * 7))}   # waves goodnight
         if t > G["t1"] + 0.8: ex = {"tuck": True}
-    return p, yaw, False, 0.0, True, ex
+    return p, yaw, False, 0.0, p[1] - y0 < 0.012, ex                    # a hop leaves the stump: not 'perched' while up
 
 # ================= cameras =================
 def cam_two(e, yaw=6.0, pitch=7.0, fw=1.75, fh=1.45, cx=0.18, cy=1.25):
