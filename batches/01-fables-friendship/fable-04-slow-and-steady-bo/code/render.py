@@ -33,7 +33,7 @@ BO_S = 1.15
 STUMP_S = 1.3; STUMP = C(9.95, 0.55); STUMP_TOP = 0.55 * STUMP_S - 0.02; STUMP_ROT = 1.2
 S_TOUCH = 7.94                                               # Bo's nose on the stump
 RUN_S = 6.0                                                  # where Tumble skids to a stop
-NAP = C(4.3, -1.8); NAP_YAW = math.atan2(-NRM[0], -NRM[1])   # lying on his side, back to the course, head towards the finish
+NAP = C(8.4, -1.9); NAP_YAW = math.atan2(NRM[0], NRM[1])   # lying on his side, face to the course-side cameras, head up-course under the mushroom, head towards the finish
 MUSH1 = C(6.95, -2.85); MUSH1_S = 1.5                        # the giant mushroom his snores puff
 MUSH2 = C(8.3, -3.8); MUSH2_S = 1.05
 PEB = C(0.25, -2.0)                                          # Pip's referee pebble
@@ -295,6 +295,7 @@ def flag_M(t, pip):
 
 # ---------------- camera ----------------
 def yaw_of(v): return math.degrees(math.atan2(v[0], v[1]))
+SG = 1
 def camera(t):
     i, name, u, lt = T.shot_at(t); e = ease(u)
     st = tumble(t); b = bo(t)
@@ -315,13 +316,13 @@ def camera(t):
         return fit_cam(np.array([p[0], 1.0, p[1]]), yaw_of(DIR) - 28, 7, 2.2, 1.6, lift=0.05)
     if name == "lie_down":                                   # medium, from the far side of the course
         c = (C(RUN_S, LANE_T) + NAP) / 2 + DIR * 0.5
-        return fit_cam(np.array([c[0], 1.0, c[1]]), yaw_of(-NRM) + lerp(14, 8, e), 8, 2.6, 1.9)
+        return fit_cam(np.array([c[0], 1.0, c[1]]), yaw_of(NRM) + SG * lerp(8, 4, e), 16, 2.8 if not WIDE else 3.2, 2.0)
     if name == "snore":                                      # close on the snoring face and the mushroom
-        hd = NAP + DIR * 1.45
-        return fit_cam(np.array([hd[0], 0.85, hd[1]]), yaw_of(-NRM) + lerp(16, 10, e), 10, 1.4, 1.1)
+        hd = NAP - DIR * 1.2
+        return fit_cam(np.array([hd[0], 0.85, hd[1]]), yaw_of(NRM) + SG * lerp(12, 6, e), 12, 1.5, 1.1)
     if name == "bo_passes":                                  # low wide from behind the sleeper: Bo plods past beyond him
-        c = NAP + DIR * 0.7 + NRM * 0.9
-        return fit_cam(np.array([c[0], 0.75, c[1]]), yaw_of(-NRM) + lerp(-8, 2, e), 7, 2.3, 1.5)
+        c = (NAP - DIR * 0.3 + b["p"]) / 2
+        return fit_cam(np.array([c[0], 0.7, c[1]]), yaw_of(NRM) + SG * lerp(20, 30, e), 20, 2.9 if not WIDE else 3.6, 2.0)
     if name == "bo_near":                                    # low angle at the stump: Pip with the flag, Bo coming
         c = (STUMP + b["p"]) / 2 + NRM * 0.1
         return fit_cam(np.array([c[0], 0.95, c[1]]), yaw_of(-DIR) + 50, -4, 2.2, 1.4, lift=0.06)
