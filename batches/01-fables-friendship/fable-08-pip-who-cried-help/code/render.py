@@ -24,6 +24,7 @@ FLOOR = BASE_Y + 0.09 * BS                                               # insid
 LX, LY, LZ = 0.98, 0.07, 0.80                                            # lid half-sizes (a flattened clay ball)
 HINGE = np.array([BASKET[0], RIM + 0.06, BASKET[1] - LZ])               # hinged on the basket's back edge
 LID_OPEN = 1.72                                                          # standing open, leaning back a little past upright
+LOWER_T = T.POP + 0.5                                                      # he sets the lid down once Pip is out, before the hug
 LIFT_A = 0.55                                                            # how far Tumble raises the lid
 LID_TINT = (0.80, 0.58, 0.36)
 PIP_IN = np.array([BASKET[0] - 0.1, FLOOR - 0.033, BASKET[1] + 0.05]) + UP      # Pip inside, on the basket floor
@@ -53,8 +54,8 @@ def lid_angle(t):
         if SH["muffled"][0] <= t < SH["is_it_a_joke"][1]:                 # Pip pushing from inside
             a += 0.035 * max(0.0, math.sin(t * 13)) * clampu(t, SH["muffled"][0], SH["muffled"][0] + 0.3)
         return a
-    if t < T.LOWER: return LIFT_A * ease(clampu(t, T.LIFT, T.LIFT + 0.4))   # Tumble lifts the lid
-    return LIFT_A * (1 - ease(clampu(t, T.LOWER, T.LOWER + 0.5)))          # and lowers it gently once Pip is out
+    if t < LOWER_T: return LIFT_A * ease(clampu(t, T.LIFT, T.LIFT + 0.4))   # Tumble lifts the lid
+    return LIFT_A * (1 - ease(clampu(t, LOWER_T, LOWER_T + 0.3)))          # and lowers it gently once Pip is out
 def basket_rock(t):
     if SH["muffled"][0] <= t < T.LIFT: return 0.03 * math.sin(t * 13) * clampu(t, SH["muffled"][0], SH["muffled"][0] + 0.3)
     return 0.0
@@ -177,7 +178,7 @@ def tumble(t):
         st["x"], st["z"] = SPINPT
         turn = ease(clampu(t, a, a + 0.4)); st["yaw"] = lerp(0.3, 0.9, turn)
         if t < T.TW_SPLIT2 - 0.55:
-            st["arms"][1] = [0.25, 2.1]; st["head"][2] = 0.12 * ease(clampu(t, T.JOKE, T.JOKE + 0.4))
+            st["arms"][1] = [0.2, 1.6, 0.6]; st["head"][2] = 0.12 * ease(clampu(t, T.JOKE, T.JOKE + 0.4))
         else:
             u = clampu(t, T.TW_SPLIT2 - 0.55, T.TW_SPLIT2)
             walk_to(st, t, SPINPT, (SPINPT[0] + 1.3, SPINPT[1] + 0.2), T.TW_SPLIT2 - 0.55, T.TW_SPLIT2 + 0.1, rate=3.4)
@@ -190,7 +191,7 @@ def tumble(t):
             if t >= T.LIFT - 0.2: st["yaw"] = LIFT_YAW
         else:
             st["x"], st["z"] = LIFTPT; st["yaw"] = LIFT_YAW
-        if T.LIFT - 0.1 <= t < T.LOWER + 0.5:
+        if T.LIFT - 0.1 <= t < LOWER_T + 0.3:
             lift_arms(st, t); st["head"][0] = -0.1
         if t >= T.CUDDLE - 0.35:                                        # the hug: paws to his chest for Pip
             u = ease(clampu(t, T.CUDDLE - 0.35, T.CUDDLE))
@@ -279,7 +280,7 @@ def pip_state(t, st, mats):
         hov = out1 + np.array([0, 0.25, 0])
         u = clampu(t, T.CUDDLE - 0.3, T.CUDDLE)
         if u < 1:                                                       # flies in low and in front of his face, then lands on the paw
-            mid = seat + np.array([0.15, 0.1, 0.9])
+            mid = seat + np.array([0.3, -0.2, 0.9])
             return legs3([hov, mid, seat], u), look(hov, face), True, 0.0, False, {"gentle": True}
         return seat, look(seat, face), False, 0.0, True, {"cheer": True}
     if n in ("moral", "chorus"):
@@ -307,15 +308,15 @@ def camera(t):
     if name == "splash":                                                # ground level, side
         return fit_cam(np.array([FLOPPT[0] - 0.35, 0.6, FLOPPT[1]]), lerp(-62, -70, e), 5, 1.8, 1.2, lift=0.08)
     if name == "giggle":                                                # close on Pip, Tumble in the puddle behind
-        return fit_cam(PIP_FLOWER + np.array([0.3, -0.05, 0]), -75, 6, 1.0, 0.95, lift=0.1)
+        return fit_cam(np.array([-0.9, 1.05, -1.1]), -14, 6, 3.4, 1.6, lift=0.1)
     if name == "drip":
         return fit_cam(np.array([lerp(FLOPPT[0], T_HOME[0], 0.5), 1.1, lerp(FLOPPT[1], T_HOME[1], 0.5)]), 25, 8, 2.0, 1.6)
     if name == "rush2":                                                 # wide side, tracking the leap, the skid and the spin
         cx = lerp(T_HOME[0] - 0.8, SPINPT[0] + 0.9, ease(clampu(t, T.RUN2, T.SPIN + 0.3)))
-        return fit_cam(np.array([cx, 1.15, -0.45]), 4, 7, 2.6, 1.7)
+        return fit_cam(np.array([cx, 1.15, -0.45]), -32, 8, 2.8, 1.7)
     if name == "not_again":                                             # two-shot, Tumble and Pip on the flower
         c = lerp(np.array([SPINPT[0], 1.25, SPINPT[1]]), PIP_FLOWER, 0.45)
-        return fit_cam(c, side_on_yaw(np.array([SPINPT[0], 0, SPINPT[1]]), PIP_FLOWER, 100) + lerp(-4, 4, e), 4, 1.5, 1.3)
+        return fit_cam(c, side_on_yaw(np.array([SPINPT[0], 0, SPINPT[1]]), PIP_FLOWER, 100) + lerp(-4, 4, e), 4, 3.0, 1.9)
     if name == "basket":                                                # Pip arrives at the basket, the lid flops
         return fit_cam(np.array([BASKET[0] - 0.25, lerp(1.3, 1.15, clampu(t, T.P_IN, T.LID_SHUT)), BASKET[1] + 0.2]), lerp(-14, -8, e), 14, 1.6, 1.5)
     if name == "muffled":                                               # low angle on the wobbling basket
@@ -351,10 +352,6 @@ def build_draws(t):
     draws.append((E2["basket"], basket_M(t), U(mat=0, bump=0.9, obj="basket"), True))
     LM = lid_M(t)
     draws.append((PR["ball"], LM @ scale(LX, LY, LZ), U(mat=0, bump=0.9, tint=LID_TINT, tintMix=1.0, obj="lid"), True))
-    for hx in (-0.45, 0.45):                                            # two leather hinge straps over the back rim
-        a_ = apply(LM, (hx, 0.0, -LZ + 0.08)); b_ = np.array([BASKET[0] + hx, RIM - 0.12, BASKET[1] - 0.42 * BS + 0.02])
-        Ms = seg_M(a_, b_, 0.035)
-        if Ms is not None: draws.append((PR["stick"], Ms, U(mat=0, bump=0.3, tint=(0.55, 0.36, 0.22), tintMix=1.0), False))
     draws.append((PR["ball"], LM @ trans(0, 0.07, LZ - 0.12) @ scale(0.09, 0.05, 0.07), U(mat=0, bump=0.4, tint=(0.62, 0.4, 0.25), tintMix=1.0), True))
     for k in range(3):                                                   # berries in the basket (seen when it is open)
         draws.append((E2["berry"], trans(BASKET[0] + 0.25 + 0.15 * k, FLOOR + 0.07, BASKET[1] - 0.25 + 0.1 * (k % 2)) @ scale(0.12), U(mat=0, bump=0.4), False))
@@ -363,7 +360,13 @@ def build_draws(t):
     pip = pip_state(t, st, mats)
     draw_pip(draws, contacts, t, pip, arms)
     # splash, drips, dust
-    puff(draws, np.array([FLOPPT[0] - 0.6, 0.15, FLOPPT[1]]), T.FLOP - 0.05, t, n=14, size=0.08, spread=1.4, dur=0.55, tint=WATER, axis=(0, 0.9, 0.3))
+    d_ = t - (T.FLOP - 0.05)                                            # radial splash: droplets arc out of the puddle round his belly
+    if 0 <= d_ < 0.8:
+        for k in range(22):
+            a_ = k * 2.399; r_ = 0.25 + (0.7 + 0.5 * (k % 3)) * d_ * 1.4; h_ = 0.12 + (1.3 + 0.5 * (k % 4)) * d_ - 2.6 * d_ * d_
+            if h_ < 0.02: continue
+            q = np.array([FLOPPT[0] + math.cos(a_) * r_ * 1.3, surf(*FLOPPT) + h_, FLOPPT[1] + math.sin(a_) * r_])
+            draws.append((PR["ball"], trans(*q) @ scale(0.06 * (1 - d_ / 0.8) + 0.015), U(mat=0, bump=0.0, tint=WATER, tintMix=1.0), False))
     if n == "drip" and t < SH["drip"][0] + 1.0:
         puff(draws, np.array([FLOPPT[0], 1.0, FLOPPT[1]]), SH["drip"][0] + 0.05, t, n=12, size=0.045, spread=1.3, dur=0.8, tint=WATER, axis=(0, 0.2, 0.3))
     if n in ("giggle", "drip"):                                         # a few drips falling off him
