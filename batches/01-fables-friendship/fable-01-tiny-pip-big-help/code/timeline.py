@@ -130,4 +130,5 @@ GUST0, GUST1 = WHOOSH - 0.2, _pa[1] - 0.3             # kite swoops and circles 
 TOPPLE = (word_times("tangled", "Problem B") or [_pb[0] + 1.4])[0]   # he tips over on "tangled", lands by "ground"
 SPIN0 = TW_SPLIT + 0.45                                     # Pip hops clear first, then Tumble rises and spins
 SPIN1 = min(TW_SPLIT + 2.2, MORAL_CUT - 0.5)                # and is dizzy for at least half a second before the cut
+GAG_WHEE = TW_SPLIT + 0.7; SPOKEN[1]["t0"] = GAG_WHEE      # "Wheee!" as he starts to spin (mix v2: spliced from the song-only audio)
 HIGH_FIVE = _c[1] - 0.9
