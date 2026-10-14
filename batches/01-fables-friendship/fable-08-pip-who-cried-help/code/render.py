@@ -2,6 +2,13 @@
 Shared renderer: fablekit.py. python3 render.py [--wide] [--preview] [out.mp4] | x <secs...> | seg f0 f1 out.mp4 | sheet | qa"""
 from fablekit import *
 
+# kit bug override: vertices are 40 bytes, so the shadow VAO skips 28 bytes after the position, not 36
+for _grp in (FOXP, PIPP, PR, SC, E2):
+    for _m in _grp.values():
+        _m.svao = ctx.vertex_array(sprog, [(_m.vbo, "3f 28x", "in_pos")], _m.ibo)
+for _m in (EYE_W, EYE_P):
+    _m.svao = ctx.vertex_array(sprog, [(_m.vbo, "3f 28x", "in_pos")], _m.ibo)
+
 # ---------------- world: the picnic corner of the meadow (giant flower, puddle, blanket and basket) ----------------
 FLOWER = (-2.0, -1.2); FLOWER_S = 6.0; FLOWER_TINT = (1.0, 0.62, 0.78)
 FLOWER_TOP = surf(*FLOWER) - 0.01 + 0.252 * FLOWER_S                    # top of the flower's middle
@@ -17,14 +24,15 @@ FLOOR = BASE_Y + 0.09 * BS                                               # insid
 LX, LY, LZ = 0.98, 0.07, 0.80                                            # lid half-sizes (a flattened clay ball)
 HINGE = np.array([BASKET[0], RIM + 0.06, BASKET[1] - LZ])               # hinged on the basket's back edge
 LID_OPEN = 1.72                                                          # standing open, leaning back a little past upright
+LIFT_A = 0.85                                                            # how far Tumble raises the lid
 LID_TINT = (0.80, 0.58, 0.36)
-PIP_IN = np.array([BASKET[0] - 0.25, FLOOR - 0.035, BASKET[1] + 0.15]) + UP      # Pip inside, on the basket floor
+PIP_IN = np.array([BASKET[0] - 0.1, FLOOR - 0.033, BASKET[1] + 0.05]) + UP      # Pip inside, on the basket floor
 RIM_FRONT = np.array([BASKET[0] - 0.35, RIM, BASKET[1] + 0.385 * BS * 0.98]) + UP   # front rim, left of centre
 T_HOME = (BASKET[0] - 0.6, BASKET[1] + 1.75)                             # Tumble by the picnic, off the blanket
 TRIPPT = (PUDDLE[0] + 1.15, PUDDLE[1] + 0.15)                             # foot catches the puddle's edge
 FLOPPT = (PUDDLE[0] + 0.75, PUDDLE[1] + 0.05)                            # where his feet end up as he belly-flops
-LEAP_A = (PUDDLE[0] + 1.2, PUDDLE[1] + 0.45); LEAP_B = (PUDDLE[0] - 1.3, PUDDLE[1] + 1.0)
-SPINPT = (FLOWER[0] - 1.35, FLOWER[1] + 1.85)                            # skids past the flower's front, spins here
+LEAP_A = (PUDDLE[0] + 1.2, PUDDLE[1] + 0.45); LEAP_B = (PUDDLE[0] - 1.3, PUDDLE[1] + 1.35)
+SPINPT = (FLOWER[0] - 1.35, FLOWER[1] + 2.2)                            # skids past the flower's front, spins here
 LIFTPT = (BASKET[0] + 1.5, BASKET[1] + 0.3)                              # at the basket's right end
 MSPOT = (BASKET[0] - 1.5, BASKET[1] + 1.9)                               # moral, dance and button
 BERRIES = [(BLANKET[0] - 0.7, BLANKET[1] + 0.3), (BLANKET[0] - 0.55, BLANKET[1] + 0.45), (BLANKET[0] - 0.85, BLANKET[1] + 0.5)]
@@ -45,8 +53,8 @@ def lid_angle(t):
         if SH["muffled"][0] <= t < SH["is_it_a_joke"][1]:                 # Pip pushing from inside
             a += 0.035 * max(0.0, math.sin(t * 13)) * clampu(t, SH["muffled"][0], SH["muffled"][0] + 0.3)
         return a
-    if t < T.LOWER: return 0.5 * ease(clampu(t, T.LIFT, T.LIFT + 0.4))   # Tumble lifts the lid
-    return 0.5 * (1 - ease(clampu(t, T.LOWER, T.LOWER + 0.5)))          # and lowers it gently once Pip is out
+    if t < T.LOWER: return LIFT_A * ease(clampu(t, T.LIFT, T.LIFT + 0.4))   # Tumble lifts the lid
+    return LIFT_A * (1 - ease(clampu(t, T.LOWER, T.LOWER + 0.5)))          # and lowers it gently once Pip is out
 def basket_rock(t):
     if SH["muffled"][0] <= t < T.LIFT: return 0.03 * math.sin(t * 13) * clampu(t, SH["muffled"][0], SH["muffled"][0] + 0.3)
     return 0.0
@@ -88,7 +96,7 @@ def lift_arms(st, t):
         solve_arm(s2, 0, tg0, n=24); solve_arm(s2, 1, tg1, side=(-0.2, 1.2), n=24)
         _arm_cache[k] = [list(a) for a in s2["arms"]]
     st["arms"] = [list(a) for a in _arm_cache[k]]
-HUG_ARMS = [[0.25, 1.0], [0.35, 0.95]]
+HUG_ARMS = [list(DANCE_ARM) + [0.0], [0.3, 1.0, 0.62]]            # Pip on his left paw (the moral's pose), right paw tucked in around him
 def tumble(t):
     st = tumble_base(t); n = T.shot_at(t)[1]
     st["x"], st["z"] = T_HOME; st["yaw"] = RUN_YAW
@@ -183,8 +191,8 @@ def tumble(t):
             lift_arms(st, t); st["head"][0] = -0.1
         if t >= T.CUDDLE - 0.35:                                        # the hug: paws to his chest for Pip
             u = ease(clampu(t, T.CUDDLE - 0.35, T.CUDDLE))
-            st["yaw"] = lerp(LIFT_YAW, 0.2, u); st["x"] += 0.3 * u                 # steps back from the basket as he turns
-            st["arms"] = lerp(st["arms"], HUG_ARMS, u).tolist(); st["head"][0] = 0.05 * u
+            st["yaw"] = lerp(LIFT_YAW, -0.05, u); st["x"] += 0.3 * u                 # steps back from the basket as he turns
+            st["arms"] = lerp([list(a) + [0.0] * (3 - len(a)) for a in st["arms"]], HUG_ARMS, u).tolist(); st["head"][0] = 0.05 * u
             if t > T.CUDDLE + 0.2: st["roll"] = 0.05 * math.sin((t - T.CUDDLE) * 5)
     elif n in ("moral", "chorus"):
         st["x"], st["z"] = MSPOT
@@ -258,17 +266,18 @@ def pip_state(t, st, mats):
         if t < T.POP + 0.5:                                             # squeezes out under the lifted lid: a forward dive
             u = clampu(t, T.POP, T.POP + 0.5)
             x0 = PIP_IN[0] - 0.05
-            p = legs3([PIP_IN, np.array([x0, RIM - 0.22, BASKET[1] + 0.2]), np.array([x0, RIM + 0.03, BASKET[1] + 0.62]),
-                       np.array([x0, RIM + 0.05, BASKET[1] + 1.0]), out1], u)
+            p = legs3([PIP_IN, np.array([x0, RIM + 0.38, BASKET[1] + 0.05]), np.array([x0, RIM + 0.38, BASKET[1] + 0.8]), out1], u)
             pitch = 1.15 * math.sin(math.pi * clampu(u, 0.1, 0.8))
             return p, 0.0, True, pitch, False, {"cling": 1.0 - u, "wings": (0.1, 0.1)}
-        seat = paw_seat(arms)
+        seat = paw_seat(arms) + np.array([0, 0.02, 0])
         if t < T.CUDDLE - 0.3:                                          # hovers, a bit wobbly, says sorry
             hov = out1 + np.array([0, 0.25 + 0.05 * math.sin(t * 7), 0]) + np.array([0.04 * math.sin(t * 9), 0, 0])
             return hov, look(hov, face), True, 0.0, False, {"gentle": True} if t < T.SORRY else {"droop": 0.5, "wings": (0.9 + 0.3 * math.sin(t * 26), 0.9 + 0.3 * math.sin(t * 26))}
         hov = out1 + np.array([0, 0.25, 0])
         u = clampu(t, T.CUDDLE - 0.3, T.CUDDLE)
-        if u < 1: return hop(hov, seat, u, 0.15), look(hov, face), True, 0.0, False, {"gentle": True}
+        if u < 1:                                                       # flies in low and in front of his face, then lands on the paw
+            mid = seat + np.array([-0.1, 0.1, 0.75])
+            return legs3([hov, mid, seat], u), look(hov, face), True, 0.0, False, {"gentle": True}
         return seat, look(seat, face), False, 0.0, True, {"cheer": True}
     if n in ("moral", "chorus"):
         return dance_pip(t, st, mats, n)                                # already on his paw from the hug (across the cut)
