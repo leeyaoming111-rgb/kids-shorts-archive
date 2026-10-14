@@ -16,9 +16,9 @@ def log_axis_y(z):
     return y0 + (y1 - y0) * (z - LZ_N) / (LZ_F - LZ_N)
 def log_top(z): return log_axis_y(z) + LOG_R
 TP = (LX, TZ)
-STAND = log_top(TZ) - float(surf(*TP))                     # stand_h on the log top
+STAND = log_top(TZ) - float(surf(*TP)) + 0.014                     # stand_h on the log top
 FACE_YAW = math.pi / 2                                     # facing +x: down the stream, towards the low camera
-PIP_Z = -6.3
+PIP_Z = -6.42
 PIP_SPOT = np.array([LX, log_top(PIP_Z), PIP_Z]) + UP
 BS = 0.12                                                  # berry scale (mesh y -0.5..0.58)
 BERRY_LOG = np.array([LX, log_top(-6.6) + 0.5 * BS - 0.004, -6.6])
@@ -147,7 +147,7 @@ def tumble(t):
     else:                                                       # button: waves bye-bye, then laughs at Pip's silly face
         a = SH["button_crane"][0]
         dance_tumble(st, SH["chorus"][0] + 0.01, "moral"); st["yaw"] = FACE_YAW - 0.05; st["y"] = 0.0
-        down = ease(clampu(t, a + 0.45, a + 0.85))
+        down = ease(clampu(t, a + 0.7, a + 1.1))
         wave = ease(clampu(t, a + 0.6, a + 0.9))
         st["arms"] = [lerp(DANCE_ARM, [0.3, 0.3], down).tolist(), [0.3 + 2.0 * wave + 0.25 * wave * math.sin(t * 12), 0.5]]
         st["head"][2] = 0.08 * (1 - down)
@@ -197,7 +197,7 @@ FLY_IN = [np.array([LX + 3.2, 2.3, -7.9]), np.array([LX + 0.25, 1.05, PIP_Z]), P
 def paw_berry(arms): return hand_pos(arms, 0) + np.array([0, 0.1 + 0.5 * BS - 0.01, 0])
 def hover_spot(arms):
     """beside the open paw on the far side from Tumble, beak towards the berry (side by side from the front camera)"""
-    return paw_berry(arms) + np.array([0.0, -0.12, -0.42])
+    return paw_berry(arms) + np.array([0.0, -0.12, -0.52])
 _cache = {}
 def hover_ref():
     if "h" not in _cache:
@@ -228,7 +228,9 @@ def pip_state(t, st, mats):
         ex = {}
         if n == "copycat" and t > T.BLEH: ex = {"cheer": True}                 # giggles at the two silly faces
         if n == "reach" and t > T.SLIP: ex = {"wings": (1.2, 1.2)} if t < T.SPLASH + 0.6 else {}
-        if n == "wobble": yaw = to_tumble; ex = {"droop": ease(clampu(t, SH[n][1] - 1.6, SH[n][1] - 0.6))}
+        if n == "wobble":
+            yaw = to_tumble; ex = {"droop": ease(clampu(t, SH[n][1] - 1.6, SH[n][1] - 0.6))}
+            return PIP_SPOT, yaw, False, 0.0, True, ex   # a step back from his drooping paw (changes at the cut)
         return PIP_SPOT, yaw, False, 0.0, True, ex
     if n == "berry":
         a = SH[n][0]
@@ -261,8 +263,8 @@ def pip_state(t, st, mats):
     p0 = paw_seat(fox_mats_p(tumble(a))[2])
     u = clampu(t, a, a + 0.6)
     if u < 1:
-        p = lerp(p0, PIP_SPOT, ease(u)); p[1] += 0.5 * math.sin(math.pi * u); p[0] += 0.3 * math.sin(math.pi * u)
-        return p, FACE_YAW - 0.3, True, 0.0, False, {"wings": (0.3, 0.3)} if u < 0.3 else {"gentle": True}
+        p = lerp(p0, PIP_SPOT, ease(u)); p[1] += 0.55 * math.sin(math.pi * u); p[0] += 0.65 * math.sin(math.pi * u) ** 0.8
+        return p, FACE_YAW - 0.3, True, 0.0, False, {"wings": (0.0, 0.0)} if u < 0.3 else {"gentle": True}
     ex = {"cheer": True} if t < a + 1.4 else {"tongue": True}
     return PIP_SPOT, FACE_YAW - 0.3, False, 0.0, True, ex
 
@@ -290,10 +292,14 @@ def berry_draws(t, pip, arms):
         pb = paw_berry(arms); d = t - T.HALF
         sep = 0.055 * ease(clampu(d, 0, 0.15))
         mine = pb + np.array([-sep, -0.012, 0])
-        if t < T.BITE + 0.25: out.append(trans(*mine) @ roty(FACE_YAW) @ rotz(0.25) @ scale(BS * 0.55, BS * 0.9, BS))
+        if t < T.BITE + 0.25:
+            k = 1 - ease(clampu(t, T.BITE + 0.05, T.BITE + 0.25))    # popped into his mouth
+            out.append(trans(*mine) @ roty(FACE_YAW) @ rotz(0.25) @ scale(BS * 0.55 * k, BS * 0.9 * k, BS * k))
         pip_half = pb + np.array([sep, -0.012, 0])
         if d > 0.45: pip_half = apply(Mp, BEAK_HOLD)
-        if t < T.BITE + 0.45: out.append(trans(*pip_half) @ roty(FACE_YAW) @ rotz(-0.25) @ scale(BS * 0.55, BS * 0.9, BS))
+        if True:
+            k = max(1 - ease(clampu(t, T.BITE + 0.25, T.BITE + 0.45)), 0.002)   # gulped (kept at ~zero size so the prop never pops)
+            out.append(trans(*pip_half) @ roty(FACE_YAW) @ rotz(-0.25) @ scale(BS * 0.55 * k, BS * 0.9 * k, BS * k))
     return out
 
 # ---------------- camera ----------------
