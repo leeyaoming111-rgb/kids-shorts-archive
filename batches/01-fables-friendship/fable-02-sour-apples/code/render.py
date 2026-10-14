@@ -65,7 +65,7 @@ def tumble(t):
         st["head"][0] = -0.3
         for j in T.JUMPS:
             y = jump_y(t, j, hgt=0.42, dur=0.55)
-            if y > 0: st["y"] += y; st["arms"][0] = REACH_ARM; st["legs"] = [0.1, 0.1]
+            if y > 0: st["y"] += y; st["arms"][0] = REACH_ARM; st["arms"][1] = [2.0, 0.3]; st["legs"] = [0.1, 0.1]
             d = t - (j + 0.55)
             if 0 <= d < 0.3: st["sq"] -= 0.1 * math.exp(-d * 9) * math.cos(d * 25)
         if not any(0 <= t - j < 0.55 for j in T.JUMPS): st["arms"][0] = [1.6, 0.4]
@@ -90,7 +90,7 @@ def tumble(t):
         L = T.line("Problem A")
         cross = ease(clampu(t, L["t0"] - 0.3, L["t0"] + 0.2))
         st["arms"] = [lerp([0.3, 0.3, 0.0], CROSS0, cross).tolist(), lerp([0.3, 0.3, 0.0], CROSS1, cross).tolist()]
-        st["head"][0] = -0.35 * cross; st["head"][1] = 0.5 * cross; st["yaw"] = st["yaw"] - 0.25 * cross   # turns away, nose in the air
+        st["head"][0] = -0.55 * cross; st["head"][1] = 0.35 * cross; st["yaw"] = lerp(st["yaw"], -0.12, cross)   # faces the camera, arms crossed, nose in the air
         if L["t0"] < t < L["t1"]: st["y"] += 0.02 * abs(math.sin((t - L["t0"]) * 7))
     elif n == "pip_idea":
         st["x"], st["z"] = POPPED; st["yaw"] = -0.35
@@ -110,24 +110,33 @@ def tumble(t):
             st["y"] += 0.3 * math.sin(math.pi * u); st["yaw"] = lerp(math.atan2(STUMP[0] - base[0], STUMP[1] - base[1]), -0.4, ease(u))
             st["arms"] = [[1.8, 0.6], [1.8, 0.6]]               # arms up and out for balance, clear of the stump
             if u >= 1: st["head"][0] = -0.35; st["arms"] = [[0.4, 1.9], [0.4, 1.9]]
-    elif n in ("tug", "catch"):
+    elif n in ("ready", "tug", "catch"):
         st["x"], st["z"] = STUMP; st["stand_h"] = STUMP_TOP; st["yaw"] = -0.4; st["head"][0] = -0.35
         st["arms"] = [list(CATCH), list(CATCH)]             # both paws together in front, ready to catch
-        if t > T.CATCH:
+        if t > T.CATCH:                                     # caught! a happy squish and wiggle
             d = t - T.CATCH
             st["head"][0] = -0.05; st["sq"] -= 0.08 * math.exp(-d * 7) * math.cos(d * 20)
-            if T.GAG_SWEET - 0.4 < t < T.GAG_SWEET + 0.9:    # brings it up for a big crunchy bite, happy wiggle
-                st["arms"] = [list(BITE), list(BITE)]; st["roll"] = 0.08 * math.sin((t - T.GAG_SWEET) * 14)
-                st["y"] += 0.04 * abs(math.sin((t - T.GAG_SWEET) * 10))
+            st["y"] += 0.05 * abs(math.sin(d * 9)) * math.exp(-d * 1.2)
     elif n in ("moral", "chorus"):
         st["x"], st["z"] = MSPOT
         dance_tumble(st, t, n)
         sway = math.sin(2 * math.pi * (t - SH["chorus"][0]) / (2 * BEAT)) if n == "chorus" else 0.0
         st["arms"][1] = [0.45, 0.95 + 0.12 * sway]           # the apple in his other paw
+        if n == "chorus":
+            st["y"] += 0.045 * abs(math.sin(math.pi * (t - SH["chorus"][0]) / BEAT)) * (1.0 if t < T.HIGH_FIVE + 0.5 else 0.0)   # bounces on the beat
+            st["yaw"] += 0.12 * sway; st["head"][1] = 0.12 * sway
+            g = T.GAG_SWEET
+            if g - 0.5 < t < g + 1.3:                        # the first crunchy bite: apple up to his mouth, chewing, happy wiggle
+                k = ease(clampu(t, g - 0.5, g - 0.1)) * (1 - ease(clampu(t, g + 0.9, g + 1.3)))
+                st["arms"][1] = lerp(np.array([0.45, 0.95, 0.0]), np.array(BITE), k).tolist()
+                st["roll"] += 0.06 * math.sin((t - g) * 12) * k; st["head"][0] = 0.12 * math.sin((t - g) * 14) * k
+                st["y"] += 0.03 * abs(math.sin((t - g) * 10)) * k
     else:                                                   # button: holds the apple out; Pip pecks a bite
         a = SH["button_crane"][0]; st["x"], st["z"] = MSPOT; st["yaw"] = -0.05
         down = ease(clampu(t, a + 0.45, a + 0.85))           # keeps the dance paw up until Pip has hopped off it
         st["arms"] = [lerp(DANCE_ARM, [0.3, 0.3], down).tolist(), [0.45, 1.1]]
+        w = clampu(t, a + 0.6, a + 0.8) * (1.0 if t < a + 2.3 else 0.0)   # a goodbye wave with the free paw on "Bye-bye!"
+        if w > 0: st["arms"][0] = [1.9 + 0.35 * math.sin((t - a) * 14), 0.3 * w + 0.3 * (1 - w)]
         st["head"][1] = -0.25 * down; st["head"][0] = 0.05 * down; st["head"][2] = 0.1 * (1 - down)
         st["y"] += 0.03 * abs(math.sin(t * 9)) * clampu(t, SH["button_crane"][0] + 1.0, SH["button_crane"][0] + 1.2)
     return st
@@ -163,7 +172,9 @@ def tug_pull(t):
     back = 0.0
     for k, tg in enumerate(T.TUGS):
         d = t - tg
-        if 0 <= d < 0.4: back = max(back, (0.06 + 0.03 * k) * math.sin(math.pi * d / 0.4))
+        if 0 <= d < 0.4: back = max(back, (0.12 + 0.04 * k) * math.sin(math.pi * d / 0.4))
+    s0 = T.TUGS[-1] + 0.5                                   # "here it comes": one long strain until the stem lets go
+    if s0 < t < T.RELEASE: back = max(back, 0.2 * ease(clampu(t, s0, T.RELEASE - 0.05)) + 0.02 * math.sin(t * 30))
     return back
 
 # ---------------- Pip ----------------
@@ -174,6 +185,20 @@ def tug_body(back):
     beak = A + np.array([OUT[0] * 0.17, -0.15, OUT[1] * 0.17])
     fwd = np.array([-OUT[0], 0, -OUT[1]])
     return beak - fwd * (0.27 * 1.1 + back) - np.array([0, 0.31 * 1.1 + back * 0.4, 0])
+def leg_path(pts, u):
+    """straight legs through pts at constant speed; u in 0..1 (eased). Returns position and heading yaw"""
+    pts = [np.asarray(p, float) for p in pts]; seg = [np.linalg.norm(b - a) for a, b in zip(pts, pts[1:])]
+    def at(x):
+        d = clampu(x, 0, 1) * sum(seg)
+        for (a, b), l in zip(zip(pts, pts[1:]), seg):
+            if d <= l: return a + (b - a) * (d / max(l, 1e-9))
+            d -= l
+        return pts[-1]
+    e = ease(u); p = at(e); q = at(min(1.0, e + 0.03)) - at(max(0.0, e - 0.03))
+    return p, math.atan2(q[0], q[2])
+BEHIND = STUMP[1] - 0.95                                    # flights past the stump keep a body-width behind him, above his ears
+W0 = np.array([STUMP[0] + 0.9, 2.95, BEHIND])               # waiting point, behind-right of the stump
+SIDE2 = np.array([STUMP[0] + 0.5, 3.0, BEHIND - 0.15])      # cheer point after the catch
 def pip_state(t, st, mats):
     n = T.shot_at(t)[1]
     R, Mh, arms, legs = mats
@@ -199,24 +224,30 @@ def pip_state(t, st, mats):
         return hov, math.atan2(face[0] - hov[0], face[2] - hov[2]), True, 0.0, False, ex
     if n == "climb":
         a = SH[n][0]; hov = apply(fox_mats_p(tumble(a - 0.01))[1], (0.62, 1.5, 0.55))
-        u = clampu(t, a + 0.8, a + 2.8)
-        p = lerp(hov, tug_spot, ease(u)); p[1] += 0.3 * math.sin(math.pi * u)
-        return p, math.atan2(stem_pt[0] - p[0], stem_pt[2] - p[2]) if u > 0.5 else 0.6, True, 0.0, False, {"gentle": True}
+        u = clampu(t, a, a + 1.5)                           # straight up from his face, then across above him to the far side of the stump
+        p, yw = leg_path([hov, hov + np.array([0, 0.9, 0]), W0], u)
+        return p, yw if u < 1 else 0.0, True, 0.0, False, {"gentle": True}
+    if n == "ready":
+        a, b = SH[n]; u = clampu(t, a + 0.4, b - 0.15)      # waits behind the stump, then flies round behind him to the apple
+        w1 = tug_spot + np.array([OUT[0] * 0.9, -0.05, -0.6])
+        if u <= 0: return W0 + np.array([0, 0.05 * math.sin(t * 6), 0]), 0.0, True, 0.0, False, {"gentle": True}
+        p, yw = leg_path([W0, w1, tug_spot], u)
+        return p, (yw if u < 0.92 else math.atan2(stem_pt[0] - p[0], stem_pt[2] - p[2])), True, 0.0, False, {"gentle": True}
     if n == "tug":
         back = tug_pull(t) if t < T.RELEASE else 0.0
-        pitch = -0.35 * back / 0.12
+        pitch = -0.35 * min(back, 0.2) / 0.12
         p = tug_body(0.0) + np.array([OUT[0] * back, 0.0, OUT[1] * back])   # the apple moves with him: beak stays on it
         if t > T.RELEASE: p = p + np.array([OUT[0] * 0.25, -0.1, OUT[1] * 0.25]) * clampu(t, T.RELEASE, T.RELEASE + 0.3)
         return p, TUG_YAW, True, pitch, False, {"beak": t < T.RELEASE, "gentle": True}
     if n == "catch":
         a = SH[n][0]
-        side = np.array([STUMP[0] + 0.85, 1.7, STUMP[1] + 0.45]) + np.array([0, 0.06 * math.sin(t * 6), 0])
+        side = SIDE2 + np.array([0, 0.05 * math.sin(t * 6), 0])
         start = tug_spot + np.array([OUT[0] * 0.25, -0.1, OUT[1] * 0.25])
-        u = clampu(t, a, a + 0.9); p = lerp(start, side, ease(u))   # out and down, away from the leaves
+        u = clampu(t, a, a + 0.8); p, yw = leg_path([start, side], u)       # away from the leaves, round behind him
         ex = {"cheer": True} if t > T.GAG_SWEET else {}
-        return p, math.atan2(st["x"] - p[0], st["z"] - p[2]), True, 0.0, False, ex
+        return p, (math.atan2(st["x"] - p[0], st["z"] - p[2]) if u >= 1 else yw), True, 0.0, False, ex
     if n in ("moral", "chorus"):
-        return dance_pip(t, st, mats, n, arrive_from=np.array([STUMP[0] + 0.85, 1.7, STUMP[1] + 0.45]))
+        return dance_pip(t, st, mats, n, arrive_from=SIDE2)
     a, b = SH["button_crane"]                               # hops from the paw onto the apple for a peck
     held = apple_state(t, mats)[1]
     top = held + np.array([0, APPLE_TOP, 0]) + UP
@@ -263,7 +294,8 @@ def camera(t):
         cx = lerp(RUN0[0] + 1.0, PILE[0] - 0.4, e)
         return fit_cam(np.array([cx, 1.2, lerp(RUN0[1], PILE[1], e) - 0.2]), 6, 6, 2.1, 1.7)
     if name == "leaf_pile":                                 # close on the pile: legs and tail sticking out
-        return fit_cam(np.array([PILE[0], 0.85, PILE[1]]), lerp(30, 22, e), 12, 1.05, 1.25)
+        c = lerp(np.array([PILE[0] - 0.2, 0.95, PILE[1]]), np.array([PILE[0], 0.85, PILE[1]]), e)     # starts wide enough to keep him in as he comes down
+        return fit_cam(c, lerp(30, 22, e), 12, lerp(1.9, 1.05, e), lerp(1.9, 1.25, e))
     if name == "sour_face":
         return fit_cam(np.array([POPPED[0] + 0.25, 1.35, POPPED[1]]), lerp(-14, -8, e), 5, 1.0, 1.25)
     if name == "pip_idea":                                  # two-shot, Pip at his face
@@ -274,8 +306,10 @@ def camera(t):
     if name == "tug":                                       # up in the tree with Pip and the apple
         pb = tug_body(0.0) + np.array([0, 0.3, 0])
         return fit_cam(lerp(A, pb, 0.55) - np.array([0, 0.05, 0]), TUG_CAM_YAW + lerp(-4, 4, e), -4, 0.72, 0.66, fov=34, lift=0.1)   # angle solved so Tumble stays out of line
-    if name == "catch":                                     # low medium on the stump
-        return fit_cam(np.array([STUMP[0] + 0.15, lerp(1.5, 1.4, e), STUMP[1] + 0.1]), lerp(-16, -10, e), -6, 1.05, 1.4)
+    if name == "ready":                                     # tall frame on the stump: Tumble below, the apple at the top, Pip flying up
+        return fit_cam(np.array([STUMP[0] - 0.3, 1.95, STUMP[1] - 0.2]), lerp(36, 42, e), -4, 2.2, 3.2)
+    if name == "catch":                                     # tall enough to see the apple fall into his paws
+        return fit_cam(np.array([STUMP[0] - 0.4, lerp(2.0, 1.8, e), STUMP[1] - 0.2]), lerp(42, 34, e), -4, lerp(2.2, 1.6, e), lerp(2.7, 2.2, e))
     if name == "moral":
         return fit_cam(np.array([MSPOT[0] + 0.25, lerp(1.35, 1.45, e), MSPOT[1]]), lerp(12, 6, e), 5, lerp(1.3, 1.1, e), lerp(1.4, 1.15, e))
     if name == "chorus":
@@ -317,7 +351,7 @@ def build_draws(t):
         Ma = trans(*val) @ roty(t * 0.5 if kind == "fall" else 0.0) @ scale(APPLE_S)
         draws.append((PR["stick"], trans(*stem_top) @ trans(0, -0.2, 0) @ scale(0.25, 0.2, 0.25), U(mat=0, bump=0.0, tint=(0.48, 0.32, 0.2), tintMix=1.0), False))
     draws.append((E2["apple"], Ma, U(mat=0, bump=0.5, obj="apple"), True))
-    if kind != "hang" and T.GAG_SWEET - 0.1 < t < SH["catch"][1]:
+    if kind != "hang" and T.GAG_SWEET - 0.1 < t < T.GAG_SWEET + 0.6:
         puff(draws, val + np.array([0, 0.1, 0.25]), T.GAG_SWEET - 0.05, t, n=8, size=0.04, spread=0.6, dur=0.4, tint=(1.0, 0.96, 0.85))
     puff(draws, np.array([PILE[0], 0.5, PILE[1]]), T.LAND, t, n=12, size=0.07, spread=1.2, dur=0.5, tint=(0.95, 0.7, 0.35), axis=(0, 0.8, 0.3))
     return draws, contacts
