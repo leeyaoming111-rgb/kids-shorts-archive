@@ -21,7 +21,7 @@ J = (0.55, 0.0)                                            # the tall jug
 JUG_YAW = -2.36                                            # handle at the back right, away from Tumble and the camera
 RIM_R, RIM_Y = 0.245, props_f3.JUG_TOP
 W0, WSTEP = 0.2, 0.12                                      # water level at the start, rise per pebble (5 -> 0.8)
-PEB_R = 0.062
+PEB_R = 0.07
 def jug_base(): return trans(J[0], ground_h(*J) - 0.01, J[1]) @ roty(JUG_YAW)
 MJ0 = jug_base()
 def jw(p): return apply(MJ0, p)                            # jug-local -> world (jug standing)
@@ -40,7 +40,7 @@ LEAF_FWD = 0.59                                            # the leaf sits this 
 WALL_X = PICK[0] + 0.76                                   # dry stone wall: its top is where the paws hold the leaf
 WALL_ZS = (LAND[1] + 0.0, LAND[1] - 0.55, LAND[1] - 1.1)
 WALL_TOP = 0.96                                            # leaf rests at 0.986: paw 0.894 + PAW_TOP 0.072 + leaf thickness 0.02
-WALL_N = 7
+WALL_N = 6
 CT = (WALL_X + 0.9, LAND[1] - 3.2)                         # the cottage behind the wall
 TRAY_ARM_LOW, TRAY_ARM_UP = HOLD, HOLD_UP                   # both paws under the leaf: on the wall, then lifted
 CUP_D = 1.3                                               # count shot: jug axis this far in front of Tumble
@@ -127,11 +127,13 @@ def tumble(t):
             d = t - pt
             if 0 <= d < 0.5:
                 s = math.sin(math.pi * d / 0.5)
-                st["roll"] = STUCK_ROLL + (0.12 + 0.03 * k) * s; st["sq"] -= 0.04 * s; st["head"][2] = 0.15 * s
+                st["roll"] = STUCK_ROLL + (0.2 + 0.04 * k) * s; st["sq"] -= 0.04 * s; st["head"][2] = 0.15 * s
+                st["arms"][0] = [STUCK_ARM[0] + 0.3 * s, STUCK_ARM[1]]
         d = t - (T.POP - 0.35)
         if 0 <= d:                                         # the big final heave
             s = ease(clampu(t, T.POP - 0.35, T.POP))
-            st["roll"] = STUCK_ROLL + 0.2 * s; st["head"][2] = 0.2 * s; st["sq"] -= 0.06 * s
+            st["roll"] = STUCK_ROLL + 0.3 * s; st["head"][2] = 0.2 * s; st["sq"] -= 0.06 * s
+            st["arms"][0] = [STUCK_ARM[0] + 0.4 * s, STUCK_ARM[1]]
         if t >= T.POP: roll_back(st, t)
     elif n == "roll_back":
         roll_back(st, t)
@@ -382,11 +384,12 @@ def camera(t):
         tgt = lerp(RIM_FAR, JC, 0.5) + np.array([0, 0.0, 0])
         return fit_cam(tgt, lerp(10, 2, e), 20, 0.62, 0.62, fov=34, lift=0.12)
     if name == "paw_in":                                   # medium front: the paw goes in, uh-oh
-        return fit_cam(np.array([lerp(TS[0], J[0], 0.5), 1.15, TS[1] + 0.2]), lerp(30, 38, e), 6, 1.35, 1.35)
+        return fit_cam(np.array([lerp(TS[0], J[0], 0.7), 1.0, TS[1] + 0.15]), lerp(24, 18, e), lerp(30, 40, e), 1.5, 1.5)   # high three-quarter: the paw goes down into the mouth
     if name == "pull":                                     # wide low angle: pull, pull, POP
-        return fit_cam(np.array([lerp(TS[0], J[0], 0.45), 1.0, TS[1] + 0.1]), 12, -8, 1.9, 1.7, lift=0.06)
+        return fit_cam(np.array([lerp(TS[0], J[0], 0.6), 1.0, TS[1] + 0.15]), 20, 30, 1.9, 1.9)
     if name == "roll_back":                                # wide side: the roll back to the wall
-        return fit_cam(np.array([lerp(LAND[0], WALL_X, 0.5), 1.15, LAND[1] + 0.2]), 6, 8, 2.0, 1.6)
+        k = ease(clampu(t, SH["roll_back"][0], T.ROLL_END + 0.3))
+        return fit_cam(np.array([lerp(TS[0] + 0.3, LAND[0] + 0.3, k), 1.1, lerp(TS[1] - 0.4, LAND[1] + 0.1, k)]), 8, 22, lerp(2.3, 1.9, k), lerp(2.0, 1.7, k))
     if name == "count":                                    # high three-quarter close-up into the jug mouth
         tgt = JC + np.array([0, 0.12, 0]) - np.array([math.sin(CUP_YAW), 0, math.cos(CUP_YAW)]) * 0.18
         return fit_cam(tgt, math.degrees(CUP_YAW) - lerp(28, 18, e), 58, 1.0, 1.0, fov=36, lift=0.1)
@@ -420,7 +423,7 @@ def build_draws(t):
     for zi, z in enumerate(WALL_ZS):                       # dry stone wall: flat stones, staggered
         for k in range(WALL_N):
             x = WALL_X + 0.02 * math.sin(k * 2.1 + zi) * (k < WALL_N - 1); zz = z + 0.03 * math.sin(k * 1.7 + zi * 2) * (k < WALL_N - 1)
-            draws.append((SC["stone"], trans(x, ground_h(WALL_X, z) + 0.07 + (WALL_TOP - 0.14) / (WALL_N - 1) * k, zz) @ roty(math.pi / 2 + 0.1 * math.sin(k + zi) * (k < WALL_N - 1)) @ scale(0.85, 1.05, 0.75),
+            draws.append((SC["stone"], trans(x, ground_h(WALL_X, z) + 0.07 + (WALL_TOP - 0.14) / (WALL_N - 1) * k, zz) @ roty(math.pi / 2 + 0.1 * math.sin(k + zi) * (k < WALL_N - 1)) @ scale(0.85, 1.2, 0.75),
                           U(mat=0, bump=0.9, tint=tuple(c * (0.92 + 0.08 * ((k + zi) % 3)) for c in STONE_T), tintMix=1.0, obj="wall"), True))
     for (x, z, s) in [(CT[0] - 2.0, CT[1] + 1.6, 0.2), (J[0] + 1.3, J[1] - 0.6, 0.16), (MSPOT[0] - 1.3, MSPOT[1] - 0.2, 0.18)]:
         draws.append((E2["mushroom"], trans(x, ground_h(x, z) - 0.01, z) @ scale(s), U(mat=0, bump=0.6), True))
