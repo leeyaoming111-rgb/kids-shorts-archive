@@ -29,7 +29,7 @@ PULLP = (-1.0, -4.3)                                      # behind the bench (st
 LANDP = (0.5, -1.95)                                       # where he lands on his bottom after the boing
 BRX = 2.6                                                  # the bridge line (along z) across the stream
 BZ0, BZ1 = -4.2, -6.8
-MSPOT = (BRX - 1.0, -7.45)                                 # far bank: moral, chorus, button
+MSPOT = (BRX - 2.0, -7.45)                                 # far bank: moral, chorus, button
 HALVES = [(-3.5, -1.25, 0.3), (-2.65, -1.2, -0.25)]       # where the two twig halves land (x, z, yaw)
 PIP_S = 0.86                                               # Pip's perch along the bench bundle (by the rock)
 FLOWERS = make_flowers([(STUMP[0], STUMP[1], 1.2), (ROCK[0], ROCK[1], 1.0), ("box", -2.6, 0.6, -4.7, -1.0),
@@ -92,7 +92,7 @@ def bundle_state(t):
     A = spring(t, T.THUMP, 0.05, f=6.0, k=5.0)
     if n == "button_crane":                                # Pip's springy landing on the middle
         for k, tb in enumerate(BOINGS):
-            A += spring(t, tb, 0.05 * (0.7 ** k), f=6.0, k=6.0) if t >= tb else 0.0
+            A += spring(t, tb, 0.12 * (0.7 ** k), f=6.0, k=6.0) if t >= tb else 0.0
     return BR0, BR1, A, 0.04, 0.96
 
 def _frame(P0, P1):
@@ -328,7 +328,7 @@ def tumble(t):
                     walk_to(st, t, path[k], path[k + 1], ts[k], ts[k + 1], rate=2.6); break
             st["arms"] = [[1.5, 0.15 + 0.1 * math.sin(t * 5)], [1.5, 0.15 - 0.1 * math.sin(t * 5)]]
             st["roll"] = 0.06 * math.sin(t * 5)
-            st["stand_h"] = bridge_stand(st["x"], st["z"], t); st["tight"] = True
+            st["stand_h"] = bridge_stand(st["x"], st["z"], t); st["tight"] = st["z"] > -7.1
     elif n in ("moral", "chorus"):
         st["x"], st["z"] = MSPOT
         dance_tumble(st, t, n)
@@ -344,7 +344,7 @@ def bridge_stand(x, z, t):
     bs = bundle_state(t)
     s = s_of_z(z)
     top = float(top_at(bs, min(max(s, 0.0), 1.0))[1]) - surf(x, z) + 0.004
-    on = clampu(-z, 3.6, 3.95) * clampu(z, -7.38, -7.12)
+    on = clampu(-z, 3.6, 3.95) * clampu(z, -7.2, -6.95)
     return max(0.0, top) * ease(on)
 
 # ---------------- Pip ----------------
@@ -388,7 +388,7 @@ def pip_state(t, st, mats):
         ex = {"wings": (-0.5 * pat + 0.05, 0.05)} if pat > 0 else ({"point": True} if t < L["t1"] else {"cheer": True})
         return p, to_t, False, 0.0, True, ex
     if n == "bridge":                                       # flies across ahead of him, in straight legs
-        legs_ = [np.array([BRX - 0.7, 1.95, -3.7]), np.array([BRX - 0.7, 2.9, -4.4]), np.array([BRX + 0.4, 2.9, -6.9]), PIP_ARRIVE]
+        legs_ = [np.array([BRX - 0.7, 1.95, -3.7]), np.array([BRX - 0.6, 2.3, -4.6]), np.array([BRX - 0.5, 2.1, -7.6]), PIP_ARRIVE]
         ts = [T.TW_SPLIT, T.THUMP, T.THUMP + 0.4, T.THUMP + 1.7, T.THUMP + 2.2]
         bob = np.array([0, 0.05 * math.sin(t * 6), 0])
         if t < ts[1]: return legs_[0] + bob, math.pi, True, 0.0, False, {"gentle": True}
@@ -413,7 +413,7 @@ def pip_state(t, st, mats):
         if 0 <= d < 0.4: hop = hh * math.sin(math.pi * d / 0.4)
     yaw = math.atan2(face[0] - dest[0], face[2] - dest[2]) * 0 + 0.3
     return dest + np.array([0, hop, 0]), yaw, hop > 0, 0.0, hop == 0, {"cheer": True}
-PIP_ARRIVE = np.array([MSPOT[0] + 2.3, 1.8, MSPOT[1] - 0.15])
+PIP_ARRIVE = np.array([BRX - 0.3, 2.3, -7.8])
 _ba = SH["button_crane"][0]
 BOINGS[:] = [_ba + 0.8, _ba + 1.2, _ba + 1.55]
 
@@ -436,13 +436,13 @@ def camera(t):
         up = ease(clampu(t, T.LAUNCH, SH[name][1]))
         return fit_cam(np.array([-0.65, lerp(1.35 if not WIDE else 1.6, 2.6, up), BZ + 0.2]), 16, lerp(-4, -12, up), 1.75, 1.55 if not WIDE else 1.95)
     if name == "land":                                      # medium, high: he drops in and bumps down
-        return fit_cam(np.array([LANDP[0] + 0.1, 1.05, LANDP[1]]), -14, 18, 1.4, 1.45)
+        return fit_cam(np.array([LANDP[0] + 0.1, 1.05, LANDP[1]]), -14, 18, 1.4, 1.45, lift=0.0 if not WIDE else 0.12)
     if name == "pip_idea":                                  # two-shot: Pip on the bundle, Tumble in the grass
         pp = bench_perch(t)
         c = lerp(pp, np.array([LANDP[0], 1.0, LANDP[1]]), 0.55)
         return fit_cam(c + np.array([0, 0.1, 0]), lerp(-40, -34, e), 8, 1.75, 1.35)
     if name == "bridge":                                    # high-angle wide, side-on to the stream
-        return fit_cam(np.array([BRX - 0.1, 1.1, lerp(-4.9, -5.8, e)]), 92, 20, 2.7, 1.8)
+        return fit_cam(np.array([BRX - 0.1, 1.5, lerp(-4.9, -6.5, e)]), 92, 20, 2.9, 2.3)
     if name == "moral":
         return fit_cam(np.array([MSPOT[0] + 0.25, lerp(1.35, 1.45, e), MSPOT[1]]), lerp(14, 8, e), 5, lerp(1.3, 1.1, e), lerp(1.4, 1.15, e))
     if name == "chorus":
