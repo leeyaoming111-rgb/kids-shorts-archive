@@ -133,7 +133,7 @@ SNACK_LIE = DOOR_GROUND + DOOR_DIR * 2.0                  # Tumble on his tummy,
 MSPOT = tuple(DOOR_GROUND + DOOR_DIR * 1.55 - SIDE * 0.75)
 MOVE0 = (MSPOT[0] - 2.0, MSPOT[1] + 0.1)                   # next morning he walks in from the left with the seed
 BIG_SEED_AT = np.array([MSPOT[0] + 0.85, MSPOT[1]])         # the biggest seed, set down near the door
-PIP_WAIT = BIG_SEED_AT + np.array([0.55, -0.45])           # Pip waits here next morning, then hops to the paw
+PIP_WAIT = BIG_SEED_AT + np.array([0.5, 0.2])           # Pip waits here next morning, then hops to the paw
 KNOCK_AT = np.array([DOOR_P[0], DOOR_P[2]]) + DOOR_DIR * 0.46   # Pip's spot: a full peck (pitch 0.6) reaches the door
 WATCHERS = [DOOR_GROUND + SIDE * (0.35 + 0.3 * k) + DOOR_DIR * (0.25 + 0.12 * k) for k in range(5)]   # ants who watch the dance
 STASH = np.array([-0.78, NOSE_Z - 0.42])                   # loose seeds by the road (Pip takes one)
@@ -230,15 +230,11 @@ def tumble(t):
                 st["arms"] = [lerp([0.15, 0.0], [0.0, 1.0], h).tolist(), lerp([0.15, 0.0], [0.0, 1.0], h).tolist()]
                 st["sq"] += 0.03 * math.sin((t - T.RUMBLE) * 30) * math.exp(-max(0, t - T.RUMBLE) * 2)
         else:
-            st["arms"] = [[0.0, 1.0], [0.0, 1.0]]
-            d = t - T.SNEEZE
-            if -0.6 < d < 0:                                 # ah... (head back)
-                st["head"][0] = -0.3 * ease(clampu(t, T.SNEEZE - 0.6, T.SNEEZE - 0.1))
-            elif 0 <= d < 0.5:                               # CHOO!
-                st["head"][0] = -0.3 + 0.55 * math.sin(math.pi * min(d / 0.25, 1.0) / 2); st["sq"] -= 0.06 * math.exp(-d * 8)
-            elif d >= 0.5:
-                st["head"][0] = 0.25 * (1 - clampu(t, T.SNEEZE + 0.5, T.SNEEZE + 0.9))
-                st["x"] += 0.012 * math.sin(t * 40) * (1 - clampu(t, SH[n][1] - 0.6, SH[n][1]))   # shiver
+            h = ease(clampu(t, SH[n][0], SH[n][0] + 0.5))          # hugs his tummy and shivers ("Brrr!")
+            st["arms"] = [lerp([0.0, 1.0, 0.0], [0.1, 1.5, 1.3], h).tolist(), lerp([0.0, 1.0, 0.0], [0.1, 1.35, 1.3], h).tolist()]
+            st["head"][0] = 0.15 * h
+            sh = clampu(t, SH[n][0] + 0.3, SH[n][0] + 0.6) * (1 - clampu(t, SH[n][1] - 0.6, SH[n][1]))
+            st["x"] += 0.014 * math.sin(t * 40) * sh; st["roll"] = 0.03 * math.sin(t * 37) * sh
     elif n == "knock":                                       # watches from behind Pip
         st["x"], st["z"] = SNACK_LIE + DOOR_DIR * 0.4; st["yaw"] = math.atan2(-DOOR_DIR[0], -DOOR_DIR[1])
         st["arms"] = [[0.0, 1.0], [0.0, 1.0]]; st["head"][0] = 0.3
@@ -378,7 +374,7 @@ def _pip_state(t, st, mats):
             return q, yaw if u < 1 else math.atan2(SIDE[0], SIDE[1]) * 0.0 + yaw, u < 1, 0.0, u >= 1, {"cheer": u >= 1}
         return p, yaw, False, pk, True, {}
     if n == "snack":                                         # pecks a seed on the leaf too
-        p = pip_ground(LEAF_PLATE + SIDE * 0.5 - DOOR_DIR * 0.1)
+        p = pip_ground(LEAF_PLATE + SIDE * 0.8 + DOOR_DIR * 0.25)
         pk = 0.0
         for k in range(3):
             d = t - (SH[n][0] + 0.5 + 0.4 * k)
@@ -420,22 +416,22 @@ def camera(t):
     if name == "hook_ants":                                  # ant height, the line crossing in front of his nose
         return fit_cam(np.array([LIE[0] + 0.05, 0.42, NOSE_Z - 0.35]), lerp(8, 2, e), 6, 0.9, 0.7, lift=0.04)
     if name == "title_wide":
-        return fit_cam(np.array([-0.2, 0.9, 0.6]), -4, 18, 3.4, 2.4 if not WIDE else 1.9, lift=0.03)
+        return fit_cam(np.array([-0.2 if not WIDE else -0.9, 0.9 if not WIDE else 1.7, 0.6]), -4, 18, 3.4, 2.4 if not WIDE else 1.9, lift=0.03)
     if name == "leaf_play":
         return fit_cam(np.array([PILE[0] + 0.2, 1.15, PILE[1] + 1.2]), lerp(-24, -18, e), 7, 1.5, 1.55)
     if name == "pip_work":                                   # side-on macro: Pip, the line, Tumble beyond
         tgt = np.array([PIPW[0] + 0.1, 0.4, PIPW[1] + 0.25])
-        return fit_cam(tgt, lerp(24, 18, e), 7, 0.8, 0.62, lift=0.04)
+        return fit_cam(tgt + (np.array([0, 0.0, 0]) if not WIDE else np.array([0, 0.35, 0])), lerp(24, 18, e), 7, 0.8, 0.62 if not WIDE else 1.3, lift=0.04)
     if name == "pip_carry":                                  # low tracking with Pip
         pp = pip_state(t, st, fox_mats_p(st))[0]
         return fit_cam(np.array([pp[0] - 0.1, 0.35, pp[2] - 0.2]), 18, 5, 0.85, 0.6, lift=0.03)
     if name == "ant_hat":                                    # low, from the front, the line coming between his feet
-        return fit_cam(np.array([GAG[0] + 0.05, lerp(1.05, 1.0, e), GAG[1]]), 90 + lerp(-12, -5, e), -4, 1.2, 1.25, lift=0.05)
+        return fit_cam(np.array([GAG[0] + 0.05, lerp(1.05, 1.0, e), GAG[1]]), 90 + lerp(-12, -5, e), -4, 1.2, 1.25 if not WIDE else 1.9, lift=0.05 if not WIDE else 0.2)
     if name == "snowflake":                                  # face close-up
         fx = apply(fox_mats_p(st)[1], NOSE)
         return fit_cam(fx + np.array([0, 0.05, 0]), math.degrees(st["yaw"]) + lerp(-8, -2, e), 4, 0.6, 0.62, lift=0.08)
     if name == "chilly":
-        return fit_cam(np.array([(GAG2[0] + DOOR_P[0]) / 2 - 0.2, 0.85, (GAG2[1] + DOOR_P[2]) / 2 + 0.3]), -8 + 4 * e, 14, 2.3, 1.45)
+        return fit_cam(np.array([(GAG2[0] + DOOR_P[0]) / 2 - (0.2 if not WIDE else 0.5), 0.85, (GAG2[1] + DOOR_P[2]) / 2 + 0.3]), -8 + 4 * e, 26, 2.3, 1.45)
     if name == "knock":                                      # side-on at the door
         tgt = DOOR_P + DOOR_DIR3() * 0.4 + np.array([0, 0.05, 0])
         return fit_cam(tgt, side_on_yaw(DOOR_P, DOOR_P + DOOR_DIR3(), 70) + lerp(-4, 4, e), 8, 0.85, 0.7, lift=0.04)
@@ -443,7 +439,8 @@ def camera(t):
         mid = np.array([LEAF_PLATE[0] * 0.6 + SNACK_LIE[0] * 0.4, 0.45, LEAF_PLATE[1] * 0.6 + SNACK_LIE[1] * 0.4])
         return fit_cam(mid, math.degrees(math.atan2(DOOR_DIR[0], DOOR_DIR[1])) + 180 + lerp(48, 42, e), 30, 1.3, 1.0, lift=0.04)
     if name == "next_day":                                   # tracking, low
-        return fit_cam(np.array([st["x"] + 0.35, 0.95, st["z"] + 0.1]), lerp(52, 40, e), 5, 1.8, 1.35)
+        mid = (np.array([st["x"], st["z"]]) + np.array([DOOR_P[0], DOOR_P[2]])) / 2
+        return fit_cam(np.array([mid[0], 0.85, mid[1]]), lerp(-6, -12, e), 5, 2.0 if not WIDE else 2.5, 1.35)
     if name == "moral":
         return fit_cam(np.array([MSPOT[0] + 0.25, lerp(1.35, 1.45, e), MSPOT[1]]), lerp(14, 8, e), 5, lerp(1.35, 1.15, e), lerp(1.4, 1.15, e))
     if name == "chorus":
@@ -587,9 +584,11 @@ def build_draws(t):
             draws.append((PR["ball"], trans(q[0], surf(*q) + 0.025, q[1]) @ roty(k) @ scale(0.034, 0.025, 0.05), U(mat=0, bump=0.3, tint=SEED_C, tintMix=1.0), False))
     if n == "pip_carry" and pip[5].get("beak"):
         Mp = trans(*pip[0]) @ roty(pip[1]) @ rotx(pip[3]) @ scale(1.1)
-        draws.append((PR["ball"], Mp @ trans(0, 0.3, 0.33) @ roty(math.pi / 2) @ scale(0.03, 0.022, 0.045), U(mat=0, bump=0.3, tint=SEED_C, tintMix=1.0, obj="pip"), False))
+        draws.append((PR["ball"], Mp @ trans(0, 0.3, 0.25) @ roty(math.pi / 2) @ scale(0.03, 0.022, 0.045), U(mat=0, bump=0.3, tint=SEED_C, tintMix=1.0, obj="pip"), False))
     hs = head_seed(t, mats)
-    if hs: draws.append((PR["ball"], hs[0] @ scale(*HEAD_SEED_R), U(mat=0, bump=0.4, tint=(0.93, 0.74, 0.45), tintMix=1.0, obj="hseed"), True))
+    if hs:
+        hz = lerp(0.36, HEAD_SEED_R[2], clampu(t, T.TOSS, T.TOSS + 0.15)) if t < T.SEED_ON else HEAD_SEED_R[2]   # held: long enough to reach both paws
+        draws.append((PR["ball"], hs[0] @ scale(HEAD_SEED_R[0], HEAD_SEED_R[1], hz), U(mat=0, bump=0.4, tint=(0.93, 0.74, 0.45), tintMix=1.0, obj="hseed"), True))
     if n in ("snowflake", "chilly"):
         p = SEED_ON_GROUND
         draws.append((PR["ball"], trans(p[0], surf(*p) + HEAD_SEED_R[1] - 0.01, p[1]) @ rotx(-1.2) @ scale(*HEAD_SEED_R), U(mat=0, bump=0.4, tint=(0.93, 0.74, 0.45), tintMix=1.0, obj="hseed"), True))
@@ -617,11 +616,10 @@ def build_draws(t):
     if n == "chilly" and t < T.SNEEZE + 0.5:
         if t < T.SNEEZE:
             draw_flake(draws, apply(Mh, NOSE) + apply(Mh, (0, 0.03, 0.05)) - apply(Mh, (0, 0, 0)), 0.08, spin=0.3, tilt=1.2)
-        else:                                                # blown off by the sneeze, spinning away
+        else:                                                # shaken off by the shiver, falling away
             u = clampu(t, T.SNEEZE, T.SNEEZE + 0.5)
-            p = apply(Mh, NOSE) + apply(Mh, (0, 0.4 * u, 0.9 * u)) - apply(Mh, (0, 0, 0))
+            p = apply(Mh, NOSE) + apply(Mh, (0, -0.5 * u, 0.25 * u)) - apply(Mh, (0, 0, 0))
             draw_flake(draws, p, 0.08 * (1 - u), spin=t * 9, tilt=1.2)
-    if n == "chilly": puff(draws, apply(Mh, NOSE) + np.array([0, 0, 0.1]), T.SNEEZE, t, n=8, size=0.04, spread=0.6, dur=0.4, tint=(0.95, 0.97, 1.0))
     amount = 0.0
     if n == "snowflake": amount = 0.2 * clampu(t, T.FLAKE_LAND + 0.3, SH[n][1])
     elif n in ("chilly", "knock", "snack"): amount = 0.55
@@ -630,10 +628,10 @@ def build_draws(t):
     if n == "button_crane":
         a = SH[n][0]; ph = pip[0] + np.array([0, 0.55, 0])
         if t < a + 1.0:
-            u = clampu(t, a, a + 1.0); draw_flake(draws, ph + np.array([0.1 * math.sin(u * 6), 1.0 * (1 - u), 0]), 0.04, spin=t, tilt=0.9)
+            u = clampu(t, a, a + 1.0); draw_flake(draws, ph + np.array([0.1 * math.sin(u * 6), 1.0 * (1 - u), 0]), 0.08, spin=t, tilt=0.9)
         elif t < a + 1.6:
             u = clampu(t, a + 1.0, a + 1.6)
-            draw_flake(draws, ph + np.array([0.5 * u, 0.2 * math.sin(math.pi * u) - 0.4 * u * u, 0]), 0.04 * (1 - u * 0.8), spin=t * 9, tilt=0.9)
+            draw_flake(draws, ph + np.array([0.5 * u, 0.2 * math.sin(math.pi * u) - 0.4 * u * u, 0]), 0.08 * (1 - u * 0.8), spin=t * 9, tilt=0.9)
         puff(draws, ph, a + 1.0, t, n=7, size=0.03, spread=0.5, dur=0.35, tint=(0.95, 0.97, 1.0))
     # bursts
     for j in T.LEAF_HOPS: puff(draws, np.array([PILE[0], 0.45, PILE[1] + 0.3]), j + 0.35, t, n=12, size=0.06, spread=1.1, dur=0.5, tint=(0.97, 0.66, 0.3), axis=(0, 0.8, 0.3))

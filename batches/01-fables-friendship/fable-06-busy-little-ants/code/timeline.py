@@ -116,6 +116,6 @@ SET_DOWN = _tw[1] - 0.6                                                 # the bi
 HIGH_FIVE = _c[1] - 0.9
 _wob = line("Problem A")["t1"] + 0.35
 SPOKEN = [dict(file="s00_tumble", who="tumble", t0=_wob, caption="Wibble-wobble!", tags="[giggling] [playful]"),
-          dict(file="s01_tumble", who="tumble", t0=SNEEZE - 0.35, caption="Ah... CHOO!", tags="[sneezing] [cute]"),
+          dict(file="s01_tumble", who="tumble", t0=SNEEZE - 0.35, caption="Brrrr!", tags="[shivering] [cute]"),
           dict(file="s02_tumble", who="tumble", t0=NIBBLE, caption="Mmm, crunchy!", tags="[delighted]"),
           dict(file="s03_both", who="both", t0=_bt[0] + 0.7, caption="Bye-bye!", tags="[cheerful]")]
