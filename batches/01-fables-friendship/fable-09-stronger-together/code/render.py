@@ -127,11 +127,6 @@ def draw_bundle(draws, t):
             a_ = i * 2 * math.pi / 12
             q = c + (e1 * math.cos(a_) + e2 * math.sin(a_)) * (BR + 0.012)
             draws.append((PR["ball"], trans(*q) @ scale(0.032), U(mat=0, bump=0.0, tint=(0.42, 0.68, 0.3), tintMix=1.0), False))
-        if k == 0:                                         # a little grass bow on the first tie
-            q = c + e2 * (BR + 0.04)
-            R = np.eye(4); R[:3, 0], R[:3, 1], R[:3, 2] = ax, e2, -e1
-            for sgn in (1, -1):
-                draws.append((SC["leaf"], trans(*q) @ R @ roty(0.5 * sgn) @ trans(0.11 * sgn, 0, 0) @ rotz(0.35 * sgn) @ scale(1.3), U(mat=0, bump=0.0, tint=(0.5, 0.74, 0.32), tintMix=1.0), False))
     return st
 
 # ---------------- the single twig (hook) ----------------
@@ -142,10 +137,10 @@ def twig_draws(draws, t, arms):
     hl, hr = hand_pos(arms, 1), hand_pos(arms, 0)
     drop0, drop1 = T.SNAP + 0.55, T.SNAP + 0.95
     if t < T.SNAP:
-        mid = (hl + hr) / 2 + np.array([0, 0.1 + TWIG_R + 0.004, 0.0])
+        mid = (hl + hr) / 2 + np.array([0, 0.02, 0.0])
         bow = 0.06 * ease(clampu(t, T.SNAP - 0.45, T.SNAP))
         dirv = (hr - hl) / np.linalg.norm(hr - hl)
-        a_, b_ = mid - dirv * 0.55, mid + dirv * 0.55
+        a_, b_ = mid - dirv * 0.42, mid + dirv * 0.42
         m_ = mid + np.array([0, bow, 0])
         for p, q in ((a_, m_), (m_, b_)):
             draws.append((PR["stick"], seg_M(p, q, TWIG_R), tint, True))
@@ -191,6 +186,8 @@ def fox_mats_x(st):
     R, Mh, arms, legs = fox_mats(st)
     if st.get("sit"):
         legs = [R @ trans(0, 0.15, st.get("sit_fwd", 0.3)) for _ in range(2)]
+    if st.get("tight"):                                     # tightrope: feet in one line along the bridge, one ahead of the other
+        legs = [R @ trans(-0.19 * sg, st["legs"][i], 0.2 * (1 if i == 0 else -1)) for i, sg in enumerate((1, -1))]
     p = st.get("pitch", 0.0)
     if p == 0.0: return R, Mh, arms, legs
     root = trans(st["x"], surf(st["x"], st["z"]) + st.get("stand_h", 0.0) - 0.01 + st["y"], st["z"]) @ roty(st["yaw"])
@@ -254,18 +251,20 @@ def tumble(t):
         elif t < j1:                                        # a show-off spin over the bundle
             u = clampu(t, j0, j1)
             st["x"], st["z"] = lerp(SPOT, PULLP, ease(u))
-            st["y"] += 1.25 * math.sin(math.pi * u); st["yaw"] = 2 * math.pi * ease(u)
+            st["y"] += 1.7 * math.sin(math.pi * u); st["yaw"] = 2 * math.pi * ease(u)
             st["arms"] = [[1.9, 0.3], [1.9, 0.3]]; st["legs"] = [0.12, 0.12]
         else:                                               # ta-da!
             d = t - j1
             st["x"], st["z"] = PULLP
             st["sq"] -= 0.12 * math.exp(-d * 7) * math.cos(d * 22)
-            v = ease(clampu(d, 1.2, 1.6)); st["arms"] = [lerp([2.3, 0.2], [0.3, 0.5], v).tolist() for _ in range(2)]
+            top = float(top_at(bundle_state(t), s_of_x(-1.0))[1]) - surf(*PULLP)
+            gf = fwd_for_height(top + 0.07)                 # then he grips the middle of the bundle, ready to pull
+            v = ease(clampu(d, 0.9, 1.4)); st["arms"] = [lerp([2.3, 0.2, 0.0], [0.3, gf, 0.62], v).tolist() for _ in range(2)]
     elif n == "pull_push":                                  # grips the middle from behind and pulls, then pushes
         st["x"], st["z"] = PULLP
         bs = bundle_state(t)
         top = float(top_at(bs, s_of_x(-1.0))[1]) - surf(*PULLP)
-        hy = top + 0.1 + 0.004
+        hy = top + 0.07
         f = fwd_for_height(hy)
         a = SH[n][0]; grip = ease(clampu(t, a, a + 0.5))
         st["arms"] = [lerp([0.3, 0.5, 0.0], [0.3, f, 0.62], grip).tolist(), lerp([0.3, 0.5, 0.0], [0.3, f, 0.62], grip).tolist()]
@@ -304,7 +303,7 @@ def tumble(t):
             st["arms"] = [[0.6, 0.2], [0.6, 0.2]]
             dz = math.exp(-d * 0.9)
             st["head"][2] = 0.2 * dz * math.sin(d * 6); st["head"][0] = 0.12 * dz * math.cos(d * 6)
-            st["yaw"] = -0.35
+            st["yaw"] = -1.0
             if n == "pip_idea":                             # listens, nods, then jumps up, ready
                 L = T.line("Twist")
                 st["head"][1] = -0.3 * ease(clampu(t, SH[n][0], SH[n][0] + 0.5))
@@ -329,7 +328,7 @@ def tumble(t):
                     walk_to(st, t, path[k], path[k + 1], ts[k], ts[k + 1], rate=2.6); break
             st["arms"] = [[1.5, 0.15 + 0.1 * math.sin(t * 5)], [1.5, 0.15 - 0.1 * math.sin(t * 5)]]
             st["roll"] = 0.06 * math.sin(t * 5)
-            st["stand_h"] = bridge_stand(st["x"], st["z"], t)
+            st["stand_h"] = bridge_stand(st["x"], st["z"], t); st["tight"] = True
     elif n in ("moral", "chorus"):
         st["x"], st["z"] = MSPOT
         dance_tumble(st, t, n)
@@ -345,7 +344,7 @@ def bridge_stand(x, z, t):
     bs = bundle_state(t)
     s = s_of_z(z)
     top = float(top_at(bs, min(max(s, 0.0), 1.0))[1]) - surf(x, z) + 0.004
-    on = clampu(-z, 3.83, 4.05) * clampu(z, -7.38, -7.12)
+    on = clampu(-z, 3.6, 3.95) * clampu(z, -7.38, -7.12)
     return max(0.0, top) * ease(on)
 
 # ---------------- Pip ----------------
