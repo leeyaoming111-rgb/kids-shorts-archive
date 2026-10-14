@@ -12,7 +12,7 @@ COTTAGE = (3.1, -4.2)
 POSTS = [(1.25, -0.6), (1.95, -1.0), (2.65, -1.4)]          # garden fence; Pip referees from the first post
 POST_H = 0.95; POST_R = 0.07
 def post_top(p): return float(surf(*p)) - 0.02 + 1.05 * POST_H
-POST_PIP = np.array([POSTS[0][0], post_top(POSTS[0]) + 0.005, POSTS[0][1]]) + UP
+POST_PIP = np.array([POSTS[0][0], post_top(POSTS[0]) - 0.02, POSTS[0][1]]) + UP
 FLOWER = (2.3, 0.3); FLOWER_S = 4.0                          # the big flower Pip clings to (downwind of the post)
 STEM_R = 0.025 * FLOWER_S
 WIND_P = np.array([-1.75, 5.5, -4.6])                         # the sky faces
@@ -82,7 +82,7 @@ def solve_arm(target, i=0):
             d = np.linalg.norm(arm_hand(sd, fw, i) - target)
             if best is None or d < best[0]: best = (d, sd, fw)
     return [best[1], best[2]]
-HUG = [[-0.3, 1.25], [-0.3, 1.25]]                           # paws clutching the scarf at his chest
+HUG = [[0.3, 1.25, 0.62], [0.3, 1.25, 0.62]]                           # paws clutching the scarf at his chest
 PULL_OUT = [1.4, 0.45]                                      # right paw out to the side, pulling the scarf through
 
 def tumble(t):
@@ -99,7 +99,7 @@ def tumble(t):
     elif n == "snug":                                        # pats and hugs his scarf, cosy little bounce
         L = T.line("Setup B")
         hug = ease(clampu(t, L["t0"] + 0.9, L["t0"] + 1.4))
-        st["arms"] = [lerp([0.2, 0.3], HUG[0], hug).tolist(), lerp([0.2, 0.3], HUG[1], hug).tolist()]
+        st["arms"] = [lerp([0.2, 0.3, 0.0], HUG[0], hug).tolist(), lerp([0.2, 0.3, 0.0], HUG[1], hug).tolist()]
         st["head"][2] = 0.12 * math.sin((t - L["t0"]) * 2.5) * hug; st["eyes_closed"] = L["t1"] - 0.6 < t < L["t1"] + 0.6
         st["y"] += 0.03 * abs(math.sin((t - L["t0"]) * 6)) * hug
     elif n in ("wind_puff", "hold_tight"):                   # hugs the scarf and leans into the wind, head wobbling
@@ -276,7 +276,7 @@ GRAB_ARM = solve_arm(_grab_target(), 0)
 
 # ---------------- Pip ----------------
 HOVER = np.array([0.95, 1.65, 0.25])
-CLING_P = np.array([FLOWER[0] + STEM_R + 0.31, surf(*FLOWER) + 0.16, FLOWER[1]])
+CLING_P = np.array([FLOWER[0] + STEM_R + 0.42, surf(*FLOWER) + 0.16, FLOWER[1]])
 def pip_state(t, st, mats):
     n = T.shot_at(t)[1]
     R, Mh, arms, legs = mats
@@ -302,7 +302,7 @@ def pip_state(t, st, mats):
         if t < T.BLOWN:                                          # feathers ruffling, hanging on
             return POST_PIP, to_tumble, False, 0.0, True, {"cling": 0.6 * wind_w(t)}
         u = clampu(t, T.BLOWN, T.CLING)                           # blown backwards, tumbling, onto the flower
-        p = lerp(POST_PIP, CLING_P, ease(u)); p[1] += 0.25 * math.sin(math.pi * u)
+        p = lerp(POST_PIP, CLING_P, ease(u)); p[1] += 0.25 * math.sin(math.pi * u); p[2] += 1.6 * math.sin(math.pi * u)
         return p, lerp(to_tumble, -math.pi / 2, u), True, -2 * math.pi * ease(u), False, {"gentle": True}
     if n in ("spin", "pip_cling"):                               # clinging to the flower stem like a little flag
         w = wind_w(t)
@@ -421,7 +421,8 @@ def camera(t):
     if name == "wind_puff":
         return fit_cam(WIND_P + np.array([0, 0.05, 0]), lerp(16, 20, e), -3, lerp(1.6, 1.35, e), lerp(1.5, 1.25, e), fov=34, lift=0.0)
     if name == "hold_tight":                                  # low three-quarter, room for Pip's tumble to the flower
-        return fit_cam(np.array([0.45, 1.2, 0.0]), -18, -4, 1.5, 1.35)
+        k = ease(clampu(t, T.BLOWN - 0.3, T.CLING))               # pull out to follow Pip's flight to the flower
+        return fit_cam(lerp(np.array([0.45, 1.2, 0.0]), np.array([1.6, 1.0, 0.2]), k), -18, -4, lerp(1.5, 2.4, k), lerp(1.35, 2.0, k))
     if name == "spin":                                        # high angle wide
         return fit_cam(np.array([0.6, 0.9, 0.1]), 8, 42, 2.0, 1.7)
     if name == "pip_cling":
