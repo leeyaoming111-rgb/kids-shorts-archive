@@ -4,6 +4,10 @@ translucent water plane). python3 render.py [--wide] [--preview] [out.mp4] | x <
 from fablekit import *
 import fablekit as FK
 from meshes import sstep
+import gc
+# kit bug: render_base builds the shadow VAO with "3f 36x" but vertices are 40 bytes ("3f 28x"). Rebuild it here.
+for _m in [o for o in gc.get_objects() if type(o).__name__ == "Mesh" and hasattr(o, "svao")]:
+    _m.svao = ctx.vertex_array(sprog, [(_m.vbo, "3f 28x", "in_pos")], _m.ibo)
 
 # ---------------- world: the log bridge over the meadow stream ----------------
 LX = 1.5                                                   # the log runs across the stream along z at x = LX
@@ -95,7 +99,7 @@ def tumble(t):
         a = SH[n][0]; u = ease(clampu(t, a, a + 0.6))
         st["yaw"] = FACE_YAW + 0.55 * u; st["head"][1] = 0.25 * u; st["head"][0] = -0.12 * u
         up = ease(clampu(t, T.SHINY[0] - 0.4, T.SHINY[0]) if T.SHINY else u)
-        st["arms"][1] = lerp(HOLD1, [0.6, 1.75, 0.0], up).tolist()
+        st["arms"][1] = lerp(HOLD1, [1.1, 1.3, 0.0], up).tolist()
         for w in T.SHINY: st["y"] += hop_y(t, w - 0.05, 0.06, 0.3)
         dn = ease(clampu(t, SH[n][1] - 0.8, SH[n][1] - 0.2))     # back to facing the water before the cut
         st["yaw"] = lerp(st["yaw"], FACE_YAW, dn); st["arms"][1] = lerp(st["arms"][1], HOLD1, dn).tolist()
