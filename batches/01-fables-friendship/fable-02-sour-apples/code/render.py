@@ -121,7 +121,7 @@ def tumble(t):
         st["x"], st["z"] = MSPOT
         dance_tumble(st, t, n)
         sway = math.sin(2 * math.pi * (t - SH["chorus"][0]) / (2 * BEAT)) if n == "chorus" else 0.0
-        st["arms"][1] = [0.45, 0.95 + 0.12 * sway]           # the apple in his other paw
+        st["arms"][1] = [0.45 + 0.1 * sway, 0.95 + 0.4 * abs(sway) * (1.0 if n == "chorus" else 0.3)]           # the apple in his other paw: lifted in time with the beat
         if n == "chorus":
             st["y"] += 0.045 * abs(math.sin(math.pi * (t - SH["chorus"][0]) / BEAT)) * (1.0 if t < T.HIGH_FIVE + 0.5 else 0.0)   # bounces on the beat
             st["yaw"] += 0.12 * sway; st["head"][1] = 0.12 * sway
@@ -172,7 +172,7 @@ def tug_pull(t):
     back = 0.0
     for k, tg in enumerate(T.TUGS):
         d = t - tg
-        if 0 <= d < 0.4: back = max(back, (0.12 + 0.04 * k) * math.sin(math.pi * d / 0.4))
+        if 0 <= d < 0.4: back = max(back, (0.14 + 0.04 * k) * math.sin(math.pi * d / 0.4))
     s0 = T.TUGS[-1] + 0.5                                   # "here it comes": one long strain until the stem lets go
     if s0 < t < T.RELEASE: back = max(back, 0.2 * ease(clampu(t, s0, T.RELEASE - 0.05)) + 0.02 * math.sin(t * 30))
     return back
@@ -198,6 +198,7 @@ def leg_path(pts, u):
     return p, math.atan2(q[0], q[2])
 BEHIND = STUMP[1] - 0.95                                    # flights past the stump keep a body-width behind him, above his ears
 W0 = np.array([STUMP[0] + 0.9, 2.95, BEHIND])               # waiting point, behind-right of the stump
+PIP_LIFT = np.array([0.5, 0.3, 0.1])
 SIDE2 = np.array([STUMP[0] + 0.5, 3.0, BEHIND - 0.15])      # cheer point after the catch
 def pip_state(t, st, mats):
     n = T.shot_at(t)[1]
@@ -219,11 +220,12 @@ def pip_state(t, st, mats):
         return p, math.atan2(face[0] - p[0], face[2] - p[2]), True, 0.0, False, {}
     if n == "pip_idea":
         hov = apply(Mh, (0.62, 1.5, 0.55)) + np.array([0, 0.05 * math.sin(t * 6), 0])   # right at his face
+        hov = hov + PIP_LIFT * ease(clampu(t, SH[n][1] - 0.6, SH[n][1]))                   # lifts off before the cut
         L = T.line("Problem B")
         ex = {"wings": (1.4 + 0.1 * math.sin(t * 10), 0.9 * math.sin(t * 28))} if L["t0"] < t < L["t1"] + 0.3 else {}
         return hov, math.atan2(face[0] - hov[0], face[2] - hov[2]), True, 0.0, False, ex
     if n == "climb":
-        a = SH[n][0]; hov = apply(fox_mats_p(tumble(a - 0.01))[1], (0.62, 1.5, 0.55))
+        a = SH[n][0]; hov = apply(fox_mats_p(tumble(a - 0.01))[1], (0.62, 1.5, 0.55)) + PIP_LIFT
         u = clampu(t, a, a + 1.5)                           # straight up from his face, then across above him to the far side of the stump
         p, yw = leg_path([hov, hov + np.array([0, 0.9, 0]), W0], u)
         return p, yw if u < 1 else 0.0, True, 0.0, False, {"gentle": True}
@@ -292,7 +294,7 @@ def camera(t):
         return fit_cam(np.array([SPOT[0], 1.55, SPOT[1]]), 62, 4, 1.05, 1.9, lift=0.1)
     if name == "big_jump":                                  # wide, following the run and the leap
         cx = lerp(RUN0[0] + 1.0, PILE[0] - 0.4, e)
-        return fit_cam(np.array([cx, 1.2, lerp(RUN0[1], PILE[1], e) - 0.2]), 6, 6, 2.1, 1.7)
+        return fit_cam(np.array([cx, 1.45, lerp(RUN0[1], PILE[1], e) - 0.2]), 6, 6, 2.1, 2.1)
     if name == "leaf_pile":                                 # close on the pile: legs and tail sticking out
         c = lerp(np.array([PILE[0] - 0.2, 0.95, PILE[1]]), np.array([PILE[0], 0.85, PILE[1]]), e)     # starts wide enough to keep him in as he comes down
         return fit_cam(c, lerp(30, 22, e), 12, lerp(1.9, 1.05, e), lerp(1.9, 1.25, e))
@@ -302,10 +304,10 @@ def camera(t):
         fc = apply(fox_mats_p(st)[1], (0.3, 1.5, 0.4))
         return fit_cam(fc, lerp(-14, -8, e), 4, 0.9, 0.95)
     if name == "climb":
-        return fit_cam(np.array([lerp(POPPED[0], STUMP[0], 0.55), 1.4, (POPPED[1] + STUMP[1]) / 2 + 0.1]), -2, 8, 1.9, 1.7)
+        return fit_cam(np.array([lerp(POPPED[0], STUMP[0], 0.55), 1.75, (POPPED[1] + STUMP[1]) / 2 + 0.1]), -2, 8, 1.9, 2.5)
     if name == "tug":                                       # up in the tree with Pip and the apple
         pb = tug_body(0.0) + np.array([0, 0.3, 0])
-        return fit_cam(lerp(A, pb, 0.55) - np.array([0, 0.05, 0]), TUG_CAM_YAW + lerp(-4, 4, e), -4, 0.72, 0.66, fov=34, lift=0.1)   # angle solved so Tumble stays out of line
+        return fit_cam(lerp(A, pb, 0.55) - np.array([0, 0.05, 0]), TUG_CAM_YAW + lerp(-4, 4, e), -4, 0.9, 0.8, fov=34, lift=0.1)   # angle solved so Tumble stays out of line
     if name == "ready":                                     # tall frame on the stump: Tumble below, the apple at the top, Pip flying up
         return fit_cam(np.array([STUMP[0] - 0.3, 1.95, STUMP[1] - 0.2]), lerp(36, 42, e), -4, 2.2, 3.2)
     if name == "catch":                                     # tall enough to see the apple fall into his paws
@@ -346,13 +348,14 @@ def build_draws(t):
         back = val; ang = back / (APPLE_TOP + 0.16)            # swings out on its stem towards Pip
         Mpiv = trans(*stem_top) @ rotz(-OUT[0] * ang) @ rotx(OUT[1] * ang) @ trans(*(-stem_top))
         Ma = Mpiv @ trans(*A) @ scale(APPLE_S)
-        draws.append((PR["stick"], Mpiv @ trans(*(A + np.array([0, APPLE_TOP - 0.03, 0]))) @ scale(0.25, 0.2, 0.25), U(mat=0, bump=0.0, tint=(0.48, 0.32, 0.2), tintMix=1.0), False))
+        draws.append((PR["stick"], Mpiv @ trans(*(A + np.array([0, APPLE_TOP - 0.03, 0]))) @ scale(0.6, 0.55, 0.6), U(mat=0, bump=0.0, tint=(0.48, 0.32, 0.2), tintMix=1.0), False))
     else:
         Ma = trans(*val) @ roty(t * 0.5 if kind == "fall" else 0.0) @ scale(APPLE_S)
         draws.append((PR["stick"], trans(*stem_top) @ trans(0, -0.2, 0) @ scale(0.25, 0.2, 0.25), U(mat=0, bump=0.0, tint=(0.48, 0.32, 0.2), tintMix=1.0), False))
     draws.append((E2["apple"], Ma, U(mat=0, bump=0.5, obj="apple"), True))
-    if kind != "hang" and T.GAG_SWEET - 0.1 < t < T.GAG_SWEET + 0.6:
-        puff(draws, val + np.array([0, 0.1, 0.25]), T.GAG_SWEET - 0.05, t, n=8, size=0.04, spread=0.6, dur=0.4, tint=(1.0, 0.96, 0.85))
+    if kind != "hang" and t > T.GAG_SWEET + 0.3:            # the bite mark stays: a pale chunk of apple flesh scooped out of the front-top
+        r = 0.46 * APPLE_S
+        draws.append((PR["ball"], trans(*(val + np.array([0.28 * r, 0.62 * r, 0.78 * r]))) @ scale(0.42 * r), U(mat=0, bump=0.0, tint=(0.99, 0.94, 0.72), tintMix=1.0), False))
     puff(draws, np.array([PILE[0], 0.5, PILE[1]]), T.LAND, t, n=12, size=0.07, spread=1.2, dur=0.5, tint=(0.95, 0.7, 0.35), axis=(0, 0.8, 0.3))
     return draws, contacts
 
