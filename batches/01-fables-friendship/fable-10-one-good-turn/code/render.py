@@ -425,8 +425,8 @@ def pip_post(t, pip):
         s = 1.0
         for ta in STUCK_TRIES:
             d = t - ta
-            if 0 <= d < 0.45: s = max(s, 1 + 0.38 * math.sin(math.pi * min(d / 0.3, 1.0) / 2) ** 2 if d < 0.3 else 1.38)
-            elif 0.45 <= d < 1.3: s = max(s, 1 + 0.38 * math.exp(-(d - 0.45) * 6) * math.cos((d - 0.45) * 18)) if True else s
+            if 0 <= d < 0.45: s = max(s, 1 + 0.6 * math.sin(math.pi * min(d / 0.3, 1.0) / 2) ** 2 if d < 0.3 else 1.6)
+            elif 0.45 <= d < 1.3: s = max(s, 1 + 0.6 * math.exp(-(d - 0.45) * 6) * math.cos((d - 0.45) * 18)) if True else s
         if s != 1.0: return stretch_M(feet, np.array([0, 1.0, 0]), s)
         return None
     if n == "tug" or (n == "pop" and t < T.POP + 0.12):
