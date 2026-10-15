@@ -263,18 +263,25 @@ def tumble(t):
     elif n == "pull_push":                                  # grips the middle from behind and pulls, then pushes
         st["x"], st["z"] = PULLP
         bs = bundle_state(t)
-        top = float(top_at(bs, s_of_x(-1.0))[1]) - surf(*PULLP)
-        hy = top + 0.04
-        f = fwd_for_height(hy)
-        a = SH[n][0]; grip = ease(clampu(t, a, a + 0.5))
-        st["arms"] = [lerp([0.3, 0.5, 0.0], [0.3, f, 0.62], grip).tolist(), lerp([0.3, 0.5, 0.0], [0.3, f, 0.62], grip).tolist()]
         r = strain(t)
         st["sq"] += 0.05 * r * (1 if t < T.PUSH - 0.1 else -1); st["head"][0] = 0.1 * r
         st["y"] += 0.03 * r * abs(math.sin(t * 40))
+        fs = []
+        for hx in (-1.0 + 0.21, -1.0 - 0.21):                      # each paw rests on the top of the bundle under it (the bow is not level)
+            top = float(top_at(bs, s_of_x(hx))[1]) - surf(*PULLP)
+            tgt = top + 0.005 - 0.06                                  # hand_pos is the paw centre, about 0.06 above the pad
+            lo, hi = 0.5, 2.6
+            for _ in range(10):                                     # bisect on the real rig (hand height rises with fwd here)
+                f_ = (lo + hi) / 2; sa_ = dict(st); sa_["arms"] = [[0.3, f_, 0.62], [0.3, f_, 0.62]]
+                got = float(hand_pos(fox_mats(sa_)[2], 0 if hx > -1.0 else 1)[1]) - surf(*PULLP)
+                if got < tgt + 0.06: lo = f_
+                else: hi = f_
+            fs.append(f_)
+        f = fs[0]
+        st["arms"] = [[0.3, fs[0], 0.62], [0.3, fs[1], 0.62]]        # already gripping when the shot cuts in (watch_me ends with the grip)
         L = T.line("Problem A")
-        if t > L["t1"] + 0.2:                               # lets go and scratches his head
-            v = ease(clampu(t, L["t1"] + 0.2, L["t1"] + 0.6))
-            st["arms"][0] = lerp([0.3, f, 0.62], [0.5, 2.6, 0.0], v).tolist(); st["head"][2] = -0.15 * v
+        if t > L["t1"] + 0.2:                               # puzzled: head tilts, paws stay on the bundle
+            v = ease(clampu(t, L["t1"] + 0.2, L["t1"] + 0.6)); st["head"][2] = -0.15 * v
     elif n in ("sit_boing", "land", "pip_idea"):
         if t < T.SAT:                                       # hops up onto the bundle and turns to sit
             a = SH["sit_boing"][0]; u = clampu(t, a + 0.15, T.SAT)
@@ -326,7 +333,8 @@ def tumble(t):
             for k in range(3):
                 if t < ts[k + 1] or k == 2:
                     walk_to(st, t, path[k], path[k + 1], ts[k], ts[k + 1], rate=2.6); break
-            st["arms"] = [[2.1, 0.15 + 0.1 * math.sin(t * 5)], [2.1, 0.15 - 0.1 * math.sin(t * 5)]]
+            if -6.85 < st["z"] < -4.35: st["legs"] = [l * 0.3 for l in st["legs"]]; st["y"] = 0.004   # feet stay on the deck (no bounce, small steps)
+            st["arms"] = [[0.5, 1.5 + 0.12 * math.sin(t * 5)], [0.5, -1.1 - 0.12 * math.sin(t * 5)]]       # balancing: one paw ahead, one behind (side-on to the camera)
             st["roll"] = 0.06 * math.sin(t * 5)
             st["stand_h"] = bridge_stand(st["x"], st["z"], t); st["tight"] = st["z"] > -7.1
     elif n in ("moral", "chorus"):
@@ -447,7 +455,7 @@ def camera(t):
         return fit_cam(np.array([MSPOT[0] + 0.25, lerp(1.35, 1.45, e), MSPOT[1]]), lerp(14, 8, e), 5, lerp(1.3, 1.1, e), lerp(1.4, 1.15, e))
     if name == "chorus":
         return fit_cam(np.array([MSPOT[0] + 0.3, 1.2, MSPOT[1]]), 10, 6, 1.35, 1.35)
-    return fit_cam(np.array([MSPOT[0] + 0.6, lerp(0.95, 1.5, e), MSPOT[1] + 0.9]), 14, lerp(8, 24, e), lerp(1.7, 2.4, e), lerp(1.5, 2.2, e), lift=0.0 if not WIDE else 0.1)
+    return fit_cam(np.array([MSPOT[0] + lerp(0.6, 1.5, e), lerp(0.95, 1.5, e), MSPOT[1] + 0.9]), 14, lerp(8, 24, e), lerp(1.9, 3.0, e), lerp(1.5, 2.2, e), lift=0.0 if not WIDE else 0.1)
 
 # ---------------- draws ----------------
 STONES = [(-2.8, -4.45, 0.9, 1.0), (-0.9, -4.6, 1.4, 0.7), (1.0, -4.5, 1.1, 1.0), (3.4, -4.45, 1.0, 1.0),
