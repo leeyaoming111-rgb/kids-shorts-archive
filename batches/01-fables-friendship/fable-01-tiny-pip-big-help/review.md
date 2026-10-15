@@ -119,7 +119,7 @@ shot split, Tumble was already spinning free at 31.7 s and the knot popped after
 - **Unchanged:** captions, mouths and the spoken gags already ran from the aligned times. "Uh-oh! Help!" (24.9),
   "Wheee!" (31.9) and "Bye-bye!" (46.3) match the mix.
 
-**Open (audio, not fixable in the visuals):** the mix puts Tumble's "Wheee!" at 31.9 s, inside the peck close-up and
+**Resolved after the first render (audio splice, `mix_v2.mp3`; the text below is the original problem):** the mix puts Tumble's "Wheee!" at 31.9 s, inside the peck close-up and
 over Pip's "help!", while Tumble is still tied up. Its caption is hidden behind Pip's sung line. To fix it, remix with
 the gag at about 34.3 s (0.25 s after Tumble starts to rise). `GAG_WHEE` in `timeline.py` would then follow.
 

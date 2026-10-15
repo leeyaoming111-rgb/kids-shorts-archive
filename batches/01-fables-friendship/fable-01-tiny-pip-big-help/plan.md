@@ -6,9 +6,10 @@
   at 30 fps, 1440 frames each: `../renders/fable-01_short.mp4` (1080x1920, 23.9 MB) and `../renders/fable-01_wide.mp4`
   (1920x1080, 25.9 MB). H.264 crf 23, AAC 192k, -14.4 LUFS integrated, peak -1.2 dBFS. Render time 68 min wall on a
   4-core cloud CPU (8 parallel segments, llvmpipe), plus 82 s for the encode. Frames from both MP4s were checked and
-  the 8 stills per aspect re-archived from them. Open: "Wheee!" sits at 31.9 s in the mix, during the peck close-up
-  while Tumble is still tied up. It needs a remix with the line at about 34.3 s (not done; awaiting the owner's
-  go-ahead).
+  the 8 stills per aspect re-archived from them. "Wheee!" was moved from 31.9 s to 34.3 s (as Tumble starts to
+  spin) by a local audio splice (song-only audio over 31.85-33.6 s, same take placed at 34.3 s), saved as
+  `../audio/fable-01/mix_v2.mp3` (-14.4 LUFS); `mix.mp3` is kept as the original. The 24-36 s segment was re-rendered
+  in both aspects (25 min) and the MP4s re-encoded.
 - **series:** Tumble & Pip (Fables About Friendship). Batch plan: [../plan.md](../plan.md)
 - **source:** Aesop's fable *The Lion and the Mouse* (public domain), retold with our cast, gags and song
 - **lesson (SEL):** small friends can be big helpers; don't judge help by size
