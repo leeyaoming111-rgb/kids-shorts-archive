@@ -133,3 +133,18 @@ the gag at about 34.3 s (0.25 s after Tumble starts to rise). `GAG_WHEE` in `tim
   - A cropped kite corner at the 16:9 peck-shot edge.
 
 Geometry QA after the fixes: 0 issues (15 fps).
+
+## Moral-to-chorus cut at 38.4 s (owner: "not smooth")
+
+The owner's 2026-10-12 listen (audio/fable-01/report.json) and a later note said the transition into the chorus at about
+38 s was not smooth. Measured on the final mix: the beats stay in time across the join (onsets every 0.3 s) and there
+is no click, but the chorus is much brighter (about +9 dB above 4 kHz) and the chroma match is 0.80 (target 0.90).
+On the picture it was a hard cut from the tight moral push-in to the medium chorus shot, with Tumble's head tilt and
+second arm jumping.
+
+Fix (picture only, `render.py`): the moral shot now eases back out from the tight two-shot to exactly the chorus
+framing (centre, yaw, pitch and size), and a 0.3 s dissolve (38.25-38.55 s) blends Tumble's small pose change.
+Frames 1080-1160 re-rendered in both aspects and spliced in; the audio is unchanged (`mix_v2.mp3`).
+
+**Open (audio):** the brightness step at the join is untouched, because it can't be judged without listening. If it
+still sounds rough, ease the chorus highs in over its first second.

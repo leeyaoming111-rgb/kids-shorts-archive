@@ -9,7 +9,8 @@
   the 8 stills per aspect re-archived from them. "Wheee!" was moved from 31.9 s to 34.3 s (as Tumble starts to
   spin) by a local audio splice (song-only audio over 31.85-33.6 s, same take placed at 34.3 s), saved as
   `../audio/fable-01/mix_v2.mp3` (-14.4 LUFS); `mix.mp3` is kept as the original. The 24-36 s segment was re-rendered
-  in both aspects (25 min) and the MP4s re-encoded.
+  in both aspects (25 min) and the MP4s re-encoded. The moral-to-chorus cut at 38.4 s was smoothed (shot eases back to the
+  chorus framing plus a 0.3 s dissolve); see review.md.
 - **series:** Tumble & Pip (Fables About Friendship). Batch plan: [../plan.md](../plan.md)
 - **source:** Aesop's fable *The Lion and the Mouse* (public domain), retold with our cast, gags and song
 - **lesson (SEL):** small friends can be big helpers; don't judge help by size
