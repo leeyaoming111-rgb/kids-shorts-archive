@@ -477,9 +477,9 @@ def camera(t):
     if name == "spin_out":                                                  # wide: spins up like a top
         e = ease(clampu(t, SH[name][0], T.SPIN1))
         return fit_cam(np.array([lerp(TPOS[0] - 0.5, TPOS[0] + 0.35, e), 1.05, TPOS[1]]), -6, 6, lerp(2.4, 1.9, e), 1.7)
-    if name == "moral":                                                     # slow push-in two-shot
+    if name == "moral":                                                     # tight two-shot that eases back out into the chorus framing (so the cut at 38.4 matches)
         e = ease(u)
-        return fit_cam(np.array([TPOS[0] + 0.35, lerp(1.35, 1.45, e), TPOS[1]]), lerp(12, 6, e), 5, lerp(1.25, 1.05, e), lerp(1.4, 1.1, e))
+        return fit_cam(np.array([TPOS[0] + 0.35, lerp(1.45, 1.2, e), TPOS[1]]), lerp(12, 6, e), lerp(5, 6, e), lerp(1.05, 1.3, e), lerp(1.1, 1.35, e))
     if name == "chorus":                                                    # medium front, both in frame for the dance
         return fit_cam(np.array([TPOS[0] + 0.35, 1.2, TPOS[1]]), 6, 6, 1.3, 1.35)
     # button: crane up, keeping Tumble, Pip and the climbing kite all in frame
@@ -652,7 +652,7 @@ def draw_pass(draws, contacts, eye, tgt, fov, vp):
         prog["seed"].value = u.get("seed", 0.0)
         mesh.vao.render()
 
-def render_frame(t):
+def render_frame_raw(t):
     draws, contacts = build_draws(t)
     shadow_fbo.use(); shadow_fbo.clear(depth=1.0); ctx.viewport = (0, 0, 2048, 2048)
     sprog["LVP"].value = gl(LVP)
@@ -667,6 +667,24 @@ def render_frame(t):
     img = np.frombuffer(res_fbo.read(components=4), np.uint8).reshape(H, W, 4)[::-1].copy()
     img[..., 3] = 255
     return img
+
+# short dissolve across the moral -> chorus cut (tight push-in to medium shot, Tumble's pose changes): both shots are
+# rendered over the overlap, the moral shot held on past the cut and the chorus shot started early.
+XF = 0.15
+def render_frame(t):
+    cut = T.SHOTS[[n for a, b, n in T.SHOTS].index("chorus")][0]
+    if not (cut - XF <= t < cut + XF): return render_frame_raw(t)
+    im, ic = [n for a, b, n in T.SHOTS].index("moral"), [n for a, b, n in T.SHOTS].index("chorus")
+    keep = list(T.SHOTS)
+    try:
+        T.SHOTS[im] = (keep[im][0], cut + XF, "moral"); T.SHOTS[ic] = (cut + XF, keep[ic][1], "chorus")
+        A = render_frame_raw(t).astype(np.float32)                       # moral shot continues
+        T.SHOTS[im] = (keep[im][0], cut - XF, "moral"); T.SHOTS[ic] = (cut - XF, keep[ic][1], "chorus")
+        B = render_frame_raw(t).astype(np.float32)                       # chorus shot already running
+    finally:
+        T.SHOTS[:] = keep
+    w = ease((t - (cut - XF)) / (2 * XF))
+    return (A * (1 - w) + B * w).astype(np.uint8)
 
 # ---------------- 2D overlay: captions, title, moral card ----------------
 tf = skia.Typeface.MakeFromFile("assets/Fredoka.ttf")
