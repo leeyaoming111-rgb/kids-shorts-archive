@@ -102,7 +102,7 @@ def tumble(t):
         st["arms"] = [lerp([0.2, 0.3, 0.0], HUG[0], hug).tolist(), lerp([0.2, 0.3, 0.0], HUG[1], hug).tolist()]
         st["head"][2] = 0.12 * math.sin((t - L["t0"]) * 2.5) * hug; st["eyes_closed"] = L["t1"] - 0.6 < t < L["t1"] + 0.6
         st["y"] += 0.03 * abs(math.sin((t - L["t0"]) * 6)) * hug
-    elif n in ("wind_puff", "hold_tight"):                   # hugs the scarf and leans into the wind, head wobbling
+    elif n in ("wind_puff", "hold_tight", "pip_blown"):                   # hugs the scarf and leans into the wind, head wobbling
         w = wind_w(t)
         st["arms"] = [list(HUG[0]), list(HUG[1])]
         st["roll"] = 0.1 * w; st["head"][2] = 0.06 * w * math.sin(t * 17); st["head"][1] = 0.08 * w * math.sin(t * 11)
@@ -132,9 +132,11 @@ def tumble(t):
     elif n == "sunbathe":                                    # drops the scarf, lies down in the sunshine
         st["arms"][0] = lerp(PULL_OUT, [0.4, 0.2], ease(clampu(t, T.DROP, T.DROP + 0.3))).tolist()
         lie = ease(clampu(t, T.LIE0, T.LIE1))
+        crouch = ease(clampu(t, T.DROP, T.LIE0)) * (1 - lie)           # settle down into a comfy crouch before lying on his side
+        st["sq"] = -0.16 * crouch
         st["lie"] = lie; st["eyes_closed"] = t > T.LIE1 - 0.2
         if lie > 0: st["arms"] = [lerp([0.4, 0.2, 0.0], [0.35, 1.0, 0.5], lie).tolist(), lerp([0.4, 0.2], [0.3, 0.4], lie).tolist()]
-        st["head"][2] = -0.6 * lie; st["head"][0] = -0.12 * lie                 # head stays up, resting, while the body lies on its side
+        st["head"][2] = 0.7 * lie; st["head"][0] = 0.0 * lie                 # head stays up, resting, while the body lies on its side
         st["tail"] = 0.3 * math.sin(t * 2)
     elif n in ("moral", "chorus"):
         dance_tumble(st, t, n)
@@ -324,11 +326,11 @@ def pip_state(t, st, mats):
         ex = {}
         if abs(t - T.WHISTLE_GO - 0.2) < 0.45: ex = {"beak": True, "point": True}
         return POST_PIP, (to_tumble if n != "whistle" else -1.75), False, 0.0, True, ex
-    if n == "hold_tight":
+    if n in ("hold_tight", "pip_blown"):
         if t < T.BLOWN:                                          # feathers ruffling, hanging on
             return POST_PIP, to_tumble, False, 0.0, True, {"cling": 0.6 * wind_w(t)}
         u = clampu(t, T.BLOWN, T.CLING)                           # blown backwards, tumbling, onto the flower
-        p = lerp(POST_PIP, cling_p(t), ease(u)); p[1] += 0.25 * math.sin(math.pi * u); p[2] += 1.6 * math.sin(math.pi * u)
+        p = lerp(POST_PIP, cling_p(t), ease(u)); p[1] += 0.45 * math.sin(math.pi * u)
         return p, lerp(to_tumble, -math.pi / 2, u), True, -2 * math.pi * ease(u), False, {"gentle": True}
     if n in ("spin", "pip_cling"):                               # clinging to the flower stem like a little flag
         w = wind_w(t)
@@ -412,8 +414,9 @@ def draw_wind(draws, t):
         for k in range(9):
             ph = (t * (2.2 + 0.25 * (k % 3)) + k * 0.37) % 1.0
             side = (k - 4) * 0.07
-            d = WIND_DIR + np.array([0, 0.04 * (k - 4), 0.05 * side])
-            a = mouth + d * (0.55 + 2.0 * ph) + np.array([0, 0.08 * (k - 4) * ph, 0])
+            fwd = apply(M, (0, 0, 1.0)) - apply(M, (0, 0, 0.0)); fwd = fwd / np.linalg.norm(fwd)
+            d = 0.75 * fwd + 0.45 * WIND_DIR + np.array([0.05 * (k - 4), 0.03 * (k - 4), 0.0]); d = d / np.linalg.norm(d)
+            a = mouth + d * (0.25 + 2.0 * ph) + np.array([0, 0.08 * (k - 4) * ph, 0])
             b = a + d * (0.35 + 0.55 * ph) * pf
             Ms = seg_M(a, b, 0.022 * pf)
             if Ms is not None: draws.append((PR["stick"], Ms, U(mat=0, bump=0.0, tint=(1.0, 1.0, 1.0), tintMix=1.0), False))
@@ -476,9 +479,10 @@ def camera(t):
         return fit_cam(np.array([0.05, 1.4, 0]), lerp(-8, -4, e), 4, 0.95, 1.15)
     if name == "wind_puff":
         return fit_cam(WIND_P + np.array([0, 0.05, 0]), lerp(16, 20, e), -3, lerp(1.6, 1.35, e), lerp(1.5, 1.25, e), fov=34, lift=0.0)
-    if name == "hold_tight":                                  # low three-quarter, room for Pip's tumble to the flower
-        k = ease(clampu(t, T.BLOWN - 0.3, T.CLING))               # pull out to follow Pip's flight to the flower
-        return fit_cam(lerp(np.array([0.45, 1.2, 0.0]), np.array([1.45, 1.0, 0.2]), k), -18, -4, lerp(1.5, 3.1, k), lerp(1.35, 2.0, k), lift=lerp(0.16 if not WIDE else 0.12, 0.0, k))
+    if name == "hold_tight":                                  # low three-quarter on Tumble holding on
+        return fit_cam(np.array([0.45, 1.2, 0.0]), -18, -4, 1.5, 1.35)
+    if name == "pip_blown":                                   # insert: Pip is blown from the post onto the flower
+        return fit_cam(np.array([2.0, 1.0, 0.3]), -8, 4, 1.75, 1.6, lift=-0.08 if not WIDE else 0.1)
     if name == "spin":                                        # high angle wide
         return fit_cam(np.array([0.6, 0.9, 0.1]), 8, 42, 2.0, 1.7)
     if name == "pip_cling":
