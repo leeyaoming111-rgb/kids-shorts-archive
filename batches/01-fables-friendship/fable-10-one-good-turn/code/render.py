@@ -22,7 +22,7 @@ LEAF_YAW0 = math.pi / 2                                # blade direction (0, -1)
 LEAF_STEM = (LEAF0[0], LEAF0[1] + 1.25 * LEAF_S)       # its stem tip
 PIP_GRAB = (LEAF_STEM[0], LEAF_STEM[1] + 0.45)         # Pip stands here, leaning forward, to take the stem in his beak
 GRAB_PITCH = 0.7
-LEAF_BANK = (-0.8, -4.9)                               # where the leaf boat touches the bank
+LEAF_BANK = (-0.95, -4.7)                               # where the leaf boat touches the bank
 ANT_BANK = (-0.5, -4.45)                               # the ant ashore
 PIP_BANK = (-0.05, -4.3)                               # Pip on the grass, facing the ant
 T0 = (0.65, -3.5)                                       # Tumble on the bank, watching
@@ -43,15 +43,16 @@ FLOWERS = make_flowers([(T0[0], T0[1], 1.0), (TS[0], TS[1], 1.6), (FLOWER[0], FL
                         ("box", -3.5, 3.6, -4.9, -3.0), ("box", -4.5, 1.6, -4.9, -0.8), ("box", -1.0, 3.6, -3.3, -1.3), ("box", 0.8, 3.8, -1.3, 0.8), ("band", -6.8, -4.3)], seed=53)
 
 def twig_c(t):
-    x = TWIG_X0 + CURRENT * t
-    return np.array([x, surf(x, TWIG_Z) + 0.025 + 0.012 * math.sin(t * 2.3), TWIG_Z])
+    x = TWIG_X0 + CURRENT * t + 2.2 * max(0.0, t - T.ANT_HOP - 0.12) ** 1.5   # the current takes the empty twig away
+    z = TWIG_Z - 0.5 * ease(clampu(t, T.ANT_HOP + 0.05, T.ANT_HOP + 0.9))        # and out round the back of the leaf
+    return np.array([x, surf(x, z) + 0.025 + 0.012 * math.sin(t * 2.3), z])
 def twig_spin(t): return 1.1 * t
 
 # ---------------- the leaf boat ----------------
 def leaf_on_beak(Mp, droop):
     b = beak_pos(Mp); yaw = math.atan2(Mp[0, 2], Mp[2, 2])   # Pip's heading
     return trans(*b) @ roty(yaw - math.pi / 2) @ rotz(-droop) @ trans(1.25 * LEAF_S, 0, 0) @ scale(LEAF_S)
-REL_X = TWIG_X0 + CURRENT * (T.DROP + 0.45) + 0.7      # release so the leaf lands just beside the drifting twig
+REL_X = TWIG_X0 + CURRENT * (T.DROP + 0.45) + 1.0      # release so the leaf lands just beside the drifting twig
 REL_P = np.array([REL_X, 0.85, TWIG_Z + 0.05 + 0.75])     # Pip's position at the drop (the blade hangs out over the water)
 LAND_T = T.DROP + 0.45
 BOARD = T.ANT_HOP + 0.4
@@ -158,6 +159,9 @@ def draw_ant(draws, contacts, t, a, obj, hero=False, sing=False):
             hip = np.array([0.03 * side, 0.085, z])
             knee = np.array([0.095 * side, 0.125, z * 1.6 + sw * 0.5])
             foot = np.array([0.13 * side, 0.004 + lift, z * 2.4 + sw])
+            if k == 2 and a.get("grip_pt") is not None:           # front legs hold Pip's tail
+                foot = (np.linalg.inv(M) @ np.r_[a["grip_pt"], 1.0])[:3] + np.array([0.012 * side, 0.0, 0.0])
+                knee = (hip + foot) / 2 + np.array([0.02 * side, 0.05, 0.0])
             for a_, b_ in ((hip, knee), (knee, foot)):
                 A, B = apply(M, a_), apply(M, b_)
                 Ms = seg_M(A, B, 0.012 * a.get("s", ANT_S))
@@ -195,7 +199,7 @@ def path_pt(pts, s):
             return (a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u), math.atan2(b[0] - a[0], b[1] - a[1])
         s -= L
 def path_len(pts): return sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(pts[:-1], pts[1:]))
-LEAD_D = -TAIL_LOCAL[2] + 0.08                         # the hero ant's distance behind Pip's feet: its front legs reach his tail tip
+LEAD_D = -TAIL_LOCAL[2] + 0.12                         # the hero ant's distance behind Pip's feet: its front legs reach his tail tip
 def slot(k, shift=0.0):
     d = LEAD_D + GAP * k + shift; return (HP[0] + DIRL[0] * d, HP[1] + DIRL[2] * d)
 PEND = slot(0, 2.2)                                    # the ants join the line here and walk up it to their places
@@ -210,13 +214,13 @@ def march_start(k):
 
 def tug_env(t):
     """Pip's stretch (1 = none) and the line's lean from the three tugs, plus the release at the pop"""
-    amps = [0.3, 0.55, 0.85]; s, lean = 1.0, 0.0
+    amps = [0.55, 0.95, 1.5]; s, lean = 1.0, 0.0
     for k, tg in enumerate(T.TUGS[:3]):
         a = amps[min(k, 2)]
         if k == len(T.TUGS[:3]) - 1:                      # the last tug holds until the pop
             u = ease(clampu(t, tg, tg + 0.35)); hold = t < T.POP
             if t < tg: continue
-            if hold: s += a * u; lean += 0.32 * u
+            if hold: s += a * u; lean += 0.55 * u
             else:
                 d = t - T.POP; s += a * max(0.0, 1 - d / 0.08)
             continue
@@ -226,8 +230,8 @@ def tug_env(t):
         elif d < 0.55: v = 1.0
         else:
             e = d - 0.55; v = math.exp(-e * 5) * math.cos(e * 16)   # toffee snaps back with a wobble
-        s += a * v; lean += 0.3 * max(0.0, v) if d < 0.9 else 0.0
-    return max(s, 0.75), lean
+        s += a * v; lean += 0.5 * max(0.0, v) if d < 0.9 else 0.0
+    return max(s, 0.8), lean
 STRETCH_AX = DIRL + np.array([0, 0.45, 0]); STRETCH_AX = STRETCH_AX / np.linalg.norm(STRETCH_AX)   # back towards the ants, a little up
 def stretch_M(anchor, axis, s):
     k = 1 / math.sqrt(max(s, 1e-3)); A = np.outer(axis, axis)
@@ -259,15 +263,16 @@ def ants(t):
                 if n == "pop" and t > T.POP:                # everyone sits down in a heap, legs up
                     d = t - T.POP; u = ease(clampu(d, 0.0, 0.25 + 0.04 * k))
                     x, z = slot(k, shift * (1 - u) + 0.12 * u)
-                    st = ant_on(x, z, ANT_YAW, lean=lean + (0.95 - lean) * u, legs_up=u > 0.5, feelers=1.0)
+                    st = ant_on(x, z, ANT_YAW, lean=lean + (0.9 - lean) * u, legs_up=u > 0.5, feelers=1.0)
+                    st["p"] = np.asarray(st["p"]) + np.array([0, 0.05 * u, 0])
                     if d > 1.2:                              # then they cheer, feelers waving
                         st["feelers"] = 1.5
-                if k == 0 and n != "pop" or (k == 0 and t <= T.POP): st["grip"] = True
+                if k == 0 and (n != "pop" or t <= T.POP): st["grip_pt"] = tail[:3] + np.array([0, 0.0, 0])
             out.append((st, f"ant{k}", k == 0, k == 0))
         return out
     # moral, chorus, button: the hero rides Tumble's paw; the line stands beside the flower facing the camera
     for k in range(1, 6):
-        x = TS[0] + (-1.05, -0.78, -0.5, 0.78, 1.05)[k - 1]; z = TS[1] + 0.5
+        x = TS[0] + (-1.05, -0.78, -0.5, 0.78, 1.05)[k - 1]; z = TS[1] + 0.3
         st = ant_on(x, z, -0.2 if x < TS[0] else 0.2)
         if n == "chorus":
             sway = math.sin(2 * math.pi * (t - SH["chorus"][0]) / (2 * BEAT))
@@ -435,7 +440,7 @@ def pip_post(t, pip):
     if n == "pop" and "flip" in pip[5]:
         u = pip[5]["flip"]; c = pip[0] + np.array([0, 0.2, 0])
         ang = -2 * math.pi * ease(u)                        # two-thirds of the way it has done one full backwards flip
-        ax = pip[1]
+        ax = PIP_YAW_STUCK
         R = trans(*c) @ roty(ax) @ rotx(ang) @ roty(-ax) @ trans(*(-c))
         s = 1 + 0.5 * math.exp(-u * 8)                       # still a bit stretched as he pops loose
         return R @ stretch_M(pip[0], STRETCH_AX, s)
@@ -457,25 +462,26 @@ def camera(t):
         c = twig_c(T.ANT_HOP)
         return fit_cam(np.array([c[0] + 0.3, 0.1, -5.25]), 0, 72, 1.8, 1.3, lift=0.02)
     if name == "thank_you":                                 # macro, low, side-on to the ant and Pip
-        return fit_cam(np.array([(ANT_BANK[0] + PIP_BANK[0]) / 2 - 0.12, 0.22, -4.5]), lerp(14, 8, e), 7, 1.15, 0.65, lift=0.05)
+        return fit_cam(np.array([(ANT_BANK[0] + PIP_BANK[0]) / 2 - 0.4, 0.22, -4.5]), lerp(-14, -8, e), 7, 1.15, 0.65, lift=0.05)
     if name == "fly_off":                                   # following Pip off and Tumble along the bank
-        return fit_cam(np.array([lerp(0.4, 1.1, e), 1.3, -3.4]), lerp(-8, 2, e), 8, 3.4, 2.1)
+        return fit_cam(np.array([lerp(0.8, 1.4, e), 1.5 if not WIDE else 1.7, -3.3]), lerp(-8, 2, e), 8, 2.3, 2.4)
     if name == "splat":                                     # low close on the honey puddle
         return fit_cam(np.array([HP[0] - 0.05, 0.42, HP[1]]), lerp(30, 24, e), 7, 1.0, 0.95, lift=0.05)
     if name == "stuck":                                     # close, side-on
         return fit_cam(np.array([HP[0], 0.5, HP[1]]), lerp(-6, 4, e), 6, 0.95, 1.05, lift=0.06)
     if name == "ants_march":                                # wide: Tumble, the line marching in, Pip in the honey
         a = SH[name][0]; tp = lerp(np.array([-0.2, 0.35, -3.3]), np.array([1.3, 0.45, -2.9]), ease(u))
-        return fit_cam(tp, lerp(-8, -22, e), 13, 2.1, 1.3)
+        return fit_cam(tp + (np.array([0, 0.6, 0]) if WIDE else 0), lerp(-8, -22, e), 13, 2.1, 1.3 if not WIDE else 1.9)
     if name == "tug":                                       # side-on along the line
         return fit_cam(np.array([HP[0] - 0.55, 0.4, HP[1] - 0.45]), lerp(-8, -20, e), 8, 1.35, 0.9 if not WIDE else 1.6, lift=0.06)
     if name == "pop":                                       # wide side: the pop and the somersault onto his nose
-        return fit_cam(np.array([0.75, 1.3, -3.4]), -4, 8, 2.4, 2.2, lift=0.05)
+        k = ease(clampu(t, T.LANDING, T.LANDING + 0.9))
+        return fit_cam(np.array([lerp(1.15, 0.35, k), lerp(1.3, 1.5, k), -3.5]), -4, 8, lerp(1.95, 1.45, k), lerp(2.2, 1.7, k), lift=0.05)
     if name == "moral":
         return fit_cam(np.array([TS[0] + 0.05, lerp(1.3, 1.38, e), TS[1]]), lerp(8, 3, e), 5, lerp(1.75, 1.55, e), lerp(1.45, 1.25, e))
     if name == "chorus":
         return fit_cam(np.array([TS[0] + 0.1, 1.15, TS[1]]), 4, 6, 1.75, 1.45)
-    tgt = np.array([lerp(TS[0] + 0.2, TS[0] + 1.0, e), lerp(1.15, 1.8, e), TS[1]])
+    tgt = np.array([lerp(TS[0] + 0.2, TS[0] - 0.5, e), lerp(1.15, 1.8, e), TS[1]])
     return fit_cam(tgt, 4, lerp(6, 18, e), lerp(1.75, 3.6, e), lerp(1.45, 2.4, e), lift=0.04)
 
 # ---------------- draws ----------------
@@ -527,7 +533,7 @@ def build_draws(t):
         if n in ("moral", "chorus", "button_crane") and hero: continue
         Ma = draw_ant(draws, contacts, t, a, obj, hero=hero, sing=sing)
         if n == "button_crane" and obj == "ant3":              # the honey drop, carried like a golden ball
-            draws.append((PR["ball"], Ma @ trans(0, 0.3, -0.05) @ scale(0.085), U(mat=2, bump=0.0, tint=HONEY, tintMix=1.0), False))
+            draws.append((PR["ball"], Ma @ trans(0, 0.3, -0.05) @ scale(0.12), U(mat=2, bump=0.0, tint=HONEY, tintMix=1.0), False))
     if n in ("moral", "chorus", "button_crane"):            # the hero ant rides Tumble's other paw and sings the moral
         hp1 = hand_pos(arms, 1) + np.array([0, 0.085, 0])
         yaw = math.atan2(-0.6, 1.0)
@@ -557,6 +563,6 @@ def build_draws(t):
 
 HOOKS.update(build=build_draws, camera=camera, tumble=tumble,
              ground_objs=lambda t: ("fox", "pip") + tuple(f"ant{k}" for k in range(6)),
-             qa_ignore={("pip", "honey"), ("honey", "pip")})   # Pip's feet are stuck in the honey on purpose
+             qa_ignore={("pip", "honey"), ("honey", "pip"), ("ant0", "pip"), ("pip", "ant0")})   # Pip's feet are stuck in the honey on purpose
 if __name__ == "__main__":
     main()
