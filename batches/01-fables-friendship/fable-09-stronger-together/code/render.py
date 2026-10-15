@@ -26,10 +26,10 @@ B0 = np.array([-2.3, SUP_Y + BR + 0.004, BZ]); B1 = B0 + np.array([BL, 0, 0])
 SA, SB = (STUMP[0] + 0.62 - B0[0]) / BL, (ROCK[0] - 0.42 - B0[0]) / BL   # inner edges of the supports: the bundle bends between them
 SPOT = (-3.1, -1.9)                                       # Tumble's hook spot, in front of the bench
 PULLP = (-1.0, -4.3)                                      # behind the bench (stream side), facing the camera
-LANDP = (0.5, -1.95)                                       # where he lands on his bottom after the boing
+LANDP = (1.1, -1.95)                                       # where he lands on his bottom after the boing
 BRX = 2.6                                                  # the bridge line (along z) across the stream
 BZ0, BZ1 = -4.2, -6.8
-MSPOT = (BRX - 2.0, -7.45)                                 # far bank: moral, chorus, button
+MSPOT = (BRX - 2.6, -7.45)                                 # far bank: moral, chorus, button
 HALVES = [(-3.5, -1.25, 0.3), (-2.65, -1.2, -0.25)]       # where the two twig halves land (x, z, yaw)
 PIP_S = 0.86                                               # Pip's perch along the bench bundle (by the rock)
 FLOWERS = make_flowers([(STUMP[0], STUMP[1], 1.2), (ROCK[0], ROCK[1], 1.0), ("box", -2.6, 0.6, -4.7, -1.0),
@@ -92,7 +92,7 @@ def bundle_state(t):
     A = spring(t, T.THUMP, 0.05, f=6.0, k=5.0)
     if n == "button_crane":                                # Pip's springy landing on the middle
         for k, tb in enumerate(BOINGS):
-            A += spring(t, tb, 0.12 * (0.7 ** k), f=6.0, k=6.0) if t >= tb else 0.0
+            A += spring(t, tb, 0.2 * (0.7 ** k), f=6.0, k=6.0) if t >= tb else 0.0
     return BR0, BR1, A, 0.04, 0.96
 
 def _frame(P0, P1):
@@ -251,20 +251,20 @@ def tumble(t):
         elif t < j1:                                        # a show-off spin over the bundle
             u = clampu(t, j0, j1)
             st["x"], st["z"] = lerp(SPOT, PULLP, ease(u))
-            st["y"] += 1.7 * math.sin(math.pi * u); st["yaw"] = 2 * math.pi * ease(u)
+            st["y"] += 1.4 * math.sin(math.pi * u); st["yaw"] = 2 * math.pi * ease(u)
             st["arms"] = [[1.9, 0.3], [1.9, 0.3]]; st["legs"] = [0.12, 0.12]
         else:                                               # ta-da!
             d = t - j1
             st["x"], st["z"] = PULLP
             st["sq"] -= 0.12 * math.exp(-d * 7) * math.cos(d * 22)
             top = float(top_at(bundle_state(t), s_of_x(-1.0))[1]) - surf(*PULLP)
-            gf = fwd_for_height(top + 0.07)                 # then he grips the middle of the bundle, ready to pull
+            gf = fwd_for_height(top + 0.04)                 # then he grips the middle of the bundle, ready to pull
             v = ease(clampu(d, 0.9, 1.4)); st["arms"] = [lerp([2.3, 0.2, 0.0], [0.3, gf, 0.62], v).tolist() for _ in range(2)]
     elif n == "pull_push":                                  # grips the middle from behind and pulls, then pushes
         st["x"], st["z"] = PULLP
         bs = bundle_state(t)
         top = float(top_at(bs, s_of_x(-1.0))[1]) - surf(*PULLP)
-        hy = top + 0.07
+        hy = top + 0.04
         f = fwd_for_height(hy)
         a = SH[n][0]; grip = ease(clampu(t, a, a + 0.5))
         st["arms"] = [lerp([0.3, 0.5, 0.0], [0.3, f, 0.62], grip).tolist(), lerp([0.3, 0.5, 0.0], [0.3, f, 0.62], grip).tolist()]
@@ -320,13 +320,13 @@ def tumble(t):
             st["arms"] = [lerp([0.15, 1.5], [2.0, 0.3], v).tolist(), lerp([0.4, 0.5], [2.0, 0.3], v).tolist()]
             st["head"][0] = -0.1
         else:                                               # onto the bridge and across, arms out for balance
-            path = [tb0, (BRX, -3.85), (BRX, -7.15), (BRX - 0.2, -7.4)]
+            path = [tb0, (BRX - 0.07, -3.85), (BRX - 0.07, -7.15), (BRX - 0.5, -7.4)]
             c0, c1 = T.CROSS0, T.CROSS1
             ts = [c0, c0 + 0.35, c1 - 0.3, c1]
             for k in range(3):
                 if t < ts[k + 1] or k == 2:
                     walk_to(st, t, path[k], path[k + 1], ts[k], ts[k + 1], rate=2.6); break
-            st["arms"] = [[1.5, 0.15 + 0.1 * math.sin(t * 5)], [1.5, 0.15 - 0.1 * math.sin(t * 5)]]
+            st["arms"] = [[2.1, 0.15 + 0.1 * math.sin(t * 5)], [2.1, 0.15 - 0.1 * math.sin(t * 5)]]
             st["roll"] = 0.06 * math.sin(t * 5)
             st["stand_h"] = bridge_stand(st["x"], st["z"], t); st["tight"] = st["z"] > -7.1
     elif n in ("moral", "chorus"):
@@ -336,7 +336,7 @@ def tumble(t):
         a = SH["button_crane"][0]; st["x"], st["z"] = MSPOT; st["yaw"] = -0.05
         down = ease(clampu(t, a + 0.45, a + 0.85))
         st["arms"] = [lerp(DANCE_ARM, [0.3, 0.3], down).tolist(), [2.2 + 0.25 * math.sin((t - a) * 9) * down, 0.3]]
-        st["head"][1] = 0.3 * down; st["head"][2] = 0.1 * (1 - down)
+        st["head"][1] = 0.3 * down; st["head"][2] = 0.1 * down
     return st
 
 def bridge_stand(x, z, t):
@@ -406,7 +406,7 @@ def pip_state(t, st, mats):
     u = clampu(t, a + 0.1, a + 0.8)
     if u < 1:
         q = lerp(p0, dest, ease(u)); q[1] += 0.8 * math.sin(math.pi * u)
-        return q, math.atan2(dest[0] - p0[0], dest[2] - p0[2]), True, 0.0, False, ({"wings": (0.15, 0.15)} if u < 0.5 else {"gentle": True})
+        return q, lerp(0.35, math.atan2(dest[0] - p0[0], dest[2] - p0[2]), ease(clampu(u, 0.0, 0.5))), True, 0.0, False, ({"wings": (0.15, 0.15)} if u < 0.5 else {"gentle": True})
     hop = 0.0
     for k, tb in enumerate(BOINGS):
         d = t - tb; hh = 0.3 * (0.6 ** k)
@@ -429,7 +429,7 @@ def camera(t):
         pp = bench_perch(t)
         return fit_cam(pp + np.array([-0.05, 0.25, 0]), lerp(58, 50, e), 4, 0.55, 0.62, fov=34)
     if name == "watch_me":                                  # medium three-quarter, wide enough for the leap
-        return fit_cam(np.array([-1.95, 1.35, -3.0]), -18, 7, 2.35, 2.05)
+        return fit_cam(np.array([-1.95, 1.6, -3.0]), -18, 7, 2.9, 2.6)
     if name == "pull_push":                                 # medium front, the bundle in the foreground
         return fit_cam(np.array([-0.85, 1.15, -3.9]), lerp(10, 4, e), 8, 1.45, 1.35)
     if name == "sit_boing":                                 # side-on low angle, tilting up with the launch
