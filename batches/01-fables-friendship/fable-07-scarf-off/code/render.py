@@ -134,6 +134,7 @@ def tumble(t):
         lie = ease(clampu(t, T.LIE0, T.LIE1))
         st["lie"] = lie; st["eyes_closed"] = t > T.LIE1 - 0.2
         if lie > 0: st["arms"] = [[0.6 + 0.6 * lie, 0.2], [0.4, 0.2]]
+        st["head"][2] = -1.1 * lie; st["head"][0] = 0.1 * lie                 # head stays up, resting, while the body lies on its side
         st["tail"] = 0.3 * math.sin(t * 2)
     elif n in ("moral", "chorus"):
         dance_tumble(st, t, n)
@@ -209,13 +210,22 @@ def ground_run(foot, d, L):
     n = max(2, int(L / 0.1) + 1)
     return [np.array([foot[0] + d[0] * L * k / (n - 1), 0, foot[2] + d[2] * L * k / (n - 1)]) for k in range(n)]
 def on_grass(p): return np.array([p[0], surf(p[0], p[2]) + SC_R * 0.9, p[2]])
+def _drape(top, bottom_y, length):
+    """points from the bottom (y=bottom_y) up to top: a soft cloth curve that bulges and sways, not a rod"""
+    n = max(3, int(length / 0.08) + 1); amp = 0.16 + 0.05 * math.sin(_NOW[0] * 5.5); side = -G1
+    out = []
+    for k in range(n):
+        f = k / (n - 1)                                          # 0 at the bottom, 1 at the paw
+        off = amp * math.sin(math.pi * f) * (1 - 0.3 * f) + 0.03 * math.sin(_NOW[0] * 7 + f * 5) * f * (1 - f)
+        out.append(np.array([top[0], bottom_y + (top[1] - bottom_y) * f, top[2]]) + side * off)
+    return out
 def hanging(hand, h):
-    """scarf gathered through the paw: straight down from the paw to the grass, then along the grass (G1)"""
+    """scarf gathered through the paw: a drooping curve from the paw to the grass, then along the grass (G1)"""
     foot = np.array([hand[0], 0, hand[2]]); gy = surf(hand[0], hand[2]) + SC_R * 0.9
     drop = max(hand[1] - gy, 0.01)
-    if h <= drop: return [hand - np.array([0, h, 0]), hand]
+    if h <= drop: return _drape(hand, hand[1] - h, h)[:] + []
     run = ground_run(foot, G1, h - drop)[::-1]
-    return [on_grass(p) for p in run] + [hand]
+    return [on_grass(p) for p in run] + _drape(hand, gy, drop)[1:]
 def scarf_points(t, st, mats):
     R, Mh, arms, legs = mats
     if t < T.GRAB:
@@ -276,7 +286,14 @@ GRAB_ARM = solve_arm(_grab_target(), 0)
 
 # ---------------- Pip ----------------
 HOVER = np.array([0.95, 1.65, 0.25])
-CLING_P = np.array([FLOWER[0] + STEM_R + 0.42, surf(*FLOWER) + 0.16, FLOWER[1]])
+CLING_P = np.array([FLOWER[0] + 0.36, surf(*FLOWER) + 0.88, FLOWER[1]])
+def flower_bend(t):
+    g = wind_w(t)
+    return 0.35 * g * math.sin(t * 9) + 0.25 * g + 0.04 * math.sin(t * 1.4)
+def cling_p(t):                                              # Pip's seat on the petals of the swaying flower head (measured: top ~0.89 at r 0.36)
+    a = 0.12 * flower_bend(t); v = np.array([0.36, 0.98])
+    base = np.array([FLOWER[0], surf(*FLOWER) - 0.01, FLOWER[1]])
+    return base + np.array([v[0] * math.cos(-a) - v[1] * math.sin(-a), v[0] * math.sin(-a) + v[1] * math.cos(-a), 0.0])
 def pip_state(t, st, mats):
     n = T.shot_at(t)[1]
     R, Mh, arms, legs = mats
@@ -302,11 +319,11 @@ def pip_state(t, st, mats):
         if t < T.BLOWN:                                          # feathers ruffling, hanging on
             return POST_PIP, to_tumble, False, 0.0, True, {"cling": 0.6 * wind_w(t)}
         u = clampu(t, T.BLOWN, T.CLING)                           # blown backwards, tumbling, onto the flower
-        p = lerp(POST_PIP, CLING_P, ease(u)); p[1] += 0.25 * math.sin(math.pi * u); p[2] += 1.6 * math.sin(math.pi * u)
+        p = lerp(POST_PIP, cling_p(t), ease(u)); p[1] += 0.25 * math.sin(math.pi * u); p[2] += 1.6 * math.sin(math.pi * u)
         return p, lerp(to_tumble, -math.pi / 2, u), True, -2 * math.pi * ease(u), False, {"gentle": True}
     if n in ("spin", "pip_cling"):                               # clinging to the flower stem like a little flag
         w = wind_w(t)
-        p = CLING_P + np.array([0.02 * math.sin(t * 19) * w, 0.02 * math.sin(t * 13) * w, 0])
+        p = cling_p(t) + np.array([0.01 * math.sin(t * 19) * w, 0.015 * math.sin(t * 13) * w, 0])
         return p, -math.pi / 2 + 0.12 * math.sin(t * 9) * w, False, 0.0, False, \
             {"wings": (1.25 + 0.15 * math.sin(t * 30), 1.25 + 0.15 * math.sin(t * 30 + 1)), "cling": 0.4}
     if n in ("wind_tired", "sun_shine", "scarf_off"):
@@ -321,15 +338,29 @@ def pip_state(t, st, mats):
     return top, 0.35, False, 0.0, True, {"cheer": t > SH["button_crane"][0] + 0.5}
 def pip_blowing(t):
     return any(abs(t - w_ - 0.2) < 0.45 for w_ in (T.WHISTLE_HOOK, T.WHISTLE_GO, T.WHISTLE_WIN))
+def stick_between(p, q, r, tint):
+    """a thin stick (mesh axis y, base at origin, length 1) from p to q"""
+    d = np.asarray(q, float) - np.asarray(p, float); L = float(np.linalg.norm(d)); d = d / max(L, 1e-6)
+    ax = np.cross([0, 1, 0], d); sn = float(np.linalg.norm(ax)); an = math.atan2(sn, d[1])
+    if sn < 1e-6: R = np.eye(4)
+    else:
+        ax = ax / sn; K = np.array([[0, -ax[2], ax[1]], [ax[2], 0, -ax[0]], [-ax[1], ax[0], 0]])
+        R = np.eye(4); R[:3, :3] = np.eye(3) + math.sin(an) * K + (1 - math.cos(an)) * (K @ K)
+    return trans(*p) @ R @ scale(r / 0.05, L, r / 0.05)
 def draw_whistle(draws, t, Mp):
+    """a little yellow whistle on a red cord round Pip's neck: lies on his chest, swings up into his beak to blow"""
     bl = 0.0
     for w_ in (T.WHISTLE_HOOK, T.WHISTLE_GO, T.WHISTLE_WIN):
         bl = max(bl, ease(clampu(t, w_ - 0.25, w_ - 0.1)) * (1 - ease(clampu(t, w_ + 0.5, w_ + 0.65))))
-    base = lerp((0, 0.16, 0.235), (0, 0.30, 0.25), bl)
-    M = Mp @ trans(*base) @ rotx(math.pi / 2 - 0.25 * (1 - bl)) @ scale(0.42, 0.1, 0.42)
-    draws.append((PR["stick"], M, U(mat=0, bump=0.0, tint=(1.0, 0.82, 0.2), tintMix=1.0), False))
+    base = lerp((-0.05, 0.14, 0.175), (0.0, 0.30, 0.25), bl)
+    M = Mp @ trans(*base) @ roty((1 - bl) * math.pi / 2) @ rotx(math.pi / 2 - 0.15 * (1 - bl)) @ scale(0.42, 0.1, 0.42)
+    yel = U(mat=0, bump=0.0, tint=(1.0, 0.82, 0.2), tintMix=1.0)
+    draws.append((PR["stick"], M, yel, False))
     tip = apply(M, (0, 1.0, 0))
-    draws.append((PR["ball"], Mp @ trans(*(base + np.array([0, -0.035, 0.05]))) @ scale(0.03), U(mat=0, bump=0.0, tint=(1.0, 0.82, 0.2), tintMix=1.0), False))
+    draws.append((PR["ball"], Mp @ trans(*base) @ scale(0.026), yel, False))
+    neck = np.array([0.0, 0.265, 0.12]); red = U(mat=0, bump=0.0, tint=(0.85, 0.2, 0.2), tintMix=1.0)
+    for sx in (-1, 1):                                          # cord: over the shoulders down to the whistle ring
+        draws.append((PR["stick"], Mp @ stick_between(neck + np.array([0.075 * sx, 0, -0.03]), base, 0.007, red), red, False))
     for w_ in (T.WHISTLE_HOOK, T.WHISTLE_GO, T.WHISTLE_WIN):
         for k in range(3):
             puff(draws, tip + np.array([0, 0.03, 0.03]), w_ + 0.12 * k, t, n=6, size=0.022, spread=0.5, dur=0.3, tint=(1.0, 1.0, 1.0), axis=(0, 0.2, 0.2))
@@ -363,7 +394,17 @@ def draw_wind(draws, t):
     if pf > 0.2:                                                  # round blowing mouth
         o = 0.09 + 0.06 * pf + 0.015 * math.sin(t * 20)
         draws.append((PR["mouth"], M @ trans(0, -0.25, 0.78 + 0.1 * pf) @ scale(o, o * 1.1, 0.05), U(mat=2, bump=0.0), False))
-    else:                                                         # smile (a laugh when tired)
+    if pf > 0.35:                                                 # a fan of gust streaks pouring out of the mouth
+        mouth = apply(M, (0, -0.25, 0.85))
+        for k in range(9):
+            ph = (t * (2.2 + 0.25 * (k % 3)) + k * 0.37) % 1.0
+            side = (k - 4) * 0.07
+            d = WIND_DIR + np.array([0, 0.04 * (k - 4), 0.05 * side])
+            a = mouth + d * (0.2 + 2.2 * ph) + np.array([0, 0.08 * (k - 4) * ph, 0])
+            b = a + d * (0.35 + 0.55 * ph) * pf
+            Ms = seg_M(a, b, 0.022 * pf)
+            if Ms is not None: draws.append((PR["stick"], Ms, U(mat=0, bump=0.0, tint=(1.0, 1.0, 1.0), tintMix=1.0), False))
+    if pf <= 0.2:                                                         # smile (a laugh when tired)
         draws.append((PR["mouth"], M @ trans(0, -0.2, 0.7) @ scale(0.2, 0.05 + 0.06 * tired, 0.05), U(mat=2, bump=0.0), False))
     return M
 def draw_wind_streaks(draws, t):
@@ -391,7 +432,7 @@ def sun_face(t):
 def draw_sun(draws, t):
     look, shine = sun_face(t)
     s = SUN_S * (1 + 0.08 * shine)
-    M = face_mat(SUN_P + np.array([0, 0.1 * math.sin(t * 1.1 + 1), 0]), look, s)
+    M = face_mat(SUN_P + np.array([0.1 * 0 + (2.5 if T.shot_at(t)[1] == "wind_puff" else 0.0), 0.1 * math.sin(t * 1.1 + 1), 0]), look, s)
     if T.shot_at(t)[1] == "sky_faces": M = M @ rotz(-0.08 * math.sin(math.pi * clampu(t, SH["sky_faces"][0] + 0.3, SH["sky_faces"][1] - 0.2)))
     draws.append((SC["sun"], M @ rotz(0.15 * t + 0.6 * shine), U(mat=0, bump=0.3, tint=(1.0, 0.93 + 0.04 * shine, 0.6), tintMix=-1.0), False))
     for sx in (-1, 1):
@@ -401,7 +442,9 @@ def draw_sun(draws, t):
     bl = blink(t, 2.0, 3.6)
     eyes(draws, M, [(0.32, 0.22, 0.34)], 0.13, 0.25 if wink else bl)
     eyes(draws, M, [(-0.32, 0.22, 0.34)], 0.13, bl)
-    draws.append((PR["mouth"], M @ trans(0, -0.25, 0.36) @ scale(0.26 + 0.04 * shine, 0.06 + 0.04 * shine, 0.04), U(mat=2, bump=0.0), False))
+    amp = 0.012 + 0.012 * shine                                   # a curved smile: beads on an arc, corners lifted
+    for i in range(-4, 5):
+        draws.append((PR["ball"], M @ trans(0.065 * i, -0.33 + amp * i * i / 4.0, 0.355) @ scale(0.034, 0.034, 0.03), U(mat=0, bump=0.0, tint=(0.62, 0.12, 0.18), tintMix=1.0), False))
     return M
 
 # ---------------- camera ----------------
@@ -413,7 +456,7 @@ def camera(t):
     if name == "title_wide":
         return fit_cam(np.array([0.9, 1.7, -1.0]), -10, 9, 3.4, 2.6 if not WIDE else 2.1, lift=0.05)
     if name == "sky_faces":
-        return fit_cam(lerp(WIND_P, SUN_P, 0.5) + np.array([0, 0.1, 0]), 0, -2, 2.6, 1.5 if not WIDE else 2.15, fov=34, lift=0.0)
+        return fit_cam(lerp(WIND_P, SUN_P, 0.5) + np.array([0, 0.1, 0]), 0, -2, 3.5, 1.5 if not WIDE else 2.3, fov=34, lift=0.1)
     if name == "whistle":                                     # macro on Pip at the post, side-on
         return fit_cam(POST_PIP + np.array([0, 0.25, 0]), lerp(-24, -16, e), 8, 0.45, 0.55 if not WIDE else 0.42, fov=34, lift=0.12)
     if name == "snug":
@@ -426,28 +469,32 @@ def camera(t):
     if name == "spin":                                        # high angle wide
         return fit_cam(np.array([0.6, 0.9, 0.1]), 8, 42, 2.0, 1.7)
     if name == "pip_cling":
-        return fit_cam(CLING_P + np.array([-0.2, 0.3, 0]), lerp(8, 14, e), 3, 0.62, 0.6, fov=34, lift=0.1)
+        return fit_cam(CLING_P + np.array([0.12 if WIDE else -0.05, 0.1, 0]), lerp(8, 14, e), 8, 0.85, 0.7, fov=34, lift=0.12)
     if name == "wind_tired":
-        return fit_cam(lerp(WIND_P, SUN_P, 0.3) + np.array([0, -0.15, 0]), -4, -4, 2.4, 1.5, fov=34, lift=0.0)
+        return fit_cam(lerp(WIND_P, SUN_P, 0.5) + np.array([0, -0.1, 0]), -4, -4, 3.5, 1.7, fov=34, lift=0.08)
     if name == "sun_shine":
         return fit_cam(SUN_P + np.array([-0.1, 0, 0]), lerp(-12, -16, e), -3, lerp(1.8, 1.5, e), lerp(1.8, 1.5, e), fov=34, lift=0.0)
     if name == "scarf_off":
         return fit_cam(np.array([0.35, 1.25, 0.1]), lerp(6, 10, e), 4, 1.4, 1.35)
     if name == "sunbathe":                                    # overhead
-        return fit_cam(np.array([-0.2, 0.3, 0.2]), 0, 70, 2.3, 1.9, lift=0.02)
+        return fit_cam(np.array([-0.3, 0.6, 0.2]), 12, 30, 2.0, 1.7, lift=0.1)
     if name == "moral":
         return fit_cam(np.array([0.3, lerp(1.35, 1.45, e), 0]), lerp(12, 6, e), 5, lerp(1.3, 1.1, e), lerp(1.4, 1.15, e))
     if name == "chorus":
         return fit_cam(np.array([0.3, 1.2, 0]), 6, 6, 1.35, 1.35)
-    tgt = lerp(np.array([0.3, 1.25, 0]), lerp(WIND_P, SUN_P, 0.5) + np.array([0, -1.3, 0]), e)   # crane up to the sky faces
-    return fit_cam(tgt, 2, lerp(4, -6, e), lerp(1.4, 3.6, e), lerp(1.4, 3.2, e), lift=0.02)
+    e = ease(clampu(t, SH["button_crane"][0] + 1.35, SH["button_crane"][1]))   # hold on Tumble and Pip through "Bye-bye!", then crane up to the sky faces
+    tgt = lerp(np.array([0.3, 1.25, 0]), lerp(WIND_P, SUN_P, 0.5) + np.array([0, -1.3, 0]), e)
+    return fit_cam(tgt, 2, lerp(4, -6, e), lerp(1.4, 3.6, e), lerp(1.4, 3.2, e), lift=lerp(0.15 if not WIDE else 0.1, 0.02, e))
 
 # ---------------- draws ----------------
+SKY_SHOTS = ("sky_faces", "wind_puff", "wind_tired", "sun_shine")
 TREES = [(-6.5, -8.5, 1.6), (6.8, -8.0, 1.7), (-10.5, -13, 1.9), (10.0, -14, 2.0), (-3.5, -14, 1.8), (-7.5, -2.5, 1.5)]
 def backdrop(draws, t):
     g = wind_w(t)
     draws.append((SC["ground"], np.eye(4), U(mat=1, bump=0.8), False))
-    for (x, z, s) in TREES:
+    n_ = T.shot_at(t)[1]
+    for k_, (x, z, s) in enumerate(TREES):
+        if n_ in SKY_SHOTS or (k_ == 5 and n_ in ("moral", "chorus")): continue       # keep trees from sitting under faces / on Tumble's head
         draws.append((SC["tree"], trans(x, ground_h(x, z) - 0.05, z) @ roty(x) @ rotz(0.04 * g * math.sin(t * 5 + x)) @ scale(s), U(mat=0, bump=0.7), True))
     draws.append((SC["cottage"], trans(COTTAGE[0], ground_h(*COTTAGE) - 0.05, COTTAGE[1]) @ roty(-0.5), U(mat=0, bump=0.6), False))
     for (x, y, z, sx, sy, sz, c) in [(-12, -1.5, -26, 10, 5.0, 4, (.62, .82, .66)), (11, -1.8, -28, 11, 6.0, 4, (.58, .78, .7)),
@@ -462,7 +509,7 @@ def backdrop(draws, t):
         for hy in (0.42, 0.72):
             pa = np.array([a[0], surf(*a) + hy, a[1]]); pb = np.array([b[0], surf(*b) + hy, b[1]])
             draws.append((PR["stick"], seg_M(pa, pb, 0.04), U(mat=0, bump=0.8, tint=(0.82, 0.62, 0.45), tintMix=1.0), True))
-    fb = 0.35 * g * math.sin(t * 9) + 0.25 * g + 0.04 * math.sin(t * 1.4)                  # the big flower bends in the wind
+    fb = flower_bend(t)                                                                      # the big flower bends in the wind
     draws.append((SC["flower"], trans(FLOWER[0], surf(*FLOWER) - 0.01, FLOWER[1]) @ rotz(-0.12 * fb) @ scale(FLOWER_S), U(mat=0, bump=0.0, tint=(1.0, 0.72, 0.82), tintMix=-1.0, obj="flower"), True))
 
 def build_draws(t):
