@@ -462,7 +462,7 @@ def camera(t):
         c = twig_c(T.ANT_HOP)
         return fit_cam(np.array([c[0] + 0.3, 0.1, -5.25]), 0, 72, 1.8, 1.3, lift=0.02)
     if name == "thank_you":                                 # macro, low, side-on to the ant and Pip
-        return fit_cam(np.array([(ANT_BANK[0] + PIP_BANK[0]) / 2 - 0.4, 0.22, -4.5]), lerp(-14, -8, e), 7, 1.15, 0.65, lift=0.05)
+        return fit_cam(np.array([(ANT_BANK[0] + PIP_BANK[0]) / 2 - 0.78, 0.22, -4.5]), lerp(-14, -8, e), 7, 1.35, 0.75, lift=0.05)
     if name == "fly_off":                                   # following Pip off and Tumble along the bank
         return fit_cam(np.array([lerp(0.8, 1.4, e), 1.5 if not WIDE else 1.7, -3.3]), lerp(-8, 2, e), 8, 2.3, 2.4)
     if name == "splat":                                     # low close on the honey puddle

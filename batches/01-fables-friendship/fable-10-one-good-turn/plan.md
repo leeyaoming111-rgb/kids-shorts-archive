@@ -1,7 +1,7 @@
 # Tumble & Pip Fables 10: One Good Turn
 
 - **job:** batch 01, fable 10 (`fable-10-one-good-turn`), built on the shared kit (`common/fablekit.py`)
-- **status:** plan written; animatic next.
+- **status:** animatic done, geometry QA 0, reviewer PASS (round 2). Audio and final renders still to do (no ElevenLabs key in the session).
 - **source:** Aesop's fable *The Dove and the Ant* (public domain), retold with our cast
 - **lesson (SEL, social-emotional learning):** kindness comes back; help a friend and a friend helps you
 - **length:** 48.0 s (20 bars at 100 BPM). Episode cut: 41.2 s (drops the sting and the button)
