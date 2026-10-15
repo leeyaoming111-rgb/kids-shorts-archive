@@ -478,7 +478,7 @@ def camera(t):
     if name == "snug":
         return fit_cam(np.array([0.05, 1.4, 0]), lerp(-8, -4, e), 4, 0.95, 1.15)
     if name == "wind_puff":
-        return fit_cam(WIND_P + np.array([0, 0.05, 0]), lerp(16, 20, e), -3, lerp(1.6, 1.35, e), lerp(1.5, 1.25, e), fov=34, lift=0.0)
+        return fit_cam(WIND_P + np.array([0, 0.05, 0]), lerp(16, 20, e), -3, lerp(1.6, 1.35, e), lerp(1.5, 1.25, e), fov=34, lift=0.0 if not WIDE else 0.18)
     if name == "hold_tight":                                  # low three-quarter on Tumble holding on
         return fit_cam(np.array([0.45, 1.2, 0.0]), -18, -4, 1.5, 1.35)
     if name == "pip_blown":                                   # insert: Pip is blown from the post onto the flower
