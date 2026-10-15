@@ -133,8 +133,8 @@ def tumble(t):
         st["arms"][0] = lerp(PULL_OUT, [0.4, 0.2], ease(clampu(t, T.DROP, T.DROP + 0.3))).tolist()
         lie = ease(clampu(t, T.LIE0, T.LIE1))
         st["lie"] = lie; st["eyes_closed"] = t > T.LIE1 - 0.2
-        if lie > 0: st["arms"] = [[0.6 + 0.6 * lie, 0.2], [0.4, 0.2]]
-        st["head"][2] = -1.1 * lie; st["head"][0] = 0.1 * lie                 # head stays up, resting, while the body lies on its side
+        if lie > 0: st["arms"] = [lerp([0.4, 0.2, 0.0], [0.35, 1.0, 0.5], lie).tolist(), lerp([0.4, 0.2], [0.3, 0.4], lie).tolist()]
+        st["head"][2] = -0.6 * lie; st["head"][0] = -0.12 * lie                 # head stays up, resting, while the body lies on its side
         st["tail"] = 0.3 * math.sin(t * 2)
     elif n in ("moral", "chorus"):
         dance_tumble(st, t, n)
@@ -212,7 +212,7 @@ def ground_run(foot, d, L):
 def on_grass(p): return np.array([p[0], surf(p[0], p[2]) + SC_R * 0.9, p[2]])
 def _drape(top, bottom_y, length):
     """points from the bottom (y=bottom_y) up to top: a soft cloth curve that bulges and sways, not a rod"""
-    n = max(3, int(length / 0.08) + 1); amp = 0.16 + 0.05 * math.sin(_NOW[0] * 5.5); side = -G1
+    n = max(3, int(length / 0.08) + 1); amp = 0.3 + 0.06 * math.sin(_NOW[0] * 5.5); side = -G1
     out = []
     for k in range(n):
         f = k / (n - 1)                                          # 0 at the bottom, 1 at the paw
@@ -264,8 +264,17 @@ def rest_points(t):
         up.append(p if u < 1 else on_grass(p))
     return run + up
 STRIPES = [(0.92, 0.3, 0.33), (0.92, 0.3, 0.33), (1.0, 0.95, 0.86), (1.0, 0.95, 0.86), (0.3, 0.72, 0.74), (1.0, 0.95, 0.86)]
+def chaikin(pts, n):
+    pts = [np.asarray(p, float) for p in pts]
+    for _ in range(n):
+        q = [pts[0]]
+        for a, b in zip(pts[:-1], pts[1:]): q += [0.75 * a + 0.25 * b, 0.25 * a + 0.75 * b]
+        pts = q + [pts[-1]]
+    return pts
 def draw_scarf(draws, t, st, mats):
-    pts = resample(scarf_points(t, st, mats))
+    pts = scarf_points(t, st, mats)
+    if t > T.GRAB + 0.3: pts = chaikin(pts[::4] + ([pts[-1]] if (len(pts) - 1) % 4 else []), 3)                   # round the corner where it meets the grass
+    pts = resample(pts)
     for k, (a, b) in enumerate(zip(pts[:-1], pts[1:])):
         c = STRIPES[k % len(STRIPES)]
         M = seg_M(a, b, SC_R)
@@ -393,14 +402,18 @@ def draw_wind(draws, t):
     eyes(draws, M, [(0.32, 0.3, 0.66), (-0.32, 0.3, 0.66)], 0.2, bl)
     if pf > 0.2:                                                  # round blowing mouth
         o = 0.09 + 0.06 * pf + 0.015 * math.sin(t * 20)
-        draws.append((PR["mouth"], M @ trans(0, -0.25, 0.78 + 0.1 * pf) @ scale(o, o * 1.1, 0.05), U(mat=2, bump=0.0), False))
+        mz = 0.84 + 0.1 * pf
+        draws.append((PR["mouth"], M @ trans(0, -0.3, mz) @ scale(o * 1.2, o * 1.6, 0.05), U(mat=2, bump=0.0), False))
+        for kk in range(12):                                      # a pink lip ring round the hollow "O"
+            an = kk * math.pi / 6
+            draws.append((PR["ball"], M @ trans(math.cos(an) * o * 1.45, -0.3 + math.sin(an) * o * 1.95, mz + 0.01) @ scale(0.04 * (0.7 + pf * 0.5)), U(mat=0, bump=0.0, tint=(1.0, 0.62, 0.72), tintMix=1.0), False))
     if pf > 0.35:                                                 # a fan of gust streaks pouring out of the mouth
-        mouth = apply(M, (0, -0.25, 0.85))
+        mouth = apply(M, (0, -0.3, 0.95))
         for k in range(9):
             ph = (t * (2.2 + 0.25 * (k % 3)) + k * 0.37) % 1.0
             side = (k - 4) * 0.07
             d = WIND_DIR + np.array([0, 0.04 * (k - 4), 0.05 * side])
-            a = mouth + d * (0.2 + 2.2 * ph) + np.array([0, 0.08 * (k - 4) * ph, 0])
+            a = mouth + d * (0.55 + 2.0 * ph) + np.array([0, 0.08 * (k - 4) * ph, 0])
             b = a + d * (0.35 + 0.55 * ph) * pf
             Ms = seg_M(a, b, 0.022 * pf)
             if Ms is not None: draws.append((PR["stick"], Ms, U(mat=0, bump=0.0, tint=(1.0, 1.0, 1.0), tintMix=1.0), False))
@@ -456,7 +469,7 @@ def camera(t):
     if name == "title_wide":
         return fit_cam(np.array([0.9, 1.7, -1.0]), -10, 9, 3.4, 2.6 if not WIDE else 2.1, lift=0.05)
     if name == "sky_faces":
-        return fit_cam(lerp(WIND_P, SUN_P, 0.5) + np.array([0, 0.1, 0]), 0, -2, 3.5, 1.5 if not WIDE else 2.3, fov=34, lift=0.1)
+        return fit_cam(lerp(WIND_P, SUN_P, 0.5) + np.array([0, 0.1, 0]), 0, -14, 3.5, 1.5 if not WIDE else 2.3, fov=34, lift=0.0 if not WIDE else 0.1)
     if name == "whistle":                                     # macro on Pip at the post, side-on
         return fit_cam(POST_PIP + np.array([0, 0.25, 0]), lerp(-24, -16, e), 8, 0.45, 0.55 if not WIDE else 0.42, fov=34, lift=0.12)
     if name == "snug":
@@ -465,7 +478,7 @@ def camera(t):
         return fit_cam(WIND_P + np.array([0, 0.05, 0]), lerp(16, 20, e), -3, lerp(1.6, 1.35, e), lerp(1.5, 1.25, e), fov=34, lift=0.0)
     if name == "hold_tight":                                  # low three-quarter, room for Pip's tumble to the flower
         k = ease(clampu(t, T.BLOWN - 0.3, T.CLING))               # pull out to follow Pip's flight to the flower
-        return fit_cam(lerp(np.array([0.45, 1.2, 0.0]), np.array([1.6, 1.0, 0.2]), k), -18, -4, lerp(1.5, 2.4, k), lerp(1.35, 2.0, k))
+        return fit_cam(lerp(np.array([0.45, 1.2, 0.0]), np.array([1.45, 1.0, 0.2]), k), -18, -4, lerp(1.5, 3.1, k), lerp(1.35, 2.0, k), lift=lerp(0.16 if not WIDE else 0.12, 0.0, k))
     if name == "spin":                                        # high angle wide
         return fit_cam(np.array([0.6, 0.9, 0.1]), 8, 42, 2.0, 1.7)
     if name == "pip_cling":
@@ -494,7 +507,7 @@ def backdrop(draws, t):
     draws.append((SC["ground"], np.eye(4), U(mat=1, bump=0.8), False))
     n_ = T.shot_at(t)[1]
     for k_, (x, z, s) in enumerate(TREES):
-        if n_ in SKY_SHOTS or (k_ == 5 and n_ in ("moral", "chorus")): continue       # keep trees from sitting under faces / on Tumble's head
+        if n_ in SKY_SHOTS or (k_ in (0, 4, 5) and n_ in ("moral", "chorus")): continue       # keep trees from sitting under faces / on Tumble's head
         draws.append((SC["tree"], trans(x, ground_h(x, z) - 0.05, z) @ roty(x) @ rotz(0.04 * g * math.sin(t * 5 + x)) @ scale(s), U(mat=0, bump=0.7), True))
     draws.append((SC["cottage"], trans(COTTAGE[0], ground_h(*COTTAGE) - 0.05, COTTAGE[1]) @ roty(-0.5), U(mat=0, bump=0.6), False))
     for (x, y, z, sx, sy, sz, c) in [(-12, -1.5, -26, 10, 5.0, 4, (.62, .82, .66)), (11, -1.8, -28, 11, 6.0, 4, (.58, .78, .7)),
@@ -519,11 +532,13 @@ def build_draws(t):
     draw_flowers(draws, t, FLOWERS, gust=wind_w(t))
     draw_wind(draws, t); draw_sun(draws, t); draw_wind_streaks(draws, t)
     st = tumble(t); mats = fox_mats(st); R, Mh, arms, legs = mats
-    draw_tumble(draws, contacts, t, st, mats)
-    draw_scarf(draws, t, st, mats)
+    if T.shot_at(t)[1] != "sky_faces":                        # a sky-only shot: Tumble and his scarf are out of frame
+        draw_tumble(draws, contacts, t, st, mats)
+        draw_scarf(draws, t, st, mats)
     pip = pip_state(t, st, mats)
     Mp = draw_pip(draws, contacts, t, pip, arms)
     draw_whistle(draws, t, Mp)
+    puff(draws, hand_pos(arms, 0) + np.array([0.1, 0.3, 0.45]), T.HIGH_FIVE, t, n=12, size=0.09, spread=1.0, dur=0.75, tint=(1.0, 0.88, 0.35), axis=(0, 0, 0.5))   # a bigger star puff, in front of the paw and wing
     return draws, contacts
 
 T.SH_BUTTON = SH["button_crane"][0]
