@@ -478,7 +478,7 @@ def camera(t):
         e = ease(clampu(t, SH[name][0], T.SPIN1))
         return fit_cam(np.array([lerp(TPOS[0] - 0.5, TPOS[0] + 0.35, e), 1.05, TPOS[1]]), -6, 6, lerp(2.4, 1.9, e), 1.7)
     if name == "moral":                                                     # tight two-shot that eases back out into the chorus framing (so the cut at 38.4 matches)
-        e = ease(u)
+        e = ease(clampu(t, SH[name][0], SH[name][0] + 2.4))               # eases out over the first 2.4 s, then holds the chorus framing through the ring-out
         return fit_cam(np.array([TPOS[0] + 0.35, lerp(1.45, 1.2, e), TPOS[1]]), lerp(12, 6, e), lerp(5, 6, e), lerp(1.05, 1.3, e), lerp(1.1, 1.35, e))
     if name == "chorus":                                                    # medium front, both in frame for the dance
         return fit_cam(np.array([TPOS[0] + 0.35, 1.2, TPOS[1]]), 6, 6, 1.3, 1.35)

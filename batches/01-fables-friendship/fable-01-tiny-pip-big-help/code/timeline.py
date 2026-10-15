@@ -57,9 +57,13 @@ def _syllables(w):
 
 if ALIGNED:
     _C = json.load(open(_check))
-    SECTIONS = [(n, a, b) for n, a, b in _C["sections"]]
+    # Breathing space between the moral line and the chorus: the final mix has GAP seconds of ring-out inserted at
+    # GAP_AT (the end of the Moral), so everything from there on is later by GAP. The Moral section runs on over it.
+    GAP_AT, GAP = 38.4, 1.5
+    def _sh(t, strict=False): return t + GAP if t > GAP_AT - 1e-6 else t
+    SECTIONS = [(n, a if a < GAP_AT - 1e-6 else a + GAP, b + GAP if b > GAP_AT - 1e-6 else b) for n, a, b in _C["sections"]]
     LINES = [dict(i=i, who=L["who"], text=L["line"], section=L["sec"],
-                  words=[dict(w=w["w"], t0=w["t0"], t1=w["t1"]) for w in L["words"]]) for i, L in enumerate(_C["lines"])]
+                  words=[dict(w=w["w"], t0=_sh(w["t0"]), t1=_sh(w["t1"])) for w in L["words"]]) for i, L in enumerate(_C["lines"])]
 else:
     SECTIONS = [(n, a * BAR, b * BAR) for n, a, b, _ in PLAN_SECTIONS]
     LINES = []
