@@ -87,15 +87,23 @@ def word_times(word, section=None):
 _h, _s, _sa, _sb = sec("Hook"), sec("Sting"), sec("Setup A"), sec("Setup B")
 _pa, _pb, _tw, _m, _c, _bt = sec("Problem A"), sec("Problem B"), sec("Twist"), sec("Moral"), sec("Chorus"), sec("Button")
 LIE_SPLIT = _pa[0] + 1.0 * BAR               # the show-off, then lying down in the mushroom shade
-SNORE_SPLIT = _pb[0] + 1.0 * BAR             # close on the snore, then Bo plodding past
+SNORE_SPLIT = _pb[0] + 0.62 * BAR            # close on the snoring face (Pip's "Shh!" line), then Bo plodding past in the break
 _lt = line("Twist")
-NEAR_SPLIT = max(_tw[0] + 1.4, (word_times("tumble", "Twist") or [_tw[0] + 1.2])[0] + 0.45)   # Pip calls from the finish...
-WAKE = max(_lt["t1"] + 0.15, NEAR_SPLIT + 0.5)   # ...cut to Tumble, who hears it and sits up with a jolt
-WAKE_SPLIT = WAKE + 1.15                       # legs spin, he zooms off; cut to the finish
+def _word_end(L, key):
+    for w in L["words"]:
+        if re.sub(r"[^a-z]", "", w["w"].lower()) == key: return w["t1"]
+    return L["t0"] + 0.9
+# The sung line comes AFTER the instrumental race break (the song puts it at the end of the section), so the order is:
+# Bo reaches the stump in the break, Pip calls "Wake up, Tumble!", Tumble jolts on his name, cut, spin, cut, he skids in
+# behind Bo, "Well done, Bo!", then the moral. Every split is clamped so no shot gets a negative length.
+NEAR_SPLIT = min(_word_end(_lt, "tumble") + 0.1, _tw[1] - 2.6)   # Pip calls from the finish...
+WAKE = NEAR_SPLIT                              # ...cut to Tumble, who hears his name and jolts up
+WAKE_SPLIT = WAKE + 1.15                       # legs spin, cut to the finish
+FIN_END = max(WAKE_SPLIT + 1.45, _m[0])        # the moral shot starts when the good-sport cheer is done
 SHOTS = [(0.0, _h[1], "start_line"), (_s[0], _s[1], "title_wide"), (_sa[0], _sa[1], "zoom"), (_sb[0], _sb[1], "bo_steps"),
          (_pa[0], LIE_SPLIT, "show_off"), (LIE_SPLIT, _pa[1], "lie_down"), (_pb[0], SNORE_SPLIT, "snore"),
          (SNORE_SPLIT, _pb[1], "bo_passes"), (_tw[0], NEAR_SPLIT, "bo_near"), (NEAR_SPLIT, WAKE_SPLIT, "wake"),
-         (WAKE_SPLIT, _tw[1], "finish"), (_m[0], _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
+         (WAKE_SPLIT, FIN_END, "finish"), (FIN_END, _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):
     for i, (a, b, n) in enumerate(SHOTS):
         if a <= t < b: return i, n, (t - a) / max(b - a, 1e-6), t - a
@@ -108,11 +116,11 @@ RUN_END = _sa[0] + 1.25 * BAR                  # Tumble skids to a stop past the
 EASY = (word_times("easy", "Problem A") or [_pa[0] + 0.6])[0]
 LIE = LIE_SPLIT + 1.0                          # lies down in the shade, eyes shut
 _lb = line("Problem B")
-SNORES = [_lb["t1"] + 0.35 + k * 1.15 for k in range(3) if _lb["t1"] + 0.35 + k * 1.15 < _pb[1] - 0.6]
-SPIN = (WAKE + 0.3, WAKE + 0.85)               # legs spin in the air before he takes off
-BO_TOUCH = WAKE_SPLIT + 0.4                    # Bo's nose touches the stump
-FOX_ARRIVE = WAKE_SPLIT + 0.85                 # Tumble zooms in a moment later and skids to a stop
-CHEER = FOX_ARRIVE + 0.35
+SNORES = [_lb["t1"] + 0.4 + k * 1.2 for k in range(3) if _lb["t1"] + 0.4 + k * 1.2 < _pb[1] - 0.6]
+SPIN = (WAKE + 0.25, WAKE + 0.85)              # legs spin in the air before he takes off
+BO_TOUCH = _tw[0] + 2.0                        # Bo's nose touches the stump in the race break, before Pip's call
+FOX_ARRIVE = WAKE_SPLIT + 0.45                 # Tumble zooms in a moment later and skids to a stop
+CHEER = max(FOX_ARRIVE + 0.2, _lt["t1"] + 0.55)   # after Pip's caption clears
 HIGH_FIVE = _c[1] - 0.9
 SPOKEN = [dict(file="s00_tumble", who="tumble", t0=SNORES[0] if SNORES else _pb[1] - 2.0, caption="Zzz... snore...", tags="[snoring] [sleepy]"),
           dict(file="s01_tumble", who="tumble", t0=WAKE, caption="Huh? Whoa!", tags="[startled]"),

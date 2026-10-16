@@ -24,36 +24,36 @@ E4 = {k: Mesh(m) for k, m in D["ep4"].items()}
 MOUTH["bo"] = mouth_track("bo").tolist()
 
 # ---------------- world: a race course across open meadow, chalk line to the big stump ----------------
-START = np.array([-3.6, 2.6])
+START = np.array([-7.64, 5.63])
 DIR = np.array([0.8, -0.6]); NRM = np.array([0.6, 0.8])      # along the course; across it (towards the front camera)
 YAW_RUN = math.atan2(DIR[0], DIR[1]); YAW_BACK = math.atan2(-DIR[0], -DIR[1])
 def C(s, lane): return START + DIR * s + NRM * lane
 LANE_T, LANE_B = -0.7, 1.2
 BO_S = 1.15
-STUMP_S = 1.3; STUMP = C(9.95, 0.55); STUMP_TOP = 0.55 * STUMP_S - 0.02; STUMP_ROT = 1.2
-S_TOUCH = 7.94                                               # Bo's nose on the stump
-RUN_S = 6.0                                                  # where Tumble skids to a stop
-NAP = C(8.4, -1.35); NAP_YAW = math.atan2(NRM[0], NRM[1])   # lying on his side, face to the course-side cameras, head up-course under the mushroom, head towards the finish
-MUSH1 = C(6.95, -3.5); MUSH1_S = 1.5                        # the giant mushroom his snores puff
-MUSH2 = C(8.3, -3.8); MUSH2_S = 1.05
+STUMP_S = 1.3; STUMP = C(15.0, 0.55); STUMP_TOP = 0.55 * STUMP_S - 0.02; STUMP_ROT = 1.2
+S_TOUCH = 13.0                                               # Bo's nose on the stump
+RUN_S = 11.0                                                 # where Tumble skids to a stop
+NAP = C(11.8, -1.35); NAP_YAW = math.atan2(NRM[0], NRM[1])   # lying on his side, face to the course-side cameras, head up-course under the mushroom, head towards the finish
+MUSH1 = C(10.35, -3.5); MUSH1_S = 1.5                        # the giant mushroom his snores puff
+MUSH2 = C(8.2, -3.8); MUSH2_S = 1.05
 PEB = C(0.25, -2.0)                                          # Pip's referee pebble
 PEB_TOP = 0.07 * 3.0
-FIN_T = C(6.5, 2.2)                                        # Tumble skids in here
+FIN_T = C(10.2, 2.2)                                        # Tumble skids in here
 FIN_LOOK = (NRM - DIR * 0.6) / np.linalg.norm(NRM - DIR * 0.6)   # the finish camera's side
 MSPOT = np.array([4.3, -0.85])                              # moral, chorus and button: Tumble here, Bo on his left
 BO_M = np.array([3.0, 0.1])
 def _on_course(x, z):
     q = np.array([x, z]) - START; sa, la = float(np.dot(q, DIR)), float(np.dot(q, NRM))
-    return -1.5 < sa < 11.5 and abs(la) < 3.0
+    return -1.5 < sa < 16.5 and abs(la) < 3.0
 FLOWERS = [f for f in make_flowers([], n=150, seed=41) if not _on_course(f[0], f[1])]
 BACK_TREES = [(6.5, -9.0, 1.8), (10.0, -14, 2.0), (3.0, -15, 1.7), (-4.0, -16, 1.8), (-12.0, -8.0, 1.8),   # clear of every camera line
-              (8.5, -3.5, 1.5), (-3.0, 9.5, 1.9), (-8.5, 7.0, 1.8), (13.0, -1.0, 1.7), (-1.0, 12.5, 1.9)]
+              (8.5, -3.5, 1.5), (-10.0, 15.0, 1.9), (-16.0, 8.0, 1.8), (13.0, -1.0, 1.7), (2.0, 17.0, 1.9)]
 def ground_at(p): return surf(p[0], p[1])
 def P3(p, y=0.0): return np.array([p[0], ground_at(p) + y, p[1]])
 
 # ---------------- Bo ----------------
 def bo_s_at(t):
-    return S_TOUCH * clampu(t, T.GO, T.BO_TOUCH)
+    return S_TOUCH * clampu(t, T.GO, T.BO_TOUCH) ** 1.15      # a steady plod that settles into its stride
 def bo(t):
     n = T.shot_at(t)[1]
     st = dict(p=C(0.0, LANE_B), yaw=YAW_RUN, walk=0.0, head=[0.0, 0.0], y=0.0, roll=0.0, legwave=0.0)
@@ -111,15 +111,22 @@ def draw_bo(draws, contacts, t, st):
     eyes(draws, Mh, BOD["eyes"]["centers"], BOD["eyes"]["r"], blink(t, 0.7, 3.9))
     mo = mouth_at("bo", t)
     if mo > 0.06:
-        draws.append((PR["mouth"], Mh @ trans(*BOD["mouth"]["c"]) @ scale(0.055, 0.042 * mo, 0.025), U(mat=2, bump=0.0), False))
+        draws.append((PR["mouth"], Mh @ trans(*BOD["mouth"]["c"]) @ scale(0.055, 0.028 * mo, 0.025), U(mat=2, bump=0.0), False))
     contacts.append((st["p"][0], st["p"][1], 0.85 * BO_S, 1.0))
     return R, Mh
 
 # ---------------- Tumble ----------------
+RUN_DASH = 10.5                                              # end of the dash; the last half metre is the skid
 def run_s(t):
-    """Tumble's distance along his lane while racing: a fast dash from the line, skidding to a stop at RUN_S"""
-    u = clampu(t, T.GO, T.RUN_END)
-    return RUN_S * (1 - (1 - u) ** 2)
+    """Tumble's distance along his lane while racing. The title shot is a cut away from the start, so each shot
+    restages the dash: start line 0 to 5, title shot 5 to 10, the side-tracking shot 4.5 to the skid at RUN_S."""
+    z0 = SH["zoom"][0]
+    if t < SH["title_wide"][0]: return 5.0 * clampu(t, T.GO, SH["title_wide"][0]) ** 1.6
+    if t < z0: return 5.0 + 5.0 * clampu(t, SH["title_wide"][0], z0)
+    v = clampu(t, z0, T.RUN_END - 0.5)
+    if t < T.RUN_END - 0.5: return 4.5 + (RUN_DASH - 4.5) * v
+    w = clampu(t, T.RUN_END - 0.5, T.RUN_END)
+    return RUN_DASH + (RUN_S - RUN_DASH) * (1 - (1 - w) ** 2)
 def tumble(t):
     st = tumble_base(t); n = T.shot_at(t)[1]
     p0 = C(0.0, LANE_T)
@@ -178,9 +185,9 @@ def tumble(t):
         st["head"][0] = -0.2 * u
         if T.SPIN[0] <= t < T.SPIN[1]:
             v = clampu(t, T.SPIN[0], T.SPIN[1])
-            st["y"] += 0.35 * math.sin(math.pi * min(v * 2.5, 1.0) / 2) * (1 - clampu(v, 0.85, 1.0))
-            ph = t * 2 * math.pi * 9
-            st["legs"] = [0.14 * max(0, math.sin(ph)), 0.14 * max(0, -math.sin(ph))]
+            st["y"] += 0.7 * math.sin(math.pi * min(v * 2.0, 1.0) / 2) * (1 - clampu(v, 0.8, 1.0))   # springs up and hangs in the air
+            ph = t * 2 * math.pi * 7
+            st["legs"] = [0.3 * max(0, math.sin(ph)), 0.3 * max(0, -math.sin(ph))]       # legs pump in mid-air
             st["arms"] = [[0.5, 1.2], [0.5, 1.2]]; st["pitch"] = -0.1
         elif t >= T.SPIN[1]:
             dd = t - T.SPIN[1]; s = 4.5 * dd ** 1.0
@@ -303,29 +310,31 @@ def camera(t):
         c = C(0.15, -0.45)
         return fit_cam(np.array([c[0], 0.8, c[1]]), yaw_of(DIR) - lerp(55, 62, e), 4, 3.0 if not WIDE else 4.6, 1.5, lift=0.05)
     if name == "title_wide":                                 # high behind the start, the whole course ahead
-        c = C(4.2, -0.4)
-        return fit_cam(np.array([c[0], 0.7, c[1]]), yaw_of(-DIR) + 22, 24, 3.6 if not WIDE else 5.6, 3.2 if not WIDE else 2.9, lift=0.0)
+        c = C(7.5, -0.4)
+        return fit_cam(np.array([c[0], 0.7, c[1]]), yaw_of(-DIR) + 22, 24, 6.0 if not WIDE else 9.0, 4.0 if not WIDE else 4.2, lift=0.0)
     if name == "zoom":                                       # side tracking, keeping pace with Tumble
+        z0 = SH["zoom"][0]; v = clampu(t, z0, T.RUN_END - 0.5)
+        lead = 0.7 - 1.5 * v + 1.2 * ease(clampu(t, T.RUN_END - 0.5, T.RUN_END + 0.3))   # he surges across the frame, the camera catches up at the skid
         p = np.array([st["x"], 1.15, st["z"]])
-        return fit_cam(p + np.array([DIR[0], 0, DIR[1]]) * 0.5, yaw_of(NRM) + 4, 6, 2.2, 1.6)
+        return fit_cam(p + np.array([DIR[0], 0, DIR[1]]) * lead, yaw_of(NRM) + 4, 6, 3.0 if not WIDE else 2.2, 1.6)
     if name == "bo_steps":                                   # ground level, close on Bo's face and feet, tracking
         p = P3(b["p"], 0.55)
         return fit_cam(p + np.array([DIR[0], 0, DIR[1]]) * 0.35, yaw_of(NRM) + 35, -2, 1.3, 1.0, lift=0.12)
-    if name == "show_off":                                   # over Tumble's shoulder, back down the course to tiny Bo
-        p = C(RUN_S - 1.6, 0.0)
-        return fit_cam(np.array([p[0], 1.0, p[1]]), yaw_of(DIR) - 28, 7, 2.2, 1.6, lift=0.05)
+    if name == "show_off":                                   # behind Tumble's shoulder, looking back up the course to tiny Bo
+        p = C(RUN_S, LANE_T)
+        return fit_cam(np.array([p[0], 1.35, p[1]]), yaw_of(DIR) + 52, 6, 1.9 if not WIDE else 2.4, 1.8, lift=0.05)
     if name == "lie_down":                                   # medium, from the far side of the course
         c = (C(RUN_S, LANE_T) + NAP) / 2 + DIR * 0.5
         return fit_cam(np.array([c[0], 1.0, c[1]]), yaw_of(NRM) + SG * lerp(8, 4, e), 16, 2.8 if not WIDE else 3.2, 2.0)
     if name == "snore":                                      # close on the snoring face and the mushroom
-        hd = NAP - DIR * 1.2
+        hd = NAP - DIR * 0.9
         return fit_cam(np.array([hd[0], 0.85, hd[1]]), yaw_of(NRM) + SG * lerp(12, 6, e), 12, 1.5, 1.1)
     if name == "bo_passes":                                  # low wide from behind the sleeper: Bo plods past beyond him
         c = (NAP - DIR * 0.3 + b["p"]) / 2
         return fit_cam(np.array([c[0], 0.7, c[1]]), yaw_of(NRM) + SG * lerp(20, 30, e), 20, 2.9 if not WIDE else 3.6, 2.0)
-    if name == "bo_near":                                    # low angle at the stump: Pip with the flag, Bo coming
-        c = (STUMP + b["p"]) / 2 + NRM * 0.1
-        return fit_cam(np.array([c[0], 0.95, c[1]]), yaw_of(-DIR) + 50, -4, 2.2, 1.4, lift=0.06)
+    if name == "bo_near":                                    # side-on at the stump: Bo plods in, nose to the stump, Pip waves the flag on top
+        c = (STUMP + b["p"]) / 2 + DIR * 0.3
+        return fit_cam(np.array([c[0], 0.85, c[1]]), yaw_of(NRM) - lerp(34, 22, e), 5, 2.7 if not WIDE else 3.6, 1.7, lift=0.1)
     if name == "wake":                                       # medium side: the jolt and the spinning legs
         c = NAP - DIR * 0.2
         return fit_cam(np.array([c[0], 1.1, c[1]]), yaw_of(NRM) - SG * 12, 34, 2.6 if not WIDE else 3.4, 2.1)
@@ -362,9 +371,9 @@ def build_draws(t):
     n = T.shot_at(t)[1]
     draws.append((E2["stump"], trans(STUMP[0], ground_at(STUMP) - 0.02, STUMP[1]) @ roty(STUMP_ROT) @ scale(STUMP_S), U(mat=0, bump=0.9, obj="stump"), True))
     sn = snore_amt(t) if SH["lie_down"][1] <= t < T.WAKE else 0.0
-    draws.append((E2["mushroom"], trans(MUSH1[0], ground_at(MUSH1) - 0.01, MUSH1[1]) @ scale(MUSH1_S, MUSH1_S * (1 + 0.13 * sn), MUSH1_S), U(mat=0, bump=0.6, obj="mush1"), True))
+    draws.append((E2["mushroom"], trans(MUSH1[0], ground_at(MUSH1) - 0.01, MUSH1[1]) @ scale(MUSH1_S, MUSH1_S * (1 + 0.22 * sn), MUSH1_S), U(mat=0, bump=0.6, obj="mush1"), True))
     draws.append((E2["mushroom"], trans(MUSH2[0], ground_at(MUSH2) - 0.01, MUSH2[1]) @ roty(1.0) @ scale(MUSH2_S), U(mat=0, bump=0.6, obj="mush2"), True))
-    for (s_, l_, sc_) in [(2.4, -3.2, 0.22), (5.2, -3.4, 0.2), (8.4, 2.6, 0.18), (-1.2, 2.4, 0.2)]:
+    for (s_, l_, sc_) in [(2.4, -3.2, 0.22), (5.6, -3.4, 0.2), (12.6, 3.0, 0.18), (-1.2, 2.4, 0.2), (8.8, 3.2, 0.2)]:
         q = C(s_, l_); draws.append((E2["mushroom"], trans(q[0], ground_at(q) - 0.01, q[1]) @ scale(sc_), U(mat=0, bump=0.6), True))
     draws.append((SC["stone"], trans(PEB[0], ground_at(PEB) - 0.01, PEB[1]) @ roty(0.4) @ scale(1.5, 3.0, 1.5), U(mat=0, bump=0.6, obj="pebble"), True))
     ls = C(0.0, 0.0) + DIR * 0.55                            # chalk start line just in front of their toes
@@ -386,10 +395,11 @@ def build_draws(t):
         for k in range(3):
             ph = ((t * 0.6 + k / 3.0) % 1.0)
             q = mouth + np.array([0, 0.25 + 0.7 * ph, 0]) + np.array([DIR[0], 0, DIR[1]]) * 0.2 * math.sin(ph * 6)
-            draws.append((PR["ball"], trans(*q) @ scale(0.035 + 0.05 * ph), U(mat=0, bump=0.0, tint=(0.82, 0.9, 1.0), tintMix=1.0), False))
-    for k, tg in enumerate([T.GO + 0.1, T.GO + 0.5, T.GO + 0.9, T.SPIN[0] + 0.1, T.SPIN[0] + 0.35, T.SPIN[1] + 0.05]):
+            draws.append((PR["ball"], trans(*q) @ scale(0.06 + 0.08 * ph), U(mat=0, bump=0.0, tint=(0.82, 0.9, 1.0), tintMix=1.0), False))
+    dash = list(np.arange(T.GO, SH["zoom"][0], 0.1)) + list(np.arange(SH["zoom"][0], T.RUN_END, 0.1)) + [T.SPIN[1] + 0.05]
+    for tg in dash:
         if 0 <= t - tg < 0.5:
-            fs = tumble(tg); puff(draws, np.array([fs["x"], surf(fs["x"], fs["z"]) + 0.15, fs["z"]]), tg, t, n=7, size=0.07, spread=0.7, dur=0.5, tint=(0.93, 0.88, 0.75), axis=(0, 0.4, 0))
+            fs = tumble(tg); puff(draws, np.array([fs["x"], surf(fs["x"], fs["z"]) + 0.15, fs["z"]]), tg, t, n=6, size=0.09, spread=0.6, dur=0.5, tint=(0.93, 0.88, 0.75), axis=(0, 0.4, 0))
     if n == "finish":
         puff(draws, np.array([FIN_T[0], surf(*FIN_T) + 0.15, FIN_T[1]]), T.FOX_ARRIVE, t, n=8, size=0.07, spread=0.8, dur=0.5, tint=(0.93, 0.88, 0.75), axis=(0, 0.4, 0))
         nose = C(S_TOUCH, LANE_B) + DIR * 1.25
