@@ -1,0 +1,113 @@
+{
+ "model": "eleven_v3",
+ "stability": 0.0,
+ "takes": 2,
+ "pick": "widest 5-95% pitch range (semitones)",
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 23.93,
+   "caption": "Whoa-oh!",
+   "tags": "[surprised] [laughing]",
+   "dur": 1.76,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 23.21
+      },
+      {
+       "seed": 22,
+       "range_st": 13.8
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_both.mp3",
+   "who": "both",
+   "t0": 34.45,
+   "caption": "Ahh!",
+   "tags": "[relieved] [happy sigh]",
+   "dur": 2.56,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 14.28
+      },
+      {
+       "seed": 22,
+       "range_st": 15.25
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 12.9
+      },
+      {
+       "seed": 22,
+       "range_st": 11.82
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_both.mp3",
+   "who": "both",
+   "t0": 46.8,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful] [giggles]",
+   "dur": 1.76,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 6.98
+      },
+      {
+       "seed": 22,
+       "range_st": 24.61
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 10.36
+      },
+      {
+       "seed": 22,
+       "range_st": 13.54
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
