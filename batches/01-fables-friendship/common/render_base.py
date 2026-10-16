@@ -154,7 +154,7 @@ class Mesh:
         data = np.concatenate([m["v"], m["n"], m["c"], m["ao"][:, None]], 1).astype("f4")
         self.vbo = ctx.buffer(data.tobytes()); self.ibo = ctx.buffer(m["f"].astype("u4").tobytes())
         self.vao = ctx.vertex_array(prog, [(self.vbo, "3f 3f 3f 1f", "in_pos", "in_nrm", "in_col", "in_ao")], self.ibo)
-        self.svao = ctx.vertex_array(sprog, [(self.vbo, "3f 36x", "in_pos")], self.ibo)
+        self.svao = ctx.vertex_array(sprog, [(self.vbo, "3f 28x", "in_pos")], self.ibo)
 
 # ---------------- math ----------------
 def trans(x, y, z): m = np.eye(4); m[:3, 3] = (x, y, z); return m

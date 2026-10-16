@@ -2,18 +2,6 @@
 Shared renderer: fablekit.py. python3 render.py [--wide] [--preview] [out.mp4] | x <secs...> | sheet | qa"""
 from fablekit import *
 
-# Kit bug override: render_base builds the shadow VAO with "3f 36x", but a vertex is 40 bytes (pos+nrm+col+ao): "3f 28x".
-import gc as _gc
-import render_base as _rb
-def _fix_svao(m):
-    m.svao = _rb.ctx.vertex_array(_rb.sprog, [(m.vbo, "3f 28x", "in_pos")], m.ibo)
-for _m in [o for o in _gc.get_objects() if isinstance(o, _rb.Mesh)]:
-    _fix_svao(_m)
-_orig_mesh_init = _rb.Mesh.__init__
-def _mesh_init(self, m):
-    _orig_mesh_init(self, m); _fix_svao(self)
-_rb.Mesh.__init__ = _mesh_init
-
 # ---------------- world: under the big apple tree (a new corner of Picnic Meadow) ----------------
 TREE = (-0.9, -1.7); TREE_S = 2.2
 APPLE_S = 0.5
