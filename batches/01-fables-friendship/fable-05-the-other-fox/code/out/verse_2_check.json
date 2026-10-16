@@ -1,0 +1,420 @@
+{
+ "stt": "Hey, who's that fox down there? My shiny apple, red and round. That fox has a bigger one. Silly face, he copies me. I want that one. Oh no! Splash! Here's my berry, half for you. Love what you've got, and share it. The stall, big or small, short or tall. Friends help friends, that's best of all. [outro jingle]",
+ "recall": 1.0,
+ "speakers": [
+  "speaker_0",
+  "speaker_1"
+ ],
+ "lines": [
+  {
+   "line": "Hey! Who's that fox down there?",
+   "who": "tumble",
+   "sec": "Hook",
+   "t0": 0.0,
+   "t1": 3.6,
+   "words": [
+    {
+     "w": "Hey!",
+     "t0": 0.62,
+     "t1": 1.04
+    },
+    {
+     "w": "Who's",
+     "t0": 1.2,
+     "t1": 1.46
+    },
+    {
+     "w": "that",
+     "t0": 1.52,
+     "t1": 1.68
+    },
+    {
+     "w": "fox",
+     "t0": 1.8,
+     "t1": 2.02
+    },
+    {
+     "w": "down",
+     "t0": 2.1,
+     "t1": 2.36
+    },
+    {
+     "w": "there?",
+     "t0": 2.46,
+     "t1": 2.96
+    }
+   ]
+  },
+  {
+   "line": "My shiny apple, red and round!",
+   "who": "tumble",
+   "sec": "Setup A",
+   "t0": 3.6,
+   "t1": 8.4,
+   "words": [
+    {
+     "w": "My",
+     "t0": 4.2,
+     "t1": 4.6
+    },
+    {
+     "w": "shiny",
+     "t0": 4.74,
+     "t1": 5.32
+    },
+    {
+     "w": "apple,",
+     "t0": 5.48,
+     "t1": 5.9
+    },
+    {
+     "w": "red",
+     "t0": 6.02,
+     "t1": 6.3
+    },
+    {
+     "w": "and",
+     "t0": 6.34,
+     "t1": 6.5
+    },
+    {
+     "w": "round!",
+     "t0": 6.62,
+     "t1": 7.16
+    }
+   ]
+  },
+  {
+   "line": "That fox has a BIGGER one!",
+   "who": "tumble",
+   "sec": "Setup B",
+   "t0": 8.4,
+   "t1": 13.2,
+   "words": [
+    {
+     "w": "That",
+     "t0": 9.02,
+     "t1": 9.38
+    },
+    {
+     "w": "fox",
+     "t0": 9.6,
+     "t1": 10.08
+    },
+    {
+     "w": "has",
+     "t0": 10.22,
+     "t1": 10.52
+    },
+    {
+     "w": "a",
+     "t0": 10.62,
+     "t1": 10.66
+    },
+    {
+     "w": "BIGGER",
+     "t0": 10.82,
+     "t1": 11.28
+    },
+    {
+     "w": "one!",
+     "t0": 11.48,
+     "t1": 11.96
+    }
+   ]
+  },
+  {
+   "line": "Silly face! He copies me!",
+   "who": "tumble",
+   "sec": "Problem A",
+   "t0": 13.2,
+   "t1": 18.0,
+   "words": [
+    {
+     "w": "Silly",
+     "t0": 14.34,
+     "t1": 14.84
+    },
+    {
+     "w": "face!",
+     "t0": 15.0,
+     "t1": 15.26
+    },
+    {
+     "w": "He",
+     "t0": 15.34,
+     "t1": 15.46
+    },
+    {
+     "w": "copies",
+     "t0": 15.62,
+     "t1": 16.14
+    },
+    {
+     "w": "me!",
+     "t0": 16.239,
+     "t1": 16.76
+    }
+   ]
+  },
+  {
+   "line": "I want THAT one! Oh no, SPLASH!",
+   "who": "tumble",
+   "sec": "Problem B",
+   "t0": 18.0,
+   "t1": 25.2,
+   "words": [
+    {
+     "w": "I",
+     "t0": 19.04,
+     "t1": 19.08
+    },
+    {
+     "w": "want",
+     "t0": 19.2,
+     "t1": 19.38
+    },
+    {
+     "w": "THAT",
+     "t0": 19.46,
+     "t1": 19.7
+    },
+    {
+     "w": "one!",
+     "t0": 19.82,
+     "t1": 20.22
+    },
+    {
+     "w": "Oh",
+     "t0": 20.74,
+     "t1": 20.9
+    },
+    {
+     "w": "no,",
+     "t0": 21.02,
+     "t1": 21.22
+    },
+    {
+     "w": "SPLASH!",
+     "t0": 21.46,
+     "t1": 22.1
+    }
+   ]
+  },
+  {
+   "line": "Here's my berry, half for you!",
+   "who": "pip",
+   "sec": "Twist",
+   "t0": 25.2,
+   "t1": 32.4,
+   "words": [
+    {
+     "w": "Here's",
+     "t0": 27.56,
+     "t1": 27.84
+    },
+    {
+     "w": "my",
+     "t0": 27.9,
+     "t1": 28.08
+    },
+    {
+     "w": "berry,",
+     "t0": 28.2,
+     "t1": 28.64
+    },
+    {
+     "w": "half",
+     "t0": 28.8,
+     "t1": 29.02
+    },
+    {
+     "w": "for",
+     "t0": 29.1,
+     "t1": 29.3
+    },
+    {
+     "w": "you!",
+     "t0": 29.46,
+     "t1": 29.94
+    }
+   ]
+  },
+  {
+   "line": "Love what you've got, and share it!",
+   "who": "pip",
+   "sec": "Moral",
+   "t0": 32.4,
+   "t1": 36.0,
+   "words": [
+    {
+     "w": "Love",
+     "t0": 33.28,
+     "t1": 33.52
+    },
+    {
+     "w": "what",
+     "t0": 33.56,
+     "t1": 33.78
+    },
+    {
+     "w": "you've",
+     "t0": 33.88,
+     "t1": 34.14
+    },
+    {
+     "w": "got,",
+     "t0": 34.2,
+     "t1": 34.68
+    },
+    {
+     "w": "and",
+     "t0": 35.08,
+     "t1": 35.22
+    },
+    {
+     "w": "share",
+     "t0": 35.34,
+     "t1": 35.68
+    },
+    {
+     "w": "it!",
+     "t0": 35.74,
+     "t1": 35.94
+    }
+   ]
+  },
+  {
+   "line": "Big or small, short or tall,",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 36.0,
+   "t1": 43.2,
+   "words": [
+    {
+     "w": "Big",
+     "t0": 37.18,
+     "t1": 37.44
+    },
+    {
+     "w": "or",
+     "t0": 37.48,
+     "t1": 37.6
+    },
+    {
+     "w": "small,",
+     "t0": 37.74,
+     "t1": 38.14
+    },
+    {
+     "w": "short",
+     "t0": 38.36,
+     "t1": 38.68
+    },
+    {
+     "w": "or",
+     "t0": 38.72,
+     "t1": 38.86
+    },
+    {
+     "w": "tall,",
+     "t0": 38.96,
+     "t1": 39.3
+    }
+   ]
+  },
+  {
+   "line": "friends help friends, that's best of all!",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 36.0,
+   "t1": 43.2,
+   "words": [
+    {
+     "w": "friends",
+     "t0": 39.54,
+     "t1": 39.82
+    },
+    {
+     "w": "help",
+     "t0": 39.86,
+     "t1": 40.08
+    },
+    {
+     "w": "friends,",
+     "t0": 40.14,
+     "t1": 40.42
+    },
+    {
+     "w": "that's",
+     "t0": 40.52,
+     "t1": 40.76
+    },
+    {
+     "w": "best",
+     "t0": 40.8,
+     "t1": 41.1
+    },
+    {
+     "w": "of",
+     "t0": 41.22,
+     "t1": 41.4
+    },
+    {
+     "w": "all!",
+     "t0": 41.44,
+     "t1": 41.96
+    }
+   ]
+  }
+ ],
+ "sections": [
+  [
+   "Hook",
+   0.0,
+   3.6
+  ],
+  [
+   "Setup A",
+   3.6,
+   8.4
+  ],
+  [
+   "Setup B",
+   8.4,
+   13.2
+  ],
+  [
+   "Problem A",
+   13.2,
+   18.0
+  ],
+  [
+   "Problem B",
+   18.0,
+   25.2
+  ],
+  [
+   "Twist",
+   25.2,
+   32.4
+  ],
+  [
+   "Moral",
+   32.4,
+   36.0
+  ],
+  [
+   "Chorus",
+   36.0,
+   43.2
+  ],
+  [
+   "Button",
+   43.2,
+   46.2
+  ]
+ ],
+ "align_loss": 1.1221416339539645,
+ "all_inside": true
+}
