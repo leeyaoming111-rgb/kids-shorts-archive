@@ -148,3 +148,20 @@ Frames 1080-1160 re-rendered in both aspects and spliced in; the audio is unchan
 
 **Open (audio):** the brightness step at the join is untouched, because it can't be judged without listening. If it
 still sounds rough, ease the chorus highs in over its first second.
+
+## Breathing space before the chorus (owner: still choppy at 38 s)
+
+After the picture fix the owner still heard the join at about 38 s as choppy, and asked for 1-2 s of space between the
+moral line and the chorus. Measured: "helpers!" ended at 38.36 s and "Big" began at 38.46 s, with nothing between.
+
+Fix (`audio/fable-01/mix_v3.mp3`, `timeline.py`, `render.py`):
+- **Audio:** 1.5 s inserted at 38.4 s, filled by a reverb ring-out of the last 0.35 s of the band, fading from -22 dB
+  to about -50 dB over the gap (no digital silence). The chorus then enters on its own downbeat at 39.9 s.
+  Loudness -14.5 LUFS, peak -1.1 dBFS. `mix_v2.mp3` (no gap) is kept.
+- **Timeline:** everything from 38.4 s on is 1.5 s later (chorus 39.9-47.1, high-five 46.2, outro 47.1-49.5,
+  "Bye-bye!" 47.8). The Moral section runs on over the gap; its card fades out as the tail rings.
+- **Picture:** the moral shot eases back out to the chorus framing over its first 2.4 s and holds it through the gap,
+  then the 0.3 s dissolve into the chorus. Video is now 49.5 s (1485 frames). Frames 1080-1485 re-rendered in both aspects.
+
+Not checked by ear (the reviewer can only measure): if the ring-out sounds artificial, try a longer decay or a
+shorter gap (1.0 s). `GAP` in `timeline.py` and the build in this section's script are the only things to change.

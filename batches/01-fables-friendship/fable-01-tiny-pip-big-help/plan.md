@@ -10,11 +10,12 @@
   spin) by a local audio splice (song-only audio over 31.85-33.6 s, same take placed at 34.3 s), saved as
   `../audio/fable-01/mix_v2.mp3` (-14.4 LUFS); `mix.mp3` is kept as the original. The 24-36 s segment was re-rendered
   in both aspects (25 min) and the MP4s re-encoded. The moral-to-chorus cut at 38.4 s was smoothed (shot eases back to the
-  chorus framing plus a 0.3 s dissolve); see review.md.
+  chorus framing plus a 0.3 s dissolve); see review.md. Then 1.5 s of breathing space was opened between the moral line and the chorus
+  (reverb ring-out, `mix_v3.mp3`), so the video is now 49.5 s (1485 frames; 24.6 MB short, 26.6 MB wide, -14.5 LUFS).
 - **series:** Tumble & Pip (Fables About Friendship). Batch plan: [../plan.md](../plan.md)
 - **source:** Aesop's fable *The Lion and the Mouse* (public domain), retold with our cast, gags and song
 - **lesson (SEL):** small friends can be big helpers; don't judge help by size
-- **length:** 48.0 s (20 bars at 100 BPM). Episode cut: 41.2 s (drops the sting and the button)
+- **length:** 49.5 s (48.0 s on the bar grid plus 1.5 s of breathing space before the chorus). Episode cut: 41.2 s (drops the sting and the button)
 - **aspects:** 9:16 Short (`render.py`) and 16:9 episode framing (`render.py --wide`), same scene and timing
 
 ## Prompt
