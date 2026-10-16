@@ -38,7 +38,7 @@ MUSH1 = C(10.35, -3.5); MUSH1_S = 1.5                        # the giant mushroo
 MUSH2 = C(8.2, -3.8); MUSH2_S = 1.05
 PEB = C(0.25, -2.0)                                          # Pip's referee pebble
 PEB_TOP = 0.07 * 3.0
-FIN_T = C(10.2, 2.2)                                        # Tumble skids in here
+FIN_T = C(11.3, 2.5)                                        # Tumble skids in here
 FIN_LOOK = (NRM - DIR * 0.6) / np.linalg.norm(NRM - DIR * 0.6)   # the finish camera's side
 MSPOT = np.array([4.3, -0.85])                              # moral, chorus and button: Tumble here, Bo on his left
 BO_M = np.array([3.0, 0.1])
@@ -47,7 +47,7 @@ def _on_course(x, z):
     return -1.5 < sa < 16.5 and abs(la) < 3.0
 FLOWERS = [f for f in make_flowers([], n=150, seed=41) if not _on_course(f[0], f[1])]
 BACK_TREES = [(6.5, -9.0, 1.8), (10.0, -14, 2.0), (3.0, -15, 1.7), (-4.0, -16, 1.8), (-12.0, -8.0, 1.8),   # clear of every camera line
-              (8.5, -3.5, 1.5), (-10.0, 15.0, 1.9), (-16.0, 8.0, 1.8), (13.0, -1.0, 1.7), (2.0, 17.0, 1.9)]
+              (8.5, -3.5, 1.5), (13.0, -1.0, 1.7), (6.0, 17.0, 1.9)]
 def ground_at(p): return surf(p[0], p[1])
 def P3(p, y=0.0): return np.array([p[0], ground_at(p) + y, p[1]])
 
@@ -308,7 +308,7 @@ def camera(t):
     st = tumble(t); b = bo(t)
     if name == "start_line":                                 # low front of the line: Pip, Tumble, Bo
         c = C(0.15, -0.45)
-        return fit_cam(np.array([c[0], 0.8, c[1]]), yaw_of(DIR) - lerp(55, 62, e), 4, 3.0 if not WIDE else 4.6, 1.5, lift=0.05)
+        return fit_cam(np.array([c[0], 0.8, c[1]]), yaw_of(DIR) - lerp(55, 62, e), 4, 2.2 if not WIDE else 4.6, 1.5, lift=0.05)
     if name == "title_wide":                                 # high behind the start, the whole course ahead
         c = C(7.5, -0.4)
         return fit_cam(np.array([c[0], 0.7, c[1]]), yaw_of(-DIR) + 22, 24, 6.0 if not WIDE else 9.0, 4.0 if not WIDE else 4.2, lift=0.0)
@@ -316,7 +316,7 @@ def camera(t):
         z0 = SH["zoom"][0]; v = clampu(t, z0, T.RUN_END - 0.5)
         lead = 0.7 - 1.5 * v + 1.2 * ease(clampu(t, T.RUN_END - 0.5, T.RUN_END + 0.3))   # he surges across the frame, the camera catches up at the skid
         p = np.array([st["x"], 1.15, st["z"]])
-        return fit_cam(p + np.array([DIR[0], 0, DIR[1]]) * lead, yaw_of(NRM) + 4, 6, 3.0 if not WIDE else 2.2, 1.6)
+        return fit_cam(p + np.array([DIR[0], 0, DIR[1]]) * lead, yaw_of(NRM) + 4, 6, 2.3 if not WIDE else 2.2, 1.6)
     if name == "bo_steps":                                   # ground level, close on Bo's face and feet, tracking
         p = P3(b["p"], 0.55)
         return fit_cam(p + np.array([DIR[0], 0, DIR[1]]) * 0.35, yaw_of(NRM) + 35, -2, 1.3, 1.0, lift=0.12)
@@ -331,16 +331,16 @@ def camera(t):
         return fit_cam(np.array([hd[0], 0.85, hd[1]]), yaw_of(NRM) + SG * lerp(12, 6, e), 12, 1.5, 1.1)
     if name == "bo_passes":                                  # low wide from behind the sleeper: Bo plods past beyond him
         c = (NAP - DIR * 0.3 + b["p"]) / 2
-        return fit_cam(np.array([c[0], 0.7, c[1]]), yaw_of(NRM) + SG * lerp(20, 30, e), 20, 2.9 if not WIDE else 3.6, 2.0)
+        return fit_cam(np.array([c[0], 0.7, c[1]]), yaw_of(NRM) + SG * lerp(20, 30, e), 30, 2.9 if not WIDE else 3.6, 2.0)
     if name == "bo_near":                                    # side-on at the stump: Bo plods in, nose to the stump, Pip waves the flag on top
         c = (STUMP + b["p"]) / 2 + DIR * 0.3
-        return fit_cam(np.array([c[0], 0.85, c[1]]), yaw_of(NRM) - lerp(34, 22, e), 5, 2.7 if not WIDE else 3.6, 1.7, lift=0.1)
+        return fit_cam(np.array([c[0], 0.85, c[1]]), yaw_of(NRM) - lerp(34, 22, e), 5, 2.3 if not WIDE else 3.6, 1.7, lift=0.1)
     if name == "wake":                                       # medium side: the jolt and the spinning legs
         c = NAP - DIR * 0.2
         return fit_cam(np.array([c[0], 1.1, c[1]]), yaw_of(NRM) - SG * 12, 34, 2.6 if not WIDE else 3.4, 2.1)
     if name == "finish":                                     # low wide past the stump: Bo touches, Tumble skids in
         c = (C(S_TOUCH + 1.0, LANE_B) + FIN_T) / 2
-        return fit_cam(np.array([c[0], 0.95, c[1]]), yaw_of(NRM) + lerp(-6, 6, e), 10, 3.0 if not WIDE else 4.2, 1.9, lift=0.03)
+        return fit_cam(np.array([c[0], 0.95, c[1]]), yaw_of(NRM) + lerp(-6, 6, e), 10, 2.7 if not WIDE else 4.2, 1.9, lift=0.03)
     mid = (MSPOT + BO_M) / 2
     hk = 1.4 if WIDE else 1.0; lf = 0.24 if WIDE else None            # wide: Bo whole and clear of the caption
     if name == "moral":
