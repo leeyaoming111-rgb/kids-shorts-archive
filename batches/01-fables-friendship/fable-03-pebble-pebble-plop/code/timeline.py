@@ -95,13 +95,14 @@ STUCK = (word_times("stuck", "Problem A") or [_pa[0] + 2.5])[0]
 PULLS = word_times("pull", "Problem B")[:3] or [_pb[0] + 0.3 + 0.45 * k for k in range(3)]
 POP = (word_times("pop", "Problem B") or [PULLS[-1] + 0.9])[0]
 COUNT = [(word_times(w, "Twist") or [_tw[0] + 1.2 + 0.6 * k])[0] for k, w in enumerate(("one", "two", "three", "four", "five"))]
+PAW_SPLIT = STUCK - 0.4                                               # the paw goes in (seen from behind), then the face on 'stuck!'
 HOOK_SPLIT = _clip(_h[0] + 1.9, 1.4, _h[1] - 1.4)                     # Pip peering in, then the look down the neck
 PB_SPLIT = _clip(POP + 0.35, _pb[0] + 1.4, _pb[1] - 3.0)              # the pull and the pop, then the backward roll
 TW_SPLIT = COUNT[-1] + 0.55                                           # the counting drops (last plop on 'five'), then the drink
 COUNT_CUT = (word_times('pebbles', 'Twist') or [_tw[0] + 2.0])[0] - 1.1       # leaf lift stays on screen until just before 'Pebbles in!'
 MORAL_CUT = (word_times('think', 'Moral') or [_m[0] + 1.0])[0] - 0.15   # moral shot starts just before the sung 'Think'
 SHOTS = [(0.0, HOOK_SPLIT, "hook_peer"), (HOOK_SPLIT, _h[1], "hook_pov"), (_s[0], _s[1], "title_wide"),
-         (_sa[0], _sa[1], "hot_walk"), (_sb[0], _sb[1], "pip_try"), (_pa[0], _pa[1], "paw_in"),
+         (_sa[0], _sa[1], "hot_walk"), (_sb[0], _sb[1], "pip_try"), (_pa[0], PAW_SPLIT, "paw_in"), (PAW_SPLIT, _pa[1], "paw_stuck"),
          (_pb[0], PB_SPLIT, "pull"), (PB_SPLIT, COUNT_CUT, "roll_back"), (COUNT_CUT, TW_SPLIT, "count"),
          (TW_SPLIT, MORAL_CUT, "drink"), (MORAL_CUT, _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):

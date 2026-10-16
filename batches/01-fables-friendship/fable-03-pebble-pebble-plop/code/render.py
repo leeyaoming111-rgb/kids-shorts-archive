@@ -110,8 +110,8 @@ def tumble(t):
         L = T.line("Setup B")
         if t > L["t1"]: st["head"][0] = 0.1 * math.sin((t - L["t1"]) * 8) * math.exp(-(t - L["t1"]))
         pant(st, t)
-    elif n == "paw_in":
-        a = SH[n][0]
+    elif n in ("paw_in", "paw_stuck"):
+        a = SH["paw_in"][0]
         u = ease(clampu(t, T.PAW_IN - 0.2, T.PAW_IN + 0.7))
         st["roll"] = STUCK_ROLL * u; st["y"] += 0.036 * u
         st["arms"][0] = lerp([0.5, 1.4], STUCK_ARM, ease(clampu(t, T.PAW_IN - 0.2, T.PAW_IN + 0.4))).tolist() if t > T.PAW_IN - 0.2 else [0.2, 0.3]
@@ -268,7 +268,7 @@ def pip_state(t, st, mats):
     face = apply(Mh, (0, 1.5, 0.6))
     into = facing(RIM_FAR, JC)
     if n in ("hook_peer", "hook_pov"):                     # peering down into the jug
-        pk = 0.45 + 0.08 * math.sin(t * 2.2)
+        pk = (0.45 if n == "hook_peer" else 0.12) + 0.05 * math.sin(t * 2.2)
         return RIM_FAR, into, False, pk, True, {"wings": (0.3, 0.3)}
     if n in ("title_wide", "hot_walk"):                    # hot: fanning himself with a wing on the rim
         yaw = into + 0.9 * ease(clampu(t, SH["title_wide"][0] + 0.5, SH["title_wide"][0] + 1.2))
@@ -281,8 +281,8 @@ def pip_state(t, st, mats):
         ex = {"wings": (1.0 + 0.3 * math.sin(t * 16), 1.0 + 0.3 * math.sin(t * 16 + 1))} if reach > 0.5 else {"wings": (0.2, 0.2)}
         if t > L["t1"] - 0.2: ex = {"point": True}         # "let me think!": wing up to his head
         return RIM_FAR, into, False, pk * (t < L["t1"] - 0.2) + 0.0, True, ex
-    if n == "paw_in":                                      # hops off the rim to hover beside, clear of the paw
-        a = SH[n][0]; u = clampu(t, a, a + 0.7)
+    if n in ("paw_in", "paw_stuck"):                       # hops off the rim to hover beside, clear of the paw
+        a = SH["paw_in"][0]; u = clampu(t, a, a + 0.7)
         p = lerp(RIM_FAR, HOVER_R, ease(u)); p[1] += 0.3 * math.sin(math.pi * u)
         p = p + np.array([0, 0.05 * math.sin(t * 6), 0]) * (u >= 1)
         return p, facing(p, face), True, 0.0, False, {"gentle": True}
@@ -367,10 +367,10 @@ def pebbles(t, st, mats, Mp, jugM):
                 u = clampu(t, c, c + 0.22)
                 p = top.copy(); p[1] = lerp(top[1], surf_y, u * u)
                 if t > c + 0.22:
-                    bot = jw(PEB_BOTTOM[k]); v = ease(clampu(t, c + 0.22, c + 0.9))
+                    bot = jw(PEB_BOTTOM[k]); v = ease(clampu(t, c + 0.22, c + 0.42))        # slips under the surface at once and settles on the floor
                     p = lerp(np.array([JC[0], surf_y, JC[2]]), bot, v)
                 out.append(p)
-        elif n in ("roll_back", "pull") or (n == "paw_in"):
+        elif n in ("roll_back", "pull") or n in ("paw_in", "paw_stuck"):
             out.append(seat)
         elif n in ("hook_peer", "hook_pov", "title_wide", "hot_walk", "pip_try"):
             out.append(seat)
@@ -385,8 +385,8 @@ def camera(t):
         tgt = lerp(RIM_FAR, JC, 0.5) + np.array([0, 0.05, 0])
         return fit_cam(tgt, lerp(8, 18, e), 14, 0.75, 0.75, lift=0.1)
     if name == "hook_pov":                                 # overhead down the neck: the water is way down there
-        tgt = jw((0, 0.4, 0)) - np.array([0.1, 0, 0])
-        return fit_cam(tgt, -60, lerp(78, 82, e), 0.5, 0.5, fov=40, lift=0.0)
+        tgt = jw((0, 0.35, 0)) - np.array([0.1, 0, 0])
+        return fit_cam(tgt, -60, lerp(72, 77, e), 0.7, 0.7, fov=40, lift=0.0)
     if name == "title_wide":
         return fit_cam(np.array([lerp(TS[0], J[0], 0.4) - 0.3, 1.5, J[1] - 0.6]), 8, 9, 3.0, 2.7 if not WIDE else 2.0, lift=0.05)
     if name == "hot_walk":                                 # low tracking alongside the trudge
@@ -396,17 +396,19 @@ def camera(t):
     if name == "pip_try":                                  # macro, side-on to Pip's beak and the mouth of the jug
         tgt = lerp(RIM_FAR, JC, 0.5) + np.array([0, 0.0, 0])
         return fit_cam(tgt, lerp(10, 2, e), 20, 0.62, 0.62, fov=34, lift=0.12)
-    if name == "paw_in":                                   # medium front: the paw goes in, uh-oh
-        return fit_cam(np.array([lerp(TS[0], J[0], 0.55), 0.95, TS[1] + 0.2]), lerp(52, 62, e), lerp(48, 42, e), 1.4, 1.4)   # high three-quarter: the paw goes down into the mouth
+    if name == "paw_in":                                   # from behind and above: his arm runs out to the jug and in
+        return fit_cam(np.array([0.15, 0.95, -0.2]), lerp(132, 142, e), 33, 1.8, 1.7 if not WIDE else 1.6)
+    if name == "paw_stuck":                                # reaction: the face on "stuck!", the jug at his chest
+        return fit_cam(np.array([lerp(TS[0], J[0], 0.55), 0.95, TS[1] + 0.2]), lerp(52, 62, e), lerp(48, 42, e), 1.4, 1.4)
     if name == "pull":                                     # wide low angle: pull, pull, POP
-        return fit_cam(np.array([lerp(TS[0], J[0], 0.55), 1.05, TS[1] + 0.2]), lerp(58, 50, e), 38, 1.8, 1.8)
+        return fit_cam(np.array([0.15, 0.95, -0.2]), 138, 33, 2.0, 2.0)
     if name == "roll_back":                                # wide side: the roll back to the wall
         k = ease(clampu(t, SH["roll_back"][0], T.ROLL_END + 0.3))
         k2 = ease(clampu(t, T.ROLL_END + 0.4, T.IDEA + 0.3))
         return fit_cam(np.array([lerp(TS[0] + 0.3, LAND[0] + 0.3, k) + 0.5 * k2, 1.1, lerp(TS[1] - 0.4, LAND[1] + 0.1, k) - 0.35 * k2]), lerp(8, 30, k2), 22, lerp(2.3, 2.6, k2), lerp(2.0, 2.2, k2))
     if name == "count":                                    # high three-quarter close-up into the jug mouth
         tgt = JC + np.array([0, 0.12, 0]) - np.array([math.sin(CUP_YAW), 0, math.cos(CUP_YAW)]) * 0.18
-        return fit_cam(tgt, math.degrees(CUP_YAW) - lerp(28, 18, e), 58, 1.0, 1.0, fov=36, lift=0.1)
+        return fit_cam(tgt + (np.array([0, 0.3, 0]) if WIDE else 0), math.degrees(CUP_YAW) - lerp(28, 18, e), 58, 1.0, 1.45 if WIDE else 1.0, fov=36, lift=0.1)
     if name == "drink":
         tgt = lerp(JC, np.array([DRINK[0], 1.0, DRINK[1]]), 0.4)
         return fit_cam(tgt, DRINK_CAM_YAW, 36, 1.8, 1.5, lift=0.1)
@@ -429,6 +431,16 @@ class QAIgnore:
 QAI = QAIgnore()
 
 STONE_T = (0.84, 0.8, 0.74)
+def spray(draws, c, t0, t, n=12, size=0.03, speed=0.9, dur=0.4, tint=(0.7, 0.9, 1.0), cone=0.9, seed=0.0):
+    """water droplets thrown up and out in a loose, uneven fan (gravity pulls them down), shrinking as they fade"""
+    d = t - t0
+    if not (0 <= d < dur): return
+    for k in range(n):
+        a = (k * 2.399 + seed) % (2 * math.pi); e = cone * (0.35 + 0.65 * ((k * 0.618 + seed) % 1.0))     # azimuth, tilt from vertical
+        v = speed * (0.6 + 0.4 * ((k * 0.377 + seed) % 1.0))
+        vel = np.array([math.sin(e) * math.cos(a), math.cos(e), math.sin(e) * math.sin(a)]) * v
+        q = np.asarray(c) + vel * d + np.array([0, -2.2, 0]) * d * d
+        draws.append((PR["ball"], trans(*q) @ scale(size * (1 - d / dur) * (0.7 + 0.5 * ((k * 0.53) % 1.0))), U(mat=0, bump=0.0, tint=tint, tintMix=1.0), False))
 def build_draws(t):
     QAI.t = t
     draws, contacts = [], []
@@ -469,10 +481,11 @@ def build_draws(t):
     TM, seats = tray_mats(t, st, mats)
     draws.append((E2["bigleaf"], TM, U(mat=0, bump=0.3, obj="leaf"), True))
     for i, p in enumerate(pebbles(t, st, mats, Mp, jugM)):
-        draws.append((PR["ball"], trans(*p) @ scale(PEB_R, PEB_R * 0.8, PEB_R), U(mat=0, bump=0.4, tint=PEB_TINT[i], tintMix=1.0, obj="pebble"), True))
+        sk = 1.0
+        draws.append((PR["ball"], trans(*p) @ scale(PEB_R * sk, PEB_R * 0.8 * sk, PEB_R * sk), U(mat=0, bump=0.4, tint=PEB_TINT[i], tintMix=1.0, obj="pebble"), True))
     for c in T.COUNT:                                      # plop: a splash out of the mouth on every pebble
         _, l2 = n_in(c + 0.22)
-        puff(draws, jw((0, l2 + 0.05, 0)), c + 0.22, t, n=14, size=0.05, spread=0.45, dur=0.55, tint=(0.75, 0.9, 1.0), axis=(0, 0.9, 0))
+        spray(draws, jw((0, l2 + 0.03, 0)), c + 0.22, t, n=14, size=0.04, speed=1.1, dur=0.5, cone=0.55, seed=c)
     if T.POP - 0.02 < t < T.POP + 0.5:                       # the cork-pop
         puff(draws, jw((0, RIM_Y + 0.12, 0)), T.POP, t, n=10, size=0.06, spread=0.9, dur=0.45, tint=(1.0, 0.96, 0.85), axis=(0, 0.6, 0.2))
     if n == "button_crane":                                # the wing-splash arcs onto Tumble's nose
@@ -481,8 +494,8 @@ def build_draws(t):
         if 0 < u < 1:
             for j in range(4):
                 q = lerp(JC + np.array([0, 0.05, 0]), nose, u - 0.04 * j); q[1] += 0.45 * math.sin(math.pi * (u - 0.04 * j))
-                draws.append((PR["ball"], trans(*q) @ scale(0.05), U(mat=3, bump=0.0, tint=(0.6, 0.85, 1.0), tintMix=1.0), False))
-        puff(draws, nose, T.SPLASH, t, n=16, size=0.06, spread=0.7, dur=0.55, tint=(0.7, 0.9, 1.0), axis=(0, 0.3, 0.3))
+                draws.append((PR["ball"], trans(*q) @ scale(0.04), U(mat=3, bump=0.0, tint=(0.6, 0.85, 1.0), tintMix=1.0), False))
+        spray(draws, nose + np.array([0, 0.02, 0.12]), T.SPLASH, t, n=10, size=0.05, speed=0.9, dur=0.4, cone=0.9, seed=2.0)
     return draws, contacts
 
 # ---------------- hot-day grade ----------------
