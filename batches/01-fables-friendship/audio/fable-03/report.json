@@ -52,7 +52,7 @@
   {
    "file": "s01_both.mp3",
    "who": "both",
-   "t0": 34.45,
+   "t0": 35.18,
    "caption": "Ahh!",
    "tags": "[relieved] [happy sigh]",
    "dur": 2.56,
@@ -139,8 +139,8 @@
  "mix": {
   "lufs": -14.43,
   "target_lufs": -14,
-  "peak": 0.966,
-  "lyric_recall": 0.9836,
-  "stt": "The water's way down there. Tumble and pit. Hot, hot sun, we need a drink. My beak can't reach, let me think. In goes my paw. Uh-oh, it's stuck. Pull, pull, pull, and pop. [laughs] Whoa-oh. [whistling] Pebbles in one, two, three, four, five. Huh. Think it through, try something new. Big or small, short or tall, friends help friends, that's best of all. [laughs] Bye-bye."
+  "peak": 0.832,
+  "lyric_recall": 1.0,
+  "stt": "The water's way down there. Tumble and Pip. Hot, hot sun. We need a drink. My beak can't reach. Let me think. In goes my paw. Uh-oh, it's stuck. Pull, pull, pull, and pop. [laughs] Whoa. Pebbles in one, two, three, four, five. Ah. Think it through. Try something new. Big or small, short or tall, friends help friends. That's best of all. [laughs] Bye-bye"
  }
 }
