@@ -98,10 +98,11 @@ COUNT = [(word_times(w, "Twist") or [_tw[0] + 1.2 + 0.6 * k])[0] for k, w in enu
 HOOK_SPLIT = _clip(_h[0] + 1.9, 1.4, _h[1] - 1.4)                     # Pip peering in, then the look down the neck
 PB_SPLIT = _clip(POP + 0.35, _pb[0] + 1.4, _pb[1] - 3.0)              # the pull and the pop, then the backward roll
 TW_SPLIT = COUNT[-1] + 0.55                                           # the counting drops (last plop on 'five'), then the drink
-MORAL_CUT = (word_times('think', 'Moral') or [_m[0] + 1.0])[0] - 0.45   # moral shot starts just before the sung 'Think'
+COUNT_CUT = (word_times('pebbles', 'Twist') or [_tw[0] + 2.0])[0] - 1.1       # leaf lift stays on screen until just before 'Pebbles in!'
+MORAL_CUT = (word_times('think', 'Moral') or [_m[0] + 1.0])[0] - 0.15   # moral shot starts just before the sung 'Think'
 SHOTS = [(0.0, HOOK_SPLIT, "hook_peer"), (HOOK_SPLIT, _h[1], "hook_pov"), (_s[0], _s[1], "title_wide"),
          (_sa[0], _sa[1], "hot_walk"), (_sb[0], _sb[1], "pip_try"), (_pa[0], _pa[1], "paw_in"),
-         (_pb[0], PB_SPLIT, "pull"), (PB_SPLIT, _pb[1], "roll_back"), (_tw[0], TW_SPLIT, "count"),
+         (_pb[0], PB_SPLIT, "pull"), (PB_SPLIT, COUNT_CUT, "roll_back"), (COUNT_CUT, TW_SPLIT, "count"),
          (TW_SPLIT, MORAL_CUT, "drink"), (MORAL_CUT, _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):
     for i, (a, b, n) in enumerate(SHOTS):
@@ -112,7 +113,7 @@ ROLL_END = POP + 1.25                         # backward somersault, lands on hi
 IDEA = max(ROLL_END + 0.3, _pb[1] - 2.0)      # Pip lands by the pebbles and points
 SCOOP = IDEA + 0.75                           # Tumble scoops five pebbles into his paws
 FULL = COUNT[-1] + 0.45                       # the water reaches the top
-SIP = TW_SPLIT + 0.25                         # Pip sips from the brim
+SIP = TW_SPLIT + 0.1                         # Pip sips from the brim
 LAP = TW_SPLIT + 0.9                          # Tumble's tongue reaches it too
 SPLASH = _bt[0] + 0.75                        # button: Pip's wing-splash lands on Tumble's nose
 HIGH_FIVE = _c[1] - 0.9

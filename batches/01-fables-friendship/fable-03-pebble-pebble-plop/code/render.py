@@ -20,7 +20,7 @@ for _grp in (FOXP, PIPP, PR, SC, E2, {"w": EYE_W, "p": EYE_P}, {"jug": JUGM}):
 J = (0.55, 0.0)                                            # the tall jug
 JUG_YAW = -2.36                                            # handle at the back right, away from Tumble and the camera
 RIM_R, RIM_Y = 0.245, props_f3.JUG_TOP
-W0, WSTEP = 0.2, 0.12                                      # water level at the start, rise per pebble (5 -> 0.8)
+W0, WSTEP = 0.12, 0.136                                    # water level at the start (deep), rise per pebble (5 -> 0.8)
 PEB_R = 0.07
 def jug_base(): return trans(J[0], ground_h(*J) - 0.01, J[1]) @ roty(JUG_YAW)
 MJ0 = jug_base()
@@ -38,15 +38,15 @@ HOLD = [0.3, 1.25, 0.62]                                   # two-paw hold (kit p
 HOLD_UP = [0.3, 1.5, 0.62]                                 # the same, lifted a little
 LEAF_FWD = 0.59                                            # the leaf sits this far in front of Tumble's feet (paws are at 0.448)
 WALL_X = PICK[0] + 0.76                                   # dry stone wall: its top is where the paws hold the leaf
-WALL_ZS = (LAND[1] + 0.0, LAND[1] - 0.55, LAND[1] - 1.1)
+WALL_ZS = (LAND[1] + 0.0, LAND[1] - 0.55, LAND[1] - 1.1, LAND[1] - 1.65, LAND[1] - 2.2)
 WALL_TOP = 0.96                                            # leaf rests at 0.986: paw 0.894 + PAW_TOP 0.072 + leaf thickness 0.02
 WALL_N = 6
-CT = (WALL_X + 0.9, LAND[1] - 3.2)                         # the cottage behind the wall
+CT = (WALL_X + 1.6, LAND[1] - 4.2)                         # the cottage behind the wall
 TRAY_ARM_LOW, TRAY_ARM_UP = HOLD, HOLD_UP                   # both paws under the leaf: on the wall, then lifted
 CUP_D = 1.3                                               # count shot: jug axis this far in front of Tumble
 CUP_YAW = math.atan2(1.0, 0.35)
 CUP = (J[0] - CUP_D * math.sin(CUP_YAW), J[1] - CUP_D * math.cos(CUP_YAW))
-DRINK_D = 1.4
+DRINK_D = 1.18
 DRINK = (J[0] - DRINK_D * math.sin(CUP_YAW), J[1] - DRINK_D * math.cos(CUP_YAW))
 MSPOT = (TS[0] - 0.35, TS[1] + 0.55)                       # moral and dance spot, the jug at his paw side
 LEAF_REST = (TS[0] + 0.15, TS[1] - 0.55)                   # the empty leaf on the grass after the count
@@ -106,6 +106,7 @@ def tumble(t):
         pant(st, t)
     elif n == "pip_try":                                   # watches Pip, head tilted, still panting
         st["yaw"] = 0.25; st["head"][2] = -0.1; st["head"][1] = 0.25
+        st["x"] = TS[0] - 0.75                              # stands back so the macro on Pip and the mouth has the frame to itself
         L = T.line("Setup B")
         if t > L["t1"]: st["head"][0] = 0.1 * math.sin((t - L["t1"]) * 8) * math.exp(-(t - L["t1"]))
         pant(st, t)
@@ -146,7 +147,7 @@ def tumble(t):
     elif n == "drink":
         st["x"], st["z"] = DRINK; st["yaw"] = CUP_YAW
         lean = ease(clampu(t, T.LAP - 0.45, T.LAP)) * (1 - ease(clampu(t, T.LAP + 0.9, T.LAP + 1.3)))
-        st["pivot"] = 0.15; st["pitch"] = 0.55 * lean; st["y"] += 0.09 * lean; st["head"][0] = 0.1 + 0.1 * lean
+        st["pivot"] = 0.15; st["pitch"] = 0.4 * lean; st["y"] += 0.09 * lean; st["head"][0] = 0.1 + 0.2 * lean
         st["arms"] = [[0.35, 0.3], [0.35, 0.3]]
         st["tongue"] = 1.0 if T.LAP - 0.1 < t < T.LAP + 0.9 else 0.0
         if t > T.LAP + 1.0: st["head"][0] = 0.05
@@ -227,6 +228,15 @@ def rim_far():
         if best is None or p[0] > best[0]: best = p
     return best
 RIM_FAR = rim_far()
+DRINK_CAM_YAW = 12.0                                       # drink camera: from his front-right, high enough to see the tongue meet the water
+def _drink_rim():
+    d = np.array([-math.sin(math.radians(DRINK_CAM_YAW)), 0.0, -math.cos(math.radians(DRINK_CAM_YAW))])   # away from the camera
+    best = None
+    for k in range(72):
+        p = rim_pt(k * 2 * math.pi / 72); s = float(np.dot(p - JC, d))
+        if best is None or s > best[0]: best = (s, p)
+    return best[1]
+RIM_DRINK = RIM_FAR                                       # Pip keeps the far lip, facing Tumble across the mouth
 HOVER_R = np.array([J[0] + 0.62, 1.38, TS[1] + 0.25])    # beside the jug at Tumble's depth, clear of his head
 LEAF_SX, LEAF_SZ = 0.34, 0.27                              # the leaf is 0.7 long and 0.22 wide, a tray for five pebbles
 def _hold_c():
@@ -280,7 +290,7 @@ def pip_state(t, st, mats):
         p = HOVER_R + np.array([0, 0.05 * math.sin(t * 6), 0])
         return p, facing(p, face), True, 0.0, False, ({"cheer": False} if t < T.POP else {"gentle": True})
     if n == "roll_back":                                   # flies to the wall (up, across, down) and points at the pebbles
-        top = np.array([WALL_X + 0.1, WALL_TOP - 0.05 + PIP_FOOT, LAND[1] + 0.34])
+        top = np.array([WALL_X + 0.1, WALL_TOP + 0.04 + PIP_FOOT, LAND[1] - 0.95])
         up1 = HOVER_R + np.array([0, 0.6, 0]); up2 = top + np.array([0, 0.75, 0])
         u = clampu(t, T.ROLL_END, T.IDEA)
         if u < 1:
@@ -295,9 +305,12 @@ def pip_state(t, st, mats):
         sip = 0.0
         d = t - T.SIP
         if 0 <= d < 0.6: sip = 0.55 * math.sin(math.pi * d / 0.6)
-        return RIM_FAR, into, False, sip, True, ({"cheer": True} if t > T.LAP + 0.3 else {})
+        if t > T.SIP + 0.7:                                # done sipping: lifts off the lip so Tumble has the mouth to himself
+            u = ease(clampu(t, T.SIP + 0.7, T.LAP - 0.2)); p = RIM_DRINK + np.array([0.3, 0.55, 0.0]) * u
+            return p, facing(p, JC), True, 0.0, False, {"cheer": True}
+        return RIM_DRINK, facing(RIM_DRINK, JC), False, sip, True, {}
     if n in ("moral", "chorus"):
-        return dance_pip(t, st, mats, n, arrive_from=RIM_FAR)
+        return dance_pip(t, st, mats, n, arrive_from=RIM_DRINK)
     a, b = SH["button_crane"]                              # hops from the paw to the rim and splashes a wing
     p0 = paw_seat(fox_mats_p(tumble(a))[2]); rim = rim_pt_near(p0)
     if t < a + 0.2: return p0, 0.35, False, 0.0, True, {}          # still riding the paw after the cut
@@ -379,23 +392,24 @@ def camera(t):
     if name == "hot_walk":                                 # low tracking alongside the trudge
         st = tumble(t)
         cx = lerp(st["x"], J[0], 0.35)
-        return fit_cam(np.array([cx, 1.1, st["z"] + 0.1]), 50, -6, 1.6, 1.45, lift=0.08)
+        return fit_cam(np.array([cx, 1.1, st["z"] + 0.1]), 35, -6, 2.0, 1.5, lift=0.08)
     if name == "pip_try":                                  # macro, side-on to Pip's beak and the mouth of the jug
         tgt = lerp(RIM_FAR, JC, 0.5) + np.array([0, 0.0, 0])
         return fit_cam(tgt, lerp(10, 2, e), 20, 0.62, 0.62, fov=34, lift=0.12)
     if name == "paw_in":                                   # medium front: the paw goes in, uh-oh
-        return fit_cam(np.array([lerp(TS[0], J[0], 0.7), 1.0, TS[1] + 0.15]), lerp(24, 18, e), lerp(30, 40, e), 1.5, 1.5)   # high three-quarter: the paw goes down into the mouth
+        return fit_cam(np.array([lerp(TS[0], J[0], 0.55), 0.95, TS[1] + 0.2]), lerp(52, 62, e), lerp(48, 42, e), 1.4, 1.4)   # high three-quarter: the paw goes down into the mouth
     if name == "pull":                                     # wide low angle: pull, pull, POP
-        return fit_cam(np.array([lerp(TS[0], J[0], 0.6), 1.0, TS[1] + 0.15]), 20, 30, 1.9, 1.9)
+        return fit_cam(np.array([lerp(TS[0], J[0], 0.55), 1.05, TS[1] + 0.2]), lerp(58, 50, e), 38, 1.8, 1.8)
     if name == "roll_back":                                # wide side: the roll back to the wall
         k = ease(clampu(t, SH["roll_back"][0], T.ROLL_END + 0.3))
-        return fit_cam(np.array([lerp(TS[0] + 0.3, LAND[0] + 0.3, k), 1.1, lerp(TS[1] - 0.4, LAND[1] + 0.1, k)]), 8, 22, lerp(2.3, 1.9, k), lerp(2.0, 1.7, k))
+        k2 = ease(clampu(t, T.ROLL_END + 0.4, T.IDEA + 0.3))
+        return fit_cam(np.array([lerp(TS[0] + 0.3, LAND[0] + 0.3, k) + 0.5 * k2, 1.1, lerp(TS[1] - 0.4, LAND[1] + 0.1, k) - 0.35 * k2]), lerp(8, 30, k2), 22, lerp(2.3, 2.6, k2), lerp(2.0, 2.2, k2))
     if name == "count":                                    # high three-quarter close-up into the jug mouth
         tgt = JC + np.array([0, 0.12, 0]) - np.array([math.sin(CUP_YAW), 0, math.cos(CUP_YAW)]) * 0.18
         return fit_cam(tgt, math.degrees(CUP_YAW) - lerp(28, 18, e), 58, 1.0, 1.0, fov=36, lift=0.1)
     if name == "drink":
-        tgt = lerp(JC, np.array([DRINK[0], 1.0, DRINK[1]]), 0.45)
-        return fit_cam(tgt, math.degrees(CUP_YAW) + 45, 10, 1.1, 1.1, lift=0.1)
+        tgt = lerp(JC, np.array([DRINK[0], 1.0, DRINK[1]]), 0.4)
+        return fit_cam(tgt, DRINK_CAM_YAW, 36, 1.8, 1.5, lift=0.1)
     if name == "moral":
         return fit_cam(np.array([MSPOT[0] + 0.25, lerp(1.35, 1.45, e), MSPOT[1]]), lerp(14, 8, e), 5, lerp(1.3, 1.1, e), lerp(1.4, 1.15, e))
     if name == "chorus":
@@ -420,9 +434,11 @@ def build_draws(t):
     draws, contacts = [], []
     meadow_backdrop(draws, t, cottage=None)
     draws.append((SC["cottage"], trans(CT[0], ground_h(*CT) - 0.05, CT[1]) @ roty(-0.35), U(mat=0, bump=0.6, obj="cottage"), True))
-    for zi, z in enumerate(WALL_ZS):                       # dry stone wall: flat stones, staggered
-        for k in range(WALL_N):
-            x = WALL_X + 0.02 * math.sin(k * 2.1 + zi) * (k < WALL_N - 1); zz = z + 0.03 * math.sin(k * 1.7 + zi * 2) * (k < WALL_N - 1)
+    for k in range(WALL_N):                                # dry stone wall: long, low, staggered courses
+        for zi, z in enumerate(WALL_ZS):
+            if k % 2 == 1 and zi == len(WALL_ZS) - 1: continue
+            zo = z - 0.275 * (k % 2)
+            x = WALL_X + 0.03 * math.sin(k * 2.1 + zi) * (k < WALL_N - 1); zz = zo + 0.03 * math.sin(k * 1.7 + zi * 2) * (k < WALL_N - 1)
             draws.append((SC["stone"], trans(x, ground_h(WALL_X, z) + 0.07 + (WALL_TOP - 0.14) / (WALL_N - 1) * k, zz) @ roty(math.pi / 2 + 0.1 * math.sin(k + zi) * (k < WALL_N - 1)) @ scale(0.85, 1.2, 0.75),
                           U(mat=0, bump=0.9, tint=tuple(c * (0.92 + 0.08 * ((k + zi) % 3)) for c in STONE_T), tintMix=1.0, obj="wall"), True))
     for (x, z, s) in [(CT[0] - 2.0, CT[1] + 1.6, 0.2), (J[0] + 1.3, J[1] - 0.6, 0.16), (MSPOT[0] - 1.3, MSPOT[1] - 0.2, 0.18)]:
@@ -456,7 +472,7 @@ def build_draws(t):
         draws.append((PR["ball"], trans(*p) @ scale(PEB_R, PEB_R * 0.8, PEB_R), U(mat=0, bump=0.4, tint=PEB_TINT[i], tintMix=1.0, obj="pebble"), True))
     for c in T.COUNT:                                      # plop: a splash out of the mouth on every pebble
         _, l2 = n_in(c + 0.22)
-        puff(draws, jw((0, l2 + 0.05, 0)), c + 0.22, t, n=8, size=0.028, spread=0.35, dur=0.45, tint=(0.75, 0.9, 1.0), axis=(0, 0.9, 0))
+        puff(draws, jw((0, l2 + 0.05, 0)), c + 0.22, t, n=14, size=0.05, spread=0.45, dur=0.55, tint=(0.75, 0.9, 1.0), axis=(0, 0.9, 0))
     if T.POP - 0.02 < t < T.POP + 0.5:                       # the cork-pop
         puff(draws, jw((0, RIM_Y + 0.12, 0)), T.POP, t, n=10, size=0.06, spread=0.9, dur=0.45, tint=(1.0, 0.96, 0.85), axis=(0, 0.6, 0.2))
     if n == "button_crane":                                # the wing-splash arcs onto Tumble's nose
@@ -465,8 +481,8 @@ def build_draws(t):
         if 0 < u < 1:
             for j in range(4):
                 q = lerp(JC + np.array([0, 0.05, 0]), nose, u - 0.04 * j); q[1] += 0.45 * math.sin(math.pi * (u - 0.04 * j))
-                draws.append((PR["ball"], trans(*q) @ scale(0.022), U(mat=3, bump=0.0, tint=(0.6, 0.85, 1.0), tintMix=1.0), False))
-        puff(draws, nose, T.SPLASH, t, n=8, size=0.025, spread=0.5, dur=0.4, tint=(0.7, 0.9, 1.0), axis=(0, 0.3, 0.3))
+                draws.append((PR["ball"], trans(*q) @ scale(0.05), U(mat=3, bump=0.0, tint=(0.6, 0.85, 1.0), tintMix=1.0), False))
+        puff(draws, nose, T.SPLASH, t, n=16, size=0.06, spread=0.7, dur=0.55, tint=(0.7, 0.9, 1.0), axis=(0, 0.3, 0.3))
     return draws, contacts
 
 # ---------------- hot-day grade ----------------
