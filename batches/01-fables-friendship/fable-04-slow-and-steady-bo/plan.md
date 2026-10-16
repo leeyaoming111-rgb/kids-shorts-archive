@@ -1,7 +1,8 @@
 # Tumble & Pip Fables 4: Slow and Steady Bo
 
 - **job:** batch 01, fable 04 (`fable-04-slow-and-steady-bo`), built on the shared kit (`common/fablekit.py`)
-- **status:** plan written; animatic in progress.
+- **status:** finished. Geometry QA 0, independent reviewer PASS (round 3, `review.md`), real song (verse seed 2, recall 100%, mix -14.8 LUFS), final renders in `batches/01-fables-friendship/renders/`.
+- **as built (differs from the shot list below):** the music model sings the Twist line at the end of its section, so Bo reaches the stump in the instrumental break (29.6 s), Pip calls "Wake up, Tumble!" at 31.8 s, Tumble jolts on his name (32.2 s), the finish shot runs 33.4-34.8 s with "Well done, Bo!" at 34.55 s, and the moral shot follows. The course is 15 units long, the nap is under the giant mushroom, and the snore close-up is 20.4-21.9 s.
 - **source:** Aesop's fable *The Tortoise and the Hare* (public domain), retold with our cast
 - **lesson (SEL, social-emotional learning):** keep going step by step; don't show off; be a good sport when a friend wins
 - **guest:** Bo the turtle from the archive one-off "Lulu & Bo" (mint face, orange shell), his clay model ported
