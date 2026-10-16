@@ -98,7 +98,7 @@ def _word_end(L, key):
 # behind Bo, "Well done, Bo!", then the moral. Every split is clamped so no shot gets a negative length.
 NEAR_SPLIT = min(_word_end(_lt, "tumble") + 0.1, _tw[1] - 2.6)   # Pip calls from the finish...
 WAKE = NEAR_SPLIT                              # ...cut to Tumble, who hears his name and jolts up
-WAKE_SPLIT = WAKE + 1.15                       # legs spin, cut to the finish
+WAKE_SPLIT = WAKE + 1.4                        # legs spin, cut to the finish
 FIN_END = max(WAKE_SPLIT + 1.45, _m[0])        # the moral shot starts when the good-sport cheer is done
 SHOTS = [(0.0, _h[1], "start_line"), (_s[0], _s[1], "title_wide"), (_sa[0], _sa[1], "zoom"), (_sb[0], _sb[1], "bo_steps"),
          (_pa[0], LIE_SPLIT, "show_off"), (LIE_SPLIT, _pa[1], "lie_down"), (_pb[0], SNORE_SPLIT, "snore"),
@@ -117,7 +117,7 @@ EASY = (word_times("easy", "Problem A") or [_pa[0] + 0.6])[0]
 LIE = LIE_SPLIT + 1.0                          # lies down in the shade, eyes shut
 _lb = line("Problem B")
 SNORES = [_lb["t1"] + 0.4 + k * 1.2 for k in range(3) if _lb["t1"] + 0.4 + k * 1.2 < _pb[1] - 0.6]
-SPIN = (WAKE + 0.25, WAKE + 0.85)              # legs spin in the air before he takes off
+SPIN = (WAKE + 0.2, WAKE + 1.0)              # legs spin in the air before he takes off
 BO_TOUCH = _tw[0] + 2.0                        # Bo's nose touches the stump in the race break, before Pip's call
 FOX_ARRIVE = WAKE_SPLIT + 0.45                 # Tumble zooms in a moment later and skids to a stop
 CHEER = max(FOX_ARRIVE + 0.2, _lt["t1"] + 0.55)   # after Pip's caption clears

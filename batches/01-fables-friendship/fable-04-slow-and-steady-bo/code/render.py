@@ -33,10 +33,10 @@ BO_S = 1.15
 STUMP_S = 1.3; STUMP = C(15.0, 0.55); STUMP_TOP = 0.55 * STUMP_S - 0.02; STUMP_ROT = 1.2
 S_TOUCH = 13.0                                               # Bo's nose on the stump
 RUN_S = 11.0                                                 # where Tumble skids to a stop
-NAP = C(11.8, -1.35); NAP_YAW = math.atan2(NRM[0], NRM[1])   # lying on his side, face to the course-side cameras, head up-course under the mushroom, head towards the finish
-MUSH1 = C(10.35, -3.5); MUSH1_S = 1.5                        # the giant mushroom his snores puff
+NAP = C(11.3, -1.35); NAP_YAW = math.atan2(NRM[0], NRM[1])   # lying on his side, face to the course-side cameras, head up-course under the mushroom, head towards the finish
+MUSH1 = C(9.85, -3.5); MUSH1_S = 1.5                        # the giant mushroom his snores puff
 MUSH2 = C(8.2, -3.8); MUSH2_S = 1.05
-PEB = C(0.25, -2.0)                                          # Pip's referee pebble
+PEB = C(1.3, -2.0)                                          # Pip's referee pebble
 PEB_TOP = 0.07 * 3.0
 FIN_T = C(11.3, 2.5)                                        # Tumble skids in here
 FIN_LOOK = (NRM - DIR * 0.6) / np.linalg.norm(NRM - DIR * 0.6)   # the finish camera's side
@@ -53,7 +53,7 @@ def P3(p, y=0.0): return np.array([p[0], ground_at(p) + y, p[1]])
 
 # ---------------- Bo ----------------
 def bo_s_at(t):
-    return S_TOUCH * clampu(t, T.GO, T.BO_TOUCH) ** 1.15      # a steady plod that settles into its stride
+    return S_TOUCH * clampu(t, T.GO, T.BO_TOUCH) ** 1.4       # a steady plod that settles into its stride
 def bo(t):
     n = T.shot_at(t)[1]
     st = dict(p=C(0.0, LANE_B), yaw=YAW_RUN, walk=0.0, head=[0.0, 0.0], y=0.0, roll=0.0, legwave=0.0)
@@ -187,7 +187,7 @@ def tumble(t):
             v = clampu(t, T.SPIN[0], T.SPIN[1])
             st["y"] += 0.7 * math.sin(math.pi * min(v * 2.0, 1.0) / 2) * (1 - clampu(v, 0.8, 1.0))   # springs up and hangs in the air
             ph = t * 2 * math.pi * 7
-            st["legs"] = [0.3 * max(0, math.sin(ph)), 0.3 * max(0, -math.sin(ph))]       # legs pump in mid-air
+            st["legs"] = [0.42 * max(0, math.sin(ph)), 0.42 * max(0, -math.sin(ph))]       # legs pump in mid-air
             st["arms"] = [[0.5, 1.2], [0.5, 1.2]]; st["pitch"] = -0.1
         elif t >= T.SPIN[1]:
             dd = t - T.SPIN[1]; s = 4.5 * dd ** 1.0
@@ -220,11 +220,11 @@ def tumble(t):
         a = SH["button_crane"][0]; st["x"], st["z"] = MSPOT; st["yaw"] = -0.05
         down = ease(clampu(t, a + 0.45, a + 0.85))
         wv = math.sin((t - a) * 9) * clampu(t, a + 0.3, a + 0.6)
-        st["arms"] = [lerp(DANCE_ARM, [0.9, 2.3 + 0.3 * wv], down).tolist(), [0.3, 0.3]]
+        st["arms"] = [lerp(DANCE_ARM, [2.3 + 0.25 * wv, 0.3], down).tolist(), [0.3, 0.3]]   # paw up beside his head, waving
     return st
 def snore_amt(t):
     """0..1 puff of the snore (big on the spoken snores, gentle breathing otherwise)"""
-    v = 0.25 * (0.5 + 0.5 * math.sin(t * 2.2))
+    v = 0.45 * (0.5 + 0.5 * math.sin(t * 2.2))
     for s0 in T.SNORES:
         d = t - s0
         if 0 <= d < 0.9: v = max(v, math.sin(math.pi * d / 0.9))
@@ -321,11 +321,11 @@ def camera(t):
         p = P3(b["p"], 0.55)
         return fit_cam(p + np.array([DIR[0], 0, DIR[1]]) * 0.35, yaw_of(NRM) + 35, -2, 1.3, 1.0, lift=0.12)
     if name == "show_off":                                   # behind Tumble's shoulder, looking back up the course to tiny Bo
-        p = C(RUN_S, LANE_T)
-        return fit_cam(np.array([p[0], 1.35, p[1]]), yaw_of(DIR) + 52, 6, 1.9 if not WIDE else 2.4, 1.8, lift=0.05)
+        p = C(RUN_S - 1.6, LANE_T + 0.2)
+        return fit_cam(np.array([p[0], 1.25, p[1]]), yaw_of(DIR) + 40, 6, 2.6 if not WIDE else 3.0, 1.8, lift=0.05)
     if name == "lie_down":                                   # medium, from the far side of the course
-        c = (C(RUN_S, LANE_T) + NAP) / 2 + DIR * 0.5
-        return fit_cam(np.array([c[0], 1.0, c[1]]), yaw_of(NRM) + SG * lerp(8, 4, e), 16, 2.8 if not WIDE else 3.2, 2.0)
+        c = (C(RUN_S, LANE_T) + NAP) / 2 + DIR * (0.5 if not WIDE else 0.1)
+        return fit_cam(np.array([c[0], 1.0, c[1]]), yaw_of(NRM) - SG * lerp(34, 28, e), 16, 2.8 if not WIDE else 3.2, 2.0)
     if name == "snore":                                      # close on the snoring face and the mushroom
         hd = NAP - DIR * 0.9
         return fit_cam(np.array([hd[0], 0.85, hd[1]]), yaw_of(NRM) + SG * lerp(12, 6, e), 12, 1.5, 1.1)
@@ -333,11 +333,11 @@ def camera(t):
         c = (NAP - DIR * 0.3 + b["p"]) / 2
         return fit_cam(np.array([c[0], 0.7, c[1]]), yaw_of(NRM) + SG * lerp(20, 30, e), 30, 2.9 if not WIDE else 3.6, 2.0)
     if name == "bo_near":                                    # side-on at the stump: Bo plods in, nose to the stump, Pip waves the flag on top
-        c = (STUMP + b["p"]) / 2 + DIR * 0.3
-        return fit_cam(np.array([c[0], 0.85, c[1]]), yaw_of(NRM) - lerp(34, 22, e), 5, 2.3 if not WIDE else 3.6, 1.7, lift=0.1)
+        c = (STUMP + b["p"]) / 2 + DIR * 1.0
+        return fit_cam(np.array([c[0], 0.85, c[1]]), yaw_of(NRM) + lerp(6, 0, e), 5, 2.3 if not WIDE else 3.0, 1.7, lift=0.1)
     if name == "wake":                                       # medium side: the jolt and the spinning legs
         c = NAP - DIR * 0.2
-        return fit_cam(np.array([c[0], 1.1, c[1]]), yaw_of(NRM) - SG * 12, 34, 2.6 if not WIDE else 3.4, 2.1)
+        return fit_cam(np.array([c[0], 1.1, c[1]]), yaw_of(NRM) - SG * 14, 20, 2.3 if not WIDE else 3.0, 2.1)
     if name == "finish":                                     # low wide past the stump: Bo touches, Tumble skids in
         c = (C(S_TOUCH + 1.0, LANE_B) + FIN_T) / 2
         return fit_cam(np.array([c[0], 0.95, c[1]]), yaw_of(NRM) + lerp(-6, 6, e), 10, 2.7 if not WIDE else 4.2, 1.9, lift=0.03)
