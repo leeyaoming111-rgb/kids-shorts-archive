@@ -97,11 +97,12 @@ POP = (word_times("pop", "Problem B") or [PULLS[-1] + 0.9])[0]
 COUNT = [(word_times(w, "Twist") or [_tw[0] + 1.2 + 0.6 * k])[0] for k, w in enumerate(("one", "two", "three", "four", "five"))]
 HOOK_SPLIT = _clip(_h[0] + 1.9, 1.4, _h[1] - 1.4)                     # Pip peering in, then the look down the neck
 PB_SPLIT = _clip(POP + 0.35, _pb[0] + 1.4, _pb[1] - 3.0)              # the pull and the pop, then the backward roll
-TW_SPLIT = _clip(COUNT[-1] + 0.9, _tw[0] + 2.5, _tw[1] - 1.6)          # the counting drops, then the drink
+TW_SPLIT = COUNT[-1] + 0.55                                           # the counting drops (last plop on 'five'), then the drink
+MORAL_CUT = (word_times('think', 'Moral') or [_m[0] + 1.0])[0] - 0.45   # moral shot starts just before the sung 'Think'
 SHOTS = [(0.0, HOOK_SPLIT, "hook_peer"), (HOOK_SPLIT, _h[1], "hook_pov"), (_s[0], _s[1], "title_wide"),
          (_sa[0], _sa[1], "hot_walk"), (_sb[0], _sb[1], "pip_try"), (_pa[0], _pa[1], "paw_in"),
          (_pb[0], PB_SPLIT, "pull"), (PB_SPLIT, _pb[1], "roll_back"), (_tw[0], TW_SPLIT, "count"),
-         (TW_SPLIT, _tw[1], "drink"), (_m[0], _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
+         (TW_SPLIT, MORAL_CUT, "drink"), (MORAL_CUT, _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):
     for i, (a, b, n) in enumerate(SHOTS):
         if a <= t < b: return i, n, (t - a) / max(b - a, 1e-6), t - a
