@@ -27,7 +27,7 @@ PIP_SPOT = np.array([LX, log_top(PIP_Z), PIP_Z]) + UP
 BS = 0.12                                                  # berry scale (mesh y -0.5..0.58)
 BERRY_LOG = np.array([LX, log_top(-6.6) + 0.5 * BS - 0.004, -6.6])
 APPLE_S = 0.44; APPLE_TOP = 0.61 * APPLE_S; APPLE_BOT = 0.41 * APPLE_S
-HOLD1 = [0.3, 1.25, 0.62]                                  # two-paw hold: both paws under the apple (coordinator pose)
+HOLD1 = [0.3, 0.98, 0.62]                                  # two-paw hold: both paws under the apple (coordinator pose)
 PAW_OUT = [0.85, 0.95]                                     # berry paw: out to the side, towards Pip
 def half_w(x):
     """the stream's half width: 0.7 at the bridge, opening into a pool downstream (towards the low camera)"""
@@ -204,8 +204,9 @@ def apple_state(t, mats):
         return ("fall", p, t * 3)
     if t >= SH["wobble"][1]: return None
     d = t - T.SPLASH
-    dx = 1.5 * max(0.0, d - 0.4) + 0.1 * min(d, 0.4)         # bobs, then drifts away down the stream (towards the camera)
-    z = land[2] + (TZ - land[2]) * min(1.0, d / 2.5)
+    dx = 3.8 * max(0.0, d - 0.4) + 0.1 * min(d, 0.4)         # bobs, then drifts away down the stream (towards the camera)
+    zt = TZ + 1.4 * (1 if land[2] < TZ else -1)             # and out to the side, so it leaves the frame
+    z = land[2] + (zt - land[2]) * ease(clampu(d, 0.8, 3.0))
     y = YW + 0.02 - 0.09 * math.exp(-d * 4) * math.cos(d * 12) + 0.015 * math.sin(d * 4)
     return ("float", np.array([land[0] + dx, y, z]), T.SPLASH * 3 + 0.8 * d)
 
@@ -326,32 +327,32 @@ def berry_draws(t, pip, arms):
 def camera(t):
     i, name, u, lt = T.shot_at(t); e = ease(u)
     if name == "hook_mirror":                                   # low, down the stream: the fox and the other fox
-        return fit_cam(np.array([LX, -0.7, TZ - 0.1]), lerp(94, 91, e), 1.5, 1.3, lerp(3.45, 3.25, e), lift=0.0)
+        return fit_cam(np.array([LX, -0.7, TZ - 0.1]), lerp(94, 91, e), 1.5, 1.3, lerp(3.9, 3.7, e), lift=0.0)
     if name == "title_wide":
         return fit_cam(np.array([LX + 0.4, 0.7 if not WIDE else 1.45, TZ - 0.2]), 38, 20, 3.0, 2.7 if not WIDE else 2.7, lift=0.0)
     if name == "proud":                                         # medium, eye level, three-quarter
         return fit_cam(np.array([LX + 0.1, 1.45 if WIDE else 1.25, TZ - 0.3]), lerp(62, 70, e), 5, 1.1, 1.75 if WIDE else 1.35)
     if name == "bigger":                                        # down at the water: real apple above, bigger water apple below
-        return fit_cam(np.array([LX + 0.4, lerp(-0.1, -0.3, e), TZ + 0.15]), lerp(87, 91, e), 4, 1.25, lerp(3.4, 3.0, e), lift=0.0)
+        return fit_cam(np.array([LX + 0.4, lerp(-0.1, -0.3, e), TZ + 0.15]), lerp(87, 91, e), 4, 1.25, lerp(3.9, 3.5, e), lift=0.0)
     if name == "silly_face":                                    # close front
         return fit_cam(np.array([LX + 0.3, 1.6, TZ]), 96, 10, 0.75, 0.85)
     if name == "copycat":
-        return fit_cam(np.array([LX, -0.7, TZ - 0.1]), 92, 1.5, 1.25, 3.35, lift=0.0)
+        return fit_cam(np.array([LX, -0.7, TZ - 0.1]), 92, 1.5, 1.25, 3.8, lift=0.0)
     if name == "reach":                                         # side-on from the near bank
         return fit_cam(np.array([LX + 0.55, 0.55 if not WIDE else 0.8, TZ + 0.1]), 12, 22, 1.5, 1.6 if not WIDE else 2.3)
     if name == "wobble":                                        # low down the stream, wider: ripples and the apple bobbing away
-        return fit_cam(np.array([LX + 0.6, -0.7, TZ]), 90, 3, 1.4, 3.45, lift=0.0)
+        return fit_cam(np.array([LX + 0.6, -0.7, TZ]), 90, 3, 1.4, 3.7, lift=0.0)
     if name == "berry":                                         # macro: the paw, the berry and Pip, from the far-bank side
         pb = paw_berry(fox_mats_p(tumble(SH["berry"][0] + 1.5))[2])
         yw = lerp(76, 84, e); rt = np.array([math.cos(math.radians(yw)), 0, -math.sin(math.radians(yw))])
         return fit_cam(pb + np.array([0.0, 0.2 if not WIDE else 0.45, -0.15]) - 0.22 * rt, yw, 8, 0.8, 0.8 if not WIDE else 1.3, fov=34)
     if name == "share":
-        return fit_cam(np.array([LX + 0.2, 1.3, TZ - 0.4]), lerp(96, 88, e), 6, 1.05, 1.15)
+        return fit_cam(np.array([LX + 0.2, 1.3, TZ - 0.4]), lerp(96, 88, e), 6, 1.25, 1.2)
     if name == "moral":
-        return fit_cam(np.array([LX, lerp(-0.7, -0.6, e), TZ - 0.25]), lerp(93, 91, e), 1.5, 1.25, lerp(3.7, 3.5, e), lift=0.1)
+        return fit_cam(np.array([LX, lerp(-0.7, -0.6, e), TZ - 0.25]), lerp(93, 91, e), 1.5, 1.25, lerp(4.0, 3.8, e), lift=0.1)
     if name == "chorus":
-        return fit_cam(np.array([LX, -0.6, TZ - 0.25]), 92, 1.5, 1.3, 3.5, lift=0.1)
-    return fit_cam(np.array([LX, lerp(-0.6, 0.5, e), TZ - 0.25]), lerp(93, 82, e), lerp(1.5, 24, e), lerp(1.3, 2.4, e), lerp(3.25, 2.7, e), lift=0.0)
+        return fit_cam(np.array([LX, -0.6, TZ - 0.25]), 92, 1.5, 1.3, 3.8, lift=0.1)
+    return fit_cam(np.array([LX, lerp(-0.6, 0.5, e), TZ - 0.25]), lerp(93, 82, e), lerp(1.5, 24, e), lerp(1.3, 2.4, e), lerp(3.7, 2.9, e), lift=0.0)
 
 # ---------------- draws ----------------
 BARK = (0.56, 0.39, 0.25)
@@ -425,7 +426,7 @@ EXTRA = {}
 def wobble_amp(t):
     if t < T.SPLASH: return 0.0
     d = t - T.SPLASH
-    return 0.16 * clampu(t, T.SPLASH, T.SPLASH + 0.25) * math.exp(-d / 1.8)
+    return 0.12 * ease(clampu(t, T.SPLASH, T.SPLASH + 0.8)) * math.exp(-d / 1.8)
 def apple_grow(t):
     if t >= T.SLIP: return 1.0
     return 1.0 + 0.4 * ease(clampu(t, T.BIGGER - 0.3, T.BIGGER + 0.4))
@@ -476,7 +477,7 @@ def build_draws(t):
         Mr = MIR @ Mx
         if amp > 0:
             dep = YW - (Mr[:3, 3][1])
-            ph = 7.0 * dep - 9.0 * t
+            ph = 3.0 * dep - 8.0 * t
             Mr = trans(0, 0, amp * math.sin(ph)) @ trans(0, YW, 0) @ np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0.9 * amp * math.cos(ph), 1, 0], [0, 0, 0, 1.0]]) @ trans(0, -YW, 0) @ Mr
         refl.append((mesh, Mr, u, Mx))
     EXTRA["refl"] = refl
