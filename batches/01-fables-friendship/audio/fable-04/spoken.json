@@ -1,0 +1,148 @@
+{
+ "model": "eleven_v3",
+ "stability": 0.0,
+ "takes": 2,
+ "pick": "widest 5-95% pitch range (semitones)",
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 24.79,
+   "caption": "Zzz... snore...",
+   "tags": "[snoring] [sleepy]",
+   "dur": 2.72,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.01
+      },
+      {
+       "seed": 22,
+       "range_st": 11.06
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 34.15,
+   "caption": "Huh? Whoa!",
+   "tags": "[startled]",
+   "dur": 1.92,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 24.87
+      },
+      {
+       "seed": 22,
+       "range_st": 28.24
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_tumble.mp3",
+   "who": "tumble",
+   "t0": 36.5,
+   "caption": "Well done, Bo!",
+   "tags": "[cheerful] [warm]",
+   "dur": 1.68,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 19.66
+      },
+      {
+       "seed": 22,
+       "range_st": 26.79
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s03_both.mp3",
+   "who": "both",
+   "t0": 45.95,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.9
+      },
+      {
+       "seed": 22,
+       "range_st": 20.22
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.71
+      },
+      {
+       "seed": 22,
+       "range_st": 8.79
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s04_bo.mp3",
+   "who": "bo",
+   "t0": 46.9,
+   "caption": "Bye... bye!",
+   "tags": "[slowly] [warm]",
+   "dur": 2.96,
+   "voices": [
+    {
+     "voice": "bo",
+     "voice_id": "YRKt3zizdlfhAMAoMNH8",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 21.22
+      },
+      {
+       "seed": 22,
+       "range_st": 5.74
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
