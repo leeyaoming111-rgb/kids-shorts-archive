@@ -10,3 +10,6 @@ Fixes only: berry in beak, reach, framing, reflection clear of captions, crane t
 - MED [short+wide] 24.5-27.5: apple stayed at the water line. Fix: drifts faster down the stream and out to the side, off frame by about 26.5 s.
 - LOW fixed: share shot widened (Pip cut by the edge); moral/chorus ear tips off the top edge.
 - LOW left: reach lean is modest; "Blehhh!" lands at the end of the copycat shot; high-five and star puff are short at 0.5 s sampling; one paw waggles in the silly face.
+
+## Round 2 - PASS (0 HIGH, 0 MED)
+All round 1 MEDs resolved in both aspects. LOW left as is: reflection ear tips graze the caption in the bigger shot and on "Bye-bye!", proud-shot apple passes the cheek (mouth stays visible), share-shot reflection at the bottom edge, wide share ear tips at the top, weak reach lean, "Blehhh!" timing, small high-five, one-paw waggle.
