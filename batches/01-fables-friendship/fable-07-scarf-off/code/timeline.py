@@ -126,6 +126,6 @@ DROP = TW_SPLIT2 + 0.15
 LIE0, LIE1 = TW_SPLIT2 + 0.5, TW_SPLIT2 + 1.6
 WHISTLE_WIN = _tw[1] - 0.75
 HIGH_FIVE = _c[1] - 0.9
-SPOKEN = [dict(file="s00_pip", who="pip", t0=PB_SPLIT1 + 0.35, caption="Whoa-whoa!", tags="[surprised] [giggling]"),
+SPOKEN = [dict(file="s00_pip", who="pip", t0=max(PB_SPLIT1 + 0.35, line("Problem B")["t1"] + 0.2), caption="Whoa-whoa!", tags="[surprised] [giggling]"),
           dict(file="s01_tumble", who="tumble", t0=FREE - 0.25, caption="Ahh... scarf off!", tags="[relieved] [happy sigh]"),
           dict(file="s02_both", who="both", t0=_bt[0] + 0.7, caption="Bye-bye!", tags="[cheerful]")]

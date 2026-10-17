@@ -3,22 +3,22 @@
  "joins": [
   {
    "join": "verse->sting",
-   "chroma": 0.408,
+   "chroma": 0.371,
    "ok": false
   },
   {
    "join": "sting->verse",
-   "chroma": 0.812,
+   "chroma": 0.556,
    "ok": false
   },
   {
    "join": "verse->chorus",
-   "chroma": 0.919,
+   "chroma": 0.935,
    "ok": true
   },
   {
    "join": "chorus->verse",
-   "chroma": 0.41,
+   "chroma": 0.658,
    "ok": false
   }
  ],
@@ -27,10 +27,10 @@
   {
    "file": "s00_pip.mp3",
    "who": "pip",
-   "t0": 23.75,
+   "t0": 24.2,
    "caption": "Whoa-whoa!",
    "tags": "[surprised] [giggling]",
-   "dur": 2.16,
+   "dur": 2.08,
    "voices": [
     {
      "voice": "pip",
@@ -39,11 +39,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 14.15
+       "range_st": 12.94
       },
       {
        "seed": 22,
-       "range_st": 10.7
+       "range_st": 9.77
       }
      ]
     }
@@ -55,20 +55,20 @@
    "t0": 31.792,
    "caption": "Ahh... scarf off!",
    "tags": "[relieved] [happy sigh]",
-   "dur": 2.16,
+   "dur": 2.32,
    "voices": [
     {
      "voice": "tumble",
      "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
-     "seed": 22,
+     "seed": 11,
      "takes": [
       {
        "seed": 11,
-       "range_st": 14.54
+       "range_st": 28.4
       },
       {
        "seed": 22,
-       "range_st": 24.73
+       "range_st": 20.21
       }
      ]
     }
@@ -80,7 +80,7 @@
    "t0": 46.3,
    "caption": "Bye-bye!",
    "tags": "[cheerful]",
-   "dur": 1.36,
+   "dur": 1.28,
    "voices": [
     {
      "voice": "tumble",
@@ -89,26 +89,26 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 18.33
+       "range_st": 18.39
       },
       {
        "seed": 22,
-       "range_st": 16.36
+       "range_st": 16.2
       }
      ]
     },
     {
      "voice": "pip",
      "voice_id": "tGxaydQ2FS8MHwM6syrt",
-     "seed": 22,
+     "seed": 11,
      "takes": [
       {
        "seed": 11,
-       "range_st": 7.61
+       "range_st": 10.21
       },
       {
        "seed": 22,
-       "range_st": 8.98
+       "range_st": 9.18
       }
      ]
     }
@@ -122,10 +122,10 @@
   "pick": "widest 5-95% pitch range (semitones)"
  },
  "mix": {
-  "lufs": -14.44,
+  "lufs": -14.43,
   "target_lufs": -14,
-  "peak": 0.849,
-  "lyric_recall": 1.0,
-  "stt": "Who can get the scarf off? Tumble and Pip. Wind and sun, a friendly game. My stripy scarf is snug and warm. Huff and puff, I'll hold on tight. Round and round, it won't come off. [laughs] Whoa, whoa. [whistles] Sun's turn, shine so soft and kind. Ah, scarf off. Gentle and kind works best. Big or small, short or tall, friends help friends, that's best of all. [cheerful music] Bye-bye."
+  "peak": 0.875,
+  "lyric_recall": 0.9836,
+  "stt": "Who can get the scarf off? Tumble and Pip. Wind and sun, a friendly game. My stripey scarf is snug and warm. Huff and puff, I'll hold on tight. Round and round, it won't come off. [laughs] Whoa, whoa. Sun's turn, shine so soft and kind. Ah. Scarf off. Gentle and kind works best. Big or small, short or tall, friends help friends, that's best of all. Bye-bye."
  }
 }
