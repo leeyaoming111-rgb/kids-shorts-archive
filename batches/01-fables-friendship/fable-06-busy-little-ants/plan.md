@@ -49,8 +49,8 @@ Story events follow the sung words (`word_times`): the leaf burst on "leaves", t
 head on "ant", the flake landing on "snowflake", the tummy hug on "rumbles", Pip's two pecks on the door on "knock".
 
 Spoken gags in the fixed cast voices (`eleven_v3`, audio tags, stability 0.0):
-- Tumble "Wibble-wobble!" (about 18.6 s, the seed wobbling on his head)
-- Tumble "Brrr!" (about 24.4 s, shivering in the first snow)
+- (dropped after the real song: "Wibble-wobble!" would sit on top of the sung line; the sung "Look at me, I'm an ant!" carries the wobble)
+- Tumble "Brrrr!" (about 25.1 s, right after the sung "rumbles", shivering in the first snow)
 - Tumble "Mmm, crunchy!" (about 31.8 s, the shared seed snack)
 - both "Bye-bye!" (about 46.3 s)
 
@@ -63,7 +63,7 @@ Spoken gags in the fixed cast voices (`eleven_v3`, audio tags, stability 0.0):
 | 3 | 6.0-10.8 | `leaf_play` | medium, front three-quarter | Tumble jumps into the leaf pile on "leaves" (burst), and again on "play", waving to the ants |
 | 4 | 10.8-13.8 | `pip_work` | macro side-on | Pip beside the marching line sings "Work first, play later"; nods to the beat |
 | 5 | 13.8-15.6 | `pip_carry` | low tracking | Pip picks up a seed in his beak and hops along at the end of the ant line |
-| 6 | 15.6-20.4 | `ant_hat` | low angle from ant height | Tumble balances a big seed on his head, legs wide; he wobbles ("Wibble-wobble!") while the ant line marches neatly between his feet; the seed tips off into the leaves |
+| 6 | 15.6-20.4 | `ant_hat` | low angle from ant height | Tumble balances a big seed on his head, legs wide; he wobbles while the ant line marches neatly between his feet; the seed tips off into the leaves |
 | 7 | 20.4-24.0 | `snowflake` | face close-up | the sky cools; one snowflake drifts down and lands on his nose on "snowflake"; he goes cross-eyed at it |
 | 8 | 24.0-27.6 | `chilly` | wide, slightly high | a light flurry; Tumble shivers ("Brrr!") and hugs his rumbling tummy; the last ants go in at their door; Pip flies to the anthill |
 | 9 | 27.6-30.4 | `knock` | side-on medium at the door | Pip pecks the tiny door on each "knock", it swings open, ants march out with seeds |

@@ -102,20 +102,19 @@ def shot_at(t):
 
 # story events from word times
 LEAF_HOPS = (word_times("leaves", "Setup A") + word_times("play", "Setup A"))[:2]
-SEED_ON = (word_times("ant", "Problem A") or [_pa[0] + 1.8])[0]          # the seed settles on his head on "ant"
+SEED_ON = (word_times("me", "Problem A") or [_pa[0] + 1.8])[0]           # the seed settles on his head on "me," (leaves the wobble time before the cut)
 SEED_LIFT = SEED_ON - 1.35                                              # he lifts it, dips (anticipation)...
 TOSS = SEED_ON - 0.55                                                   # ...and tosses it up onto his head
-TIP_OFF = _pa[1] - 0.8                                                  # after the wobble it tips off into the leaves
+TIP_OFF = max(_pa[1] - 0.8, SEED_ON + 1.2)                                                  # after the wobble it tips off into the leaves
 FLAKE_LAND = (word_times("snowflake", "Problem B") or [_pb[0] + 0.6])[0] + 0.25
 RUMBLE = (word_times("rumbles", "Problem B") or [_pb[0] + 2.4])[0]
-SNEEZE = PB_SPLIT + 0.7                                                 # "Ah-choo!" pops the flake off his nose
+SNEEZE = max(PB_SPLIT + 0.7, line("Problem B")["t1"] + 0.1)                                                 # "Ah-choo!" pops the flake off his nose
 KNOCKS = word_times("knock", "Twist")[:2] or [_tw[0] + 0.2, _tw[0] + 0.6]
 DOOR_OPEN = KNOCKS[-1] + 0.45
-NIBBLE = TW_SPLIT1 + 1.0
+NIBBLE = max(TW_SPLIT1 + 1.0, line("Twist")["t1"] + 0.05)
 SET_DOWN = _tw[1] - 0.6                                                 # the biggest seed set down at the door
 HIGH_FIVE = _c[1] - 0.9
 _wob = line("Problem A")["t1"] + 0.35
-SPOKEN = [dict(file="s00_tumble", who="tumble", t0=_wob, caption="Wibble-wobble!", tags="[giggling] [playful]"),
-          dict(file="s01_tumble", who="tumble", t0=SNEEZE - 0.35, caption="Brrrr!", tags="[shivering] [cute]"),
-          dict(file="s02_tumble", who="tumble", t0=NIBBLE, caption="Mmm, crunchy!", tags="[delighted]"),
-          dict(file="s03_both", who="both", t0=_bt[0] + 0.7, caption="Bye-bye!", tags="[cheerful]")]
+SPOKEN = [dict(file="s00_tumble", who="tumble", t0=SNEEZE, caption="Brrrr!", tags="[shivering] [cute]"),
+          dict(file="s01_tumble", who="tumble", t0=NIBBLE, caption="Mmm, crunchy!", tags="[delighted]"),
+          dict(file="s02_both", who="both", t0=_bt[0] + 0.7, caption="Bye-bye!", tags="[cheerful]")]

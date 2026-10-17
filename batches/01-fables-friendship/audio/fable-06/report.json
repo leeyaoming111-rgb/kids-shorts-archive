@@ -27,10 +27,10 @@
   {
    "file": "s00_tumble.mp3",
    "who": "tumble",
-   "t0": 20.43,
-   "caption": "Wibble-wobble!",
-   "tags": "[giggling] [playful]",
-   "dur": 2.16,
+   "t0": 25.08,
+   "caption": "Brrrr!",
+   "tags": "[shivering] [cute]",
+   "dur": 2.4,
    "voices": [
     {
      "voice": "tumble",
@@ -39,11 +39,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 21.43
+       "range_st": 13.24
       },
       {
        "seed": 22,
-       "range_st": 23.89
+       "range_st": 26.7
       }
      ]
     }
@@ -52,35 +52,10 @@
   {
    "file": "s01_tumble.mp3",
    "who": "tumble",
-   "t0": 24.35,
-   "caption": "Brrrr!",
-   "tags": "[shivering] [cute]",
-   "dur": 1.12,
-   "voices": [
-    {
-     "voice": "tumble",
-     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
-     "seed": 11,
-     "takes": [
-      {
-       "seed": 11,
-       "range_st": 28.0
-      },
-      {
-       "seed": 22,
-       "range_st": 24.98
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "file": "s02_tumble.mp3",
-   "who": "tumble",
-   "t0": 31.6,
+   "t0": 31.85,
    "caption": "Mmm, crunchy!",
    "tags": "[delighted]",
-   "dur": 2.56,
+   "dur": 2.08,
    "voices": [
     {
      "voice": "tumble",
@@ -89,18 +64,18 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 29.6
+       "range_st": 24.32
       },
       {
        "seed": 22,
-       "range_st": 35.73
+       "range_st": 31.09
       }
      ]
     }
    ]
   },
   {
-   "file": "s03_both.mp3",
+   "file": "s02_both.mp3",
    "who": "both",
    "t0": 46.3,
    "caption": "Bye-bye!",
@@ -114,11 +89,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 18.58
+       "range_st": 18.76
       },
       {
        "seed": 22,
-       "range_st": 15.86
+       "range_st": 15.84
       }
      ]
     },
@@ -129,11 +104,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 6.64
+       "range_st": 7.85
       },
       {
        "seed": 22,
-       "range_st": 8.82
+       "range_st": 8.89
       }
      ]
     }
@@ -147,10 +122,10 @@
   "pick": "widest 5-95% pitch range (semitones)"
  },
  "mix": {
-  "lufs": -14.59,
+  "lufs": -14.44,
   "target_lufs": -14,
-  "peak": 0.98,
-  "lyric_recall": 0.9464,
-  "stt": "Little ants, where do you go? Tumble and pit. Crunchy leaves, come and play. Work first, play later. Okay. Look at me, I'm an ant. [laughs] With a wobble. A full plate, my tummy rumbles. [laughs] Knock, knock, the ants share their snack. Mm, crunchy. Help a little every day. Big or small, short or tall, friends help friends, that's best of all. Bye-bye."
+  "peak": 0.838,
+  "lyric_recall": 0.9821,
+  "stt": "Little ants, where do you go? Tumble and pit. Crunchy leaves, come and play. Work first, play later. Okay. Look at me, I'm an ant. Brr, a snowflake. My tummy rumbles. [shivers] Brr. Knock, knock, the ants share their snack. Mm, crunchy. Help a little every day. Big or small, short or tall. Friends help friends, that's best of all. Bye bye. Bye bye"
  }
 }

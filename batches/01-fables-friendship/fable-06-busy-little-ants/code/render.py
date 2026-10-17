@@ -233,7 +233,7 @@ def tumble(t):
             h = ease(clampu(t, SH[n][0], SH[n][0] + 0.5))          # hugs his tummy and shivers ("Brrr!")
             st["arms"] = [lerp([0.0, 1.0, 0.0], [0.1, 1.5, 1.3], h).tolist(), lerp([0.0, 1.0, 0.0], [0.1, 1.35, 1.3], h).tolist()]
             st["head"][0] = 0.15 * h
-            sh = clampu(t, SH[n][0] + 0.3, SH[n][0] + 0.6) * (1 - clampu(t, SH[n][1] - 0.6, SH[n][1]))
+            sh = clampu(t, T.SNEEZE - 0.05, T.SNEEZE + 0.3) * (1 - clampu(t, SH[n][1] - 0.6, SH[n][1]))
             st["x"] += 0.014 * math.sin(t * 40) * sh; st["roll"] = 0.03 * math.sin(t * 37) * sh
     elif n == "knock":                                       # watches from behind Pip
         st["x"], st["z"] = SNACK_LIE + DOOR_DIR * 0.4; st["yaw"] = math.atan2(-DOOR_DIR[0], -DOOR_DIR[1])
