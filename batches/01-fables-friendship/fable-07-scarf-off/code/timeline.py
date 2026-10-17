@@ -113,8 +113,9 @@ BLOW0 = (word_times("huff", "Problem A") or [_pa[0] + 0.3])[0] - 0.1   # Wind st
 _tight = word_times("tight", "Problem A")
 BLOWN = min((_tight[0] if _tight else _pa[0] + 2.6) + 0.85, _pa[1] - 0.95)  # Pip blown off the post
 CLING = BLOWN + 0.6
-SHOTS[6] = (PA_SPLIT, BLOWN - 0.1, "hold_tight")                 # cut to an insert of Pip's flight as the gust hits
-SHOTS.insert(7, (BLOWN - 0.1, _pa[1], "pip_blown"))
+_PB = min(BLOWN - 0.1, _pa[1] - 1.4)
+SHOTS[6] = (PA_SPLIT, _PB, "hold_tight")                 # cut to an insert of Pip's flight as the gust hits
+SHOTS.insert(7, (_PB, _pa[1], "pip_blown"))
 SPIN0 = (word_times("round", "Problem B") or [_pb[0] + 0.2])[0]
 SPIN1 = min(SPIN0 + 1.7, PB_SPLIT1 - 0.6)
 BLOW1 = PB_SPLIT2 + 0.5                                   # Wind runs out of puff
