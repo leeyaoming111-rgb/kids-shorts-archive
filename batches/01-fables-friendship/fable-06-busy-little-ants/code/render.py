@@ -133,7 +133,7 @@ SNACK_LIE = DOOR_GROUND + DOOR_DIR * 2.0                  # Tumble on his tummy,
 MSPOT = tuple(DOOR_GROUND + DOOR_DIR * 1.55 - SIDE * 0.75)
 MOVE0 = (MSPOT[0] - 2.0, MSPOT[1] + 0.1)                   # next morning he walks in from the left with the seed
 BIG_SEED_AT = np.array([MSPOT[0] + 0.85, MSPOT[1]])         # the biggest seed, set down near the door
-PIP_WAIT = BIG_SEED_AT + np.array([0.5, 0.2])           # Pip waits here next morning, then hops to the paw
+PIP_WAIT = BIG_SEED_AT + np.array([0.5, 0.32])           # Pip waits here next morning, then hops to the paw
 KNOCK_AT = np.array([DOOR_P[0], DOOR_P[2]]) + DOOR_DIR * 0.46   # Pip's spot: a full peck (pitch 0.6) reaches the door
 WATCHERS = [DOOR_GROUND + SIDE * (0.35 + 0.3 * k) + DOOR_DIR * (0.25 + 0.12 * k) for k in range(5)]   # ants who watch the dance
 STASH = np.array([-0.78, NOSE_Z - 0.42])                   # loose seeds by the road (Pip takes one)
@@ -424,14 +424,14 @@ def camera(t):
         return fit_cam(tgt + (np.array([0, 0.0, 0]) if not WIDE else np.array([0, 0.35, 0])), lerp(24, 18, e), 7, 0.8, 0.62 if not WIDE else 1.3, lift=0.04)
     if name == "pip_carry":                                  # low tracking with Pip
         pp = pip_state(t, st, fox_mats_p(st))[0]
-        return fit_cam(np.array([pp[0] - 0.1, 0.35, pp[2] - 0.2]), 18, 5, 0.85, 0.6, lift=0.03)
+        return fit_cam(np.array([pp[0] - 0.1, 0.35 if not WIDE else 0.75, pp[2] - 0.2]), 18, 5, 0.85, 0.6 if not WIDE else 1.3, lift=0.03)
     if name == "ant_hat":                                    # low, from the front, the line coming between his feet
         return fit_cam(np.array([GAG[0] + 0.05, lerp(1.05, 1.0, e), GAG[1]]), 90 + lerp(-12, -5, e), -4, 1.2, 1.25 if not WIDE else 1.9, lift=0.05 if not WIDE else 0.2)
     if name == "snowflake":                                  # face close-up
         fx = apply(fox_mats_p(st)[1], NOSE)
         return fit_cam(fx + np.array([0, 0.05, 0]), math.degrees(st["yaw"]) + lerp(-8, -2, e), 4, 0.6, 0.62, lift=0.08)
     if name == "chilly":
-        return fit_cam(np.array([(GAG2[0] + DOOR_P[0]) / 2 - (0.2 if not WIDE else 0.5), 0.85, (GAG2[1] + DOOR_P[2]) / 2 + 0.3]), -8 + 4 * e, 26, 2.3, 1.45)
+        return fit_cam(np.array([(GAG2[0] + DOOR_P[0]) / 2 - (0.2 if not WIDE else 0.5), 0.85, (GAG2[1] + DOOR_P[2]) / 2 + 0.3]), -8 + 4 * e, 26, 2.3 if not WIDE else 2.3, 1.45 if not WIDE else 1.7)
     if name == "knock":                                      # side-on at the door
         tgt = DOOR_P + DOOR_DIR3() * 0.4 + np.array([0, 0.05, 0])
         return fit_cam(tgt, side_on_yaw(DOOR_P, DOOR_P + DOOR_DIR3(), 70) + lerp(-4, 4, e), 8, 0.85, 0.7, lift=0.04)
@@ -440,7 +440,7 @@ def camera(t):
         return fit_cam(mid, math.degrees(math.atan2(DOOR_DIR[0], DOOR_DIR[1])) + 180 + lerp(48, 42, e), 30, 1.3, 1.0, lift=0.04)
     if name == "next_day":                                   # tracking, low
         mid = (np.array([st["x"], st["z"]]) + np.array([DOOR_P[0], DOOR_P[2]])) / 2
-        return fit_cam(np.array([mid[0], 0.85, mid[1]]), lerp(-6, -12, e), 5, 2.0 if not WIDE else 2.5, 1.35)
+        return fit_cam(np.array([mid[0] - 0.25, 0.85, mid[1]]), lerp(-6, -12, e), 5, 2.0 if not WIDE else 2.5, 1.35)
     if name == "moral":
         return fit_cam(np.array([MSPOT[0] + 0.25, lerp(1.35, 1.45, e), MSPOT[1]]), lerp(14, 8, e), 5, lerp(1.35, 1.15, e), lerp(1.4, 1.15, e))
     if name == "chorus":
