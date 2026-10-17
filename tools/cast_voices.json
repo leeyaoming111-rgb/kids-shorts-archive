@@ -8,5 +8,10 @@
   "voice_id": "tGxaydQ2FS8MHwM6syrt",
   "name": "Pip (little bird) - Kids Shorts",
   "description": "High-pitched bubbly cartoon songbird voice for Pip. Light, quick, chirpy, clear diction."
+ },
+ "bo": {
+  "voice_id": "YRKt3zizdlfhAMAoMNH8",
+  "name": "Bo (turtle) - Kids Shorts",
+  "description": "Slow, gentle, warm low cartoon voice for Bo the turtle. Calm, unhurried, kind, a little sleepy, clear diction."
  }
 }

@@ -1,0 +1,181 @@
+{
+ "fable": "fable-04-slow-and-steady-bo",
+ "joins": [
+  {
+   "join": "verse->sting",
+   "chroma": 0.448,
+   "ok": false
+  },
+  {
+   "join": "sting->verse",
+   "chroma": 0.912,
+   "ok": true
+  },
+  {
+   "join": "verse->chorus",
+   "chroma": 0.933,
+   "ok": true
+  },
+  {
+   "join": "chorus->verse",
+   "chroma": 0.603,
+   "ok": false
+  }
+ ],
+ "joins_all_ok": false,
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 24.84,
+   "caption": "Zzz... snore...",
+   "tags": "[snoring] [sleepy]",
+   "dur": 2.72,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.01
+      },
+      {
+       "seed": 22,
+       "range_st": 11.06
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 32.2,
+   "caption": "Huh? Whoa!",
+   "tags": "[startled]",
+   "dur": 1.92,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 24.87
+      },
+      {
+       "seed": 22,
+       "range_st": 28.24
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_tumble.mp3",
+   "who": "tumble",
+   "t0": 34.55,
+   "caption": "Well done, Bo!",
+   "tags": "[cheerful] [warm]",
+   "dur": 1.68,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 19.66
+      },
+      {
+       "seed": 22,
+       "range_st": 26.79
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s03_both.mp3",
+   "who": "both",
+   "t0": 45.95,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.9
+      },
+      {
+       "seed": 22,
+       "range_st": 20.22
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.71
+      },
+      {
+       "seed": 22,
+       "range_st": 8.79
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s04_bo.mp3",
+   "who": "bo",
+   "t0": 46.9,
+   "caption": "Bye... bye!",
+   "tags": "[slowly] [warm]",
+   "dur": 2.96,
+   "voices": [
+    {
+     "voice": "bo",
+     "voice_id": "YRKt3zizdlfhAMAoMNH8",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 21.22
+      },
+      {
+       "seed": 22,
+       "range_st": 5.74
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "tts": {
+  "model": "eleven_v3",
+  "stability": 0.0,
+  "takes": 2,
+  "pick": "widest 5-95% pitch range (semitones)"
+ },
+ "mix": {
+  "lufs": -14.82,
+  "target_lufs": -14,
+  "peak": 0.98,
+  "lyric_recall": 1.0,
+  "stt": "Ready, steady, go, go, go. Tumble and Pip. Zoom, zoom, I'm the fastest fox. Step by step, I'm slow but sure. Too easy. Time for a tiny rest. Shh, Tumble's snoozing. Bo keeps going. Snore. Wake up, Tumble. Huh? Whoa. Look at Bo. Well done, Bo. Slow and steady gets there, too. Big or small, short or tall, friends help friends. That's best of all. Bye-bye. Bye-bye. Bye."
+ }
+}

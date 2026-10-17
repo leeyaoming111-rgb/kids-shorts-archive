@@ -1,0 +1,419 @@
+{
+ "stt": "Ready, steady, go, go, go! Zoom, zoom, I'm the fastest fox. Step by step, I'm slow but sure. Too easy\u2014time for a tiny rest. Shh, Tumble's snoozing. Bo keeps going. [whistles] Wake up, Tumble, look at Bo. Slow and steady gets there too. Big or small, short or tall, friends help friends, that's best of all. [outro music]",
+ "recall": 1.0,
+ "speakers": [
+  "speaker_0"
+ ],
+ "lines": [
+  {
+   "line": "Ready, steady... go, go, go!",
+   "who": "pip",
+   "sec": "Hook",
+   "t0": 0.0,
+   "t1": 3.6,
+   "words": [
+    {
+     "w": "Ready,",
+     "t0": 0.6,
+     "t1": 1.0
+    },
+    {
+     "w": "steady...",
+     "t0": 1.12,
+     "t1": 1.66
+    },
+    {
+     "w": "go,",
+     "t0": 1.84,
+     "t1": 2.0
+    },
+    {
+     "w": "go,",
+     "t0": 2.12,
+     "t1": 2.28
+    },
+    {
+     "w": "go!",
+     "t0": 2.44,
+     "t1": 2.7
+    }
+   ]
+  },
+  {
+   "line": "Zoom, zoom! I'm the fastest fox!",
+   "who": "tumble",
+   "sec": "Setup A",
+   "t0": 3.6,
+   "t1": 8.4,
+   "words": [
+    {
+     "w": "Zoom,",
+     "t0": 5.4,
+     "t1": 5.86
+    },
+    {
+     "w": "zoom!",
+     "t0": 6.02,
+     "t1": 6.28
+    },
+    {
+     "w": "I'm",
+     "t0": 6.34,
+     "t1": 6.42
+    },
+    {
+     "w": "the",
+     "t0": 6.46,
+     "t1": 6.54
+    },
+    {
+     "w": "fastest",
+     "t0": 6.62,
+     "t1": 7.14
+    },
+    {
+     "w": "fox!",
+     "t0": 7.24,
+     "t1": 7.68
+    }
+   ]
+  },
+  {
+   "line": "Step by step, I'm slow but sure.",
+   "who": "bo",
+   "sec": "Setup B",
+   "t0": 8.4,
+   "t1": 13.2,
+   "words": [
+    {
+     "w": "Step",
+     "t0": 10.18,
+     "t1": 10.42
+    },
+    {
+     "w": "by",
+     "t0": 10.52,
+     "t1": 10.66
+    },
+    {
+     "w": "step,",
+     "t0": 10.74,
+     "t1": 11.02
+    },
+    {
+     "w": "I'm",
+     "t0": 11.16,
+     "t1": 11.32
+    },
+    {
+     "w": "slow",
+     "t0": 11.4,
+     "t1": 11.64
+    },
+    {
+     "w": "but",
+     "t0": 11.72,
+     "t1": 11.88
+    },
+    {
+     "w": "sure.",
+     "t0": 12.0,
+     "t1": 12.6
+    }
+   ]
+  },
+  {
+   "line": "Too easy! Time for a tiny rest!",
+   "who": "tumble",
+   "sec": "Problem A",
+   "t0": 13.2,
+   "t1": 18.0,
+   "words": [
+    {
+     "w": "Too",
+     "t0": 14.1,
+     "t1": 14.38
+    },
+    {
+     "w": "easy!",
+     "t0": 14.5,
+     "t1": 14.84
+    },
+    {
+     "w": "Time",
+     "t0": 15.02,
+     "t1": 15.46
+    },
+    {
+     "w": "for",
+     "t0": 15.64,
+     "t1": 15.94
+    },
+    {
+     "w": "a",
+     "t0": 16.079,
+     "t1": 16.14
+    },
+    {
+     "w": "tiny",
+     "t0": 16.219,
+     "t1": 16.7
+    },
+    {
+     "w": "rest!",
+     "t0": 16.84,
+     "t1": 17.3
+    }
+   ]
+  },
+  {
+   "line": "Shh! Tumble's snoozing... Bo keeps going!",
+   "who": "pip",
+   "sec": "Problem B",
+   "t0": 18.0,
+   "t1": 25.2,
+   "words": [
+    {
+     "w": "Shh!",
+     "t0": 19.16,
+     "t1": 19.5
+    },
+    {
+     "w": "Tumble's",
+     "t0": 19.8,
+     "t1": 20.3
+    },
+    {
+     "w": "snoozing...",
+     "t0": 20.38,
+     "t1": 20.92
+    },
+    {
+     "w": "Bo",
+     "t0": 21.02,
+     "t1": 21.16
+    },
+    {
+     "w": "keeps",
+     "t0": 21.3,
+     "t1": 21.54
+    },
+    {
+     "w": "going!",
+     "t0": 21.66,
+     "t1": 22.04
+    }
+   ]
+  },
+  {
+   "line": "Wake up, Tumble! Look at Bo!",
+   "who": "pip",
+   "sec": "Twist",
+   "t0": 25.2,
+   "t1": 32.4,
+   "words": [
+    {
+     "w": "Wake",
+     "t0": 29.42,
+     "t1": 29.7
+    },
+    {
+     "w": "up,",
+     "t0": 29.78,
+     "t1": 29.86
+    },
+    {
+     "w": "Tumble!",
+     "t0": 30.0,
+     "t1": 30.5
+    },
+    {
+     "w": "Look",
+     "t0": 30.62,
+     "t1": 30.9
+    },
+    {
+     "w": "at",
+     "t0": 30.94,
+     "t1": 31.1
+    },
+    {
+     "w": "Bo!",
+     "t0": 31.22,
+     "t1": 31.6
+    }
+   ]
+  },
+  {
+   "line": "Slow and steady gets there too!",
+   "who": "bo",
+   "sec": "Moral",
+   "t0": 32.4,
+   "t1": 36.0,
+   "words": [
+    {
+     "w": "Slow",
+     "t0": 32.94,
+     "t1": 33.3
+    },
+    {
+     "w": "and",
+     "t0": 33.34,
+     "t1": 33.46
+    },
+    {
+     "w": "steady",
+     "t0": 33.62,
+     "t1": 34.06
+    },
+    {
+     "w": "gets",
+     "t0": 34.24,
+     "t1": 34.64
+    },
+    {
+     "w": "there",
+     "t0": 34.84,
+     "t1": 35.32
+    },
+    {
+     "w": "too!",
+     "t0": 35.4,
+     "t1": 35.82
+    }
+   ]
+  },
+  {
+   "line": "Big or small, short or tall,",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 36.0,
+   "t1": 43.2,
+   "words": [
+    {
+     "w": "Big",
+     "t0": 36.62,
+     "t1": 36.9
+    },
+    {
+     "w": "or",
+     "t0": 36.94,
+     "t1": 37.04
+    },
+    {
+     "w": "small,",
+     "t0": 37.18,
+     "t1": 37.6
+    },
+    {
+     "w": "short",
+     "t0": 37.78,
+     "t1": 38.12
+    },
+    {
+     "w": "or",
+     "t0": 38.18,
+     "t1": 38.26
+    },
+    {
+     "w": "tall,",
+     "t0": 38.4,
+     "t1": 38.68
+    }
+   ]
+  },
+  {
+   "line": "friends help friends, that's best of all!",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 36.0,
+   "t1": 43.2,
+   "words": [
+    {
+     "w": "friends",
+     "t0": 39.0,
+     "t1": 39.28
+    },
+    {
+     "w": "help",
+     "t0": 39.32,
+     "t1": 39.52
+    },
+    {
+     "w": "friends,",
+     "t0": 39.62,
+     "t1": 40.12
+    },
+    {
+     "w": "that's",
+     "t0": 40.52,
+     "t1": 40.76
+    },
+    {
+     "w": "best",
+     "t0": 40.82,
+     "t1": 41.12
+    },
+    {
+     "w": "of",
+     "t0": 41.26,
+     "t1": 41.44
+    },
+    {
+     "w": "all!",
+     "t0": 41.5,
+     "t1": 42.0
+    }
+   ]
+  }
+ ],
+ "sections": [
+  [
+   "Hook",
+   0.0,
+   3.6
+  ],
+  [
+   "Setup A",
+   3.6,
+   8.4
+  ],
+  [
+   "Setup B",
+   8.4,
+   13.2
+  ],
+  [
+   "Problem A",
+   13.2,
+   18.0
+  ],
+  [
+   "Problem B",
+   18.0,
+   25.2
+  ],
+  [
+   "Twist",
+   25.2,
+   32.4
+  ],
+  [
+   "Moral",
+   32.4,
+   36.0
+  ],
+  [
+   "Chorus",
+   36.0,
+   43.2
+  ],
+  [
+   "Button",
+   43.2,
+   46.2
+  ]
+ ],
+ "align_loss": 1.0652929623921712,
+ "all_inside": true
+}
