@@ -132,7 +132,7 @@ def tumble(t):
     elif n == "sunbathe":                                    # drops the scarf, lies down in the sunshine
         st["arms"][0] = lerp(PULL_OUT, [0.4, 0.2], ease(clampu(t, T.DROP, T.DROP + 0.3))).tolist()
         lie = ease(clampu(t, T.LIE0, T.LIE1))
-        crouch = ease(clampu(t, T.DROP, T.LIE0)) * (1 - lie)           # settle down into a comfy crouch before lying on his side
+        crouch = ease(clampu(t, T.DROP, T.LIE0 + 0.2)) * (1 - lie)           # settle down into a comfy crouch before lying on his side
         st["sq"] = -0.16 * crouch
         st["lie"] = lie; st["eyes_closed"] = t > T.LIE1 - 0.2
         if lie > 0: st["arms"] = [lerp([0.4, 0.2, 0.0], [0.35, 1.0, 0.5], lie).tolist(), lerp([0.4, 0.2], [0.3, 0.4], lie).tolist()]

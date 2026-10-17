@@ -123,7 +123,7 @@ SUN0 = _tw[0] + 0.35                                      # the sky warms from h
 GRAB = TW_SPLIT1 + 0.55
 FREE = TW_SPLIT2 - 0.55                                   # the scarf leaves his neck
 DROP = TW_SPLIT2 + 0.15
-LIE0, LIE1 = TW_SPLIT2 + 0.5, TW_SPLIT2 + 1.6
+LIE0, LIE1 = TW_SPLIT2 + 0.35, TW_SPLIT2 + 1.95
 WHISTLE_WIN = _tw[1] - 0.75
 HIGH_FIVE = _c[1] - 0.9
 SPOKEN = [dict(file="s00_pip", who="pip", t0=max(PB_SPLIT1 + 0.35, line("Problem B")["t1"] + 0.2), caption="Whoa-whoa!", tags="[surprised] [giggling]"),
