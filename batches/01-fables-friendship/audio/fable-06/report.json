@@ -1,0 +1,131 @@
+{
+ "fable": "fable-06-busy-little-ants",
+ "joins": [
+  {
+   "join": "verse->sting",
+   "chroma": 0.443,
+   "ok": false
+  },
+  {
+   "join": "sting->verse",
+   "chroma": 0.561,
+   "ok": false
+  },
+  {
+   "join": "verse->chorus",
+   "chroma": 0.821,
+   "ok": false
+  },
+  {
+   "join": "chorus->verse",
+   "chroma": 0.849,
+   "ok": false
+  }
+ ],
+ "joins_all_ok": false,
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 25.08,
+   "caption": "Brrrr!",
+   "tags": "[shivering] [cute]",
+   "dur": 2.4,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 13.24
+      },
+      {
+       "seed": 22,
+       "range_st": 26.7
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 31.85,
+   "caption": "Mmm, crunchy!",
+   "tags": "[delighted]",
+   "dur": 2.08,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 24.32
+      },
+      {
+       "seed": 22,
+       "range_st": 31.09
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.76
+      },
+      {
+       "seed": 22,
+       "range_st": 15.84
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.85
+      },
+      {
+       "seed": 22,
+       "range_st": 8.89
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "tts": {
+  "model": "eleven_v3",
+  "stability": 0.0,
+  "takes": 2,
+  "pick": "widest 5-95% pitch range (semitones)"
+ },
+ "mix": {
+  "lufs": -14.44,
+  "target_lufs": -14,
+  "peak": 0.838,
+  "lyric_recall": 0.9821,
+  "stt": "Little ants, where do you go? Tumble and pit. Crunchy leaves, come and play. Work first, play later. Okay. Look at me, I'm an ant. Brr, a snowflake. My tummy rumbles. [shivers] Brr. Knock, knock, the ants share their snack. Mm, crunchy. Help a little every day. Big or small, short or tall. Friends help friends, that's best of all. Bye bye. Bye bye"
+ }
+}
