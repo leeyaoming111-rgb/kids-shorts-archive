@@ -1,0 +1,435 @@
+{
+ "stt": "Up, up, up goes my big kite Can I help? I'm good at things This kite's too big for tiny wings Whoosh! The wind goes round and round Now Tumble's tangled on the ground [whistling] I can help! Peck, peck, peck Tiny friends can be big helpers Big or small, short or tall Friends help friends, that's best of all [whistling]",
+ "recall": 1.0,
+ "speakers": [
+  "speaker_0",
+  "speaker_1"
+ ],
+ "lines": [
+  {
+   "line": "Up, up, up goes my big kite!",
+   "who": "tumble",
+   "sec": "Hook",
+   "t0": 0.0,
+   "t1": 3.6,
+   "words": [
+    {
+     "w": "Up,",
+     "t0": 0.1,
+     "t1": 0.3
+    },
+    {
+     "w": "up,",
+     "t0": 0.44,
+     "t1": 0.6
+    },
+    {
+     "w": "up",
+     "t0": 0.72,
+     "t1": 0.86
+    },
+    {
+     "w": "goes",
+     "t0": 0.94,
+     "t1": 1.2
+    },
+    {
+     "w": "my",
+     "t0": 1.28,
+     "t1": 1.48
+    },
+    {
+     "w": "big",
+     "t0": 1.56,
+     "t1": 1.78
+    },
+    {
+     "w": "kite!",
+     "t0": 1.86,
+     "t1": 2.32
+    }
+   ]
+  },
+  {
+   "line": "Can I help? I'm good at things!",
+   "who": "pip",
+   "sec": "Setup A",
+   "t0": 3.6,
+   "t1": 8.4,
+   "words": [
+    {
+     "w": "Can",
+     "t0": 4.82,
+     "t1": 5.14
+    },
+    {
+     "w": "I",
+     "t0": 5.3,
+     "t1": 5.36
+    },
+    {
+     "w": "help?",
+     "t0": 5.42,
+     "t1": 5.66
+    },
+    {
+     "w": "I'm",
+     "t0": 5.82,
+     "t1": 5.94
+    },
+    {
+     "w": "good",
+     "t0": 6.06,
+     "t1": 6.34
+    },
+    {
+     "w": "at",
+     "t0": 6.38,
+     "t1": 6.56
+    },
+    {
+     "w": "things!",
+     "t0": 6.62,
+     "t1": 7.2
+    }
+   ]
+  },
+  {
+   "line": "This kite's too big for tiny wings!",
+   "who": "tumble",
+   "sec": "Setup B",
+   "t0": 8.4,
+   "t1": 13.2,
+   "words": [
+    {
+     "w": "This",
+     "t0": 9.32,
+     "t1": 9.56
+    },
+    {
+     "w": "kite's",
+     "t0": 9.62,
+     "t1": 9.9
+    },
+    {
+     "w": "too",
+     "t0": 9.94,
+     "t1": 10.1
+    },
+    {
+     "w": "big",
+     "t0": 10.24,
+     "t1": 10.46
+    },
+    {
+     "w": "for",
+     "t0": 10.54,
+     "t1": 10.68
+    },
+    {
+     "w": "tiny",
+     "t0": 10.84,
+     "t1": 11.32
+    },
+    {
+     "w": "wings!",
+     "t0": 11.44,
+     "t1": 11.96
+    }
+   ]
+  },
+  {
+   "line": "Whoosh! The wind goes round and round,",
+   "who": "tumble",
+   "sec": "Problem A",
+   "t0": 13.2,
+   "t1": 18.0,
+   "words": [
+    {
+     "w": "Whoosh!",
+     "t0": 14.44,
+     "t1": 14.64
+    },
+    {
+     "w": "The",
+     "t0": 14.76,
+     "t1": 14.96
+    },
+    {
+     "w": "wind",
+     "t0": 15.04,
+     "t1": 15.24
+    },
+    {
+     "w": "goes",
+     "t0": 15.34,
+     "t1": 15.6
+    },
+    {
+     "w": "round",
+     "t0": 15.66,
+     "t1": 15.96
+    },
+    {
+     "w": "and",
+     "t0": 16.02,
+     "t1": 16.14
+    },
+    {
+     "w": "round,",
+     "t0": 16.28,
+     "t1": 16.8
+    }
+   ]
+  },
+  {
+   "line": "now Tumble's tangled on the ground!",
+   "who": "tumble",
+   "sec": "Problem B",
+   "t0": 18.0,
+   "t1": 25.2,
+   "words": [
+    {
+     "w": "now",
+     "t0": 18.92,
+     "t1": 19.08
+    },
+    {
+     "w": "Tumble's",
+     "t0": 19.24,
+     "t1": 19.74
+    },
+    {
+     "w": "tangled",
+     "t0": 19.86,
+     "t1": 20.44
+    },
+    {
+     "w": "on",
+     "t0": 20.54,
+     "t1": 20.7
+    },
+    {
+     "w": "the",
+     "t0": 20.78,
+     "t1": 20.86
+    },
+    {
+     "w": "ground!",
+     "t0": 21.0,
+     "t1": 21.6
+    }
+   ]
+  },
+  {
+   "line": "I can help! Peck, peck, peck!",
+   "who": "pip",
+   "sec": "Twist",
+   "t0": 25.2,
+   "t1": 32.4,
+   "words": [
+    {
+     "w": "I",
+     "t0": 29.0,
+     "t1": 29.08
+    },
+    {
+     "w": "can",
+     "t0": 29.16,
+     "t1": 29.34
+    },
+    {
+     "w": "help!",
+     "t0": 29.46,
+     "t1": 29.8
+    },
+    {
+     "w": "Peck,",
+     "t0": 30.02,
+     "t1": 30.22
+    },
+    {
+     "w": "peck,",
+     "t0": 30.34,
+     "t1": 30.54
+    },
+    {
+     "w": "peck!",
+     "t0": 30.66,
+     "t1": 30.98
+    }
+   ]
+  },
+  {
+   "line": "Tiny friends can be BIG helpers!",
+   "who": "tumble",
+   "sec": "Moral",
+   "t0": 32.4,
+   "t1": 36.0,
+   "words": [
+    {
+     "w": "Tiny",
+     "t0": 33.62,
+     "t1": 34.04
+    },
+    {
+     "w": "friends",
+     "t0": 34.2,
+     "t1": 34.48
+    },
+    {
+     "w": "can",
+     "t0": 34.56,
+     "t1": 34.78
+    },
+    {
+     "w": "be",
+     "t0": 34.86,
+     "t1": 35.02
+    },
+    {
+     "w": "BIG",
+     "t0": 35.14,
+     "t1": 35.36
+    },
+    {
+     "w": "helpers!",
+     "t0": 35.42,
+     "t1": 35.96
+    }
+   ]
+  },
+  {
+   "line": "Big or small, short or tall,",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 36.0,
+   "t1": 43.2,
+   "words": [
+    {
+     "w": "Big",
+     "t0": 36.02,
+     "t1": 36.34
+    },
+    {
+     "w": "or",
+     "t0": 36.38,
+     "t1": 36.48
+    },
+    {
+     "w": "small,",
+     "t0": 36.62,
+     "t1": 37.04
+    },
+    {
+     "w": "short",
+     "t0": 37.22,
+     "t1": 37.54
+    },
+    {
+     "w": "or",
+     "t0": 37.58,
+     "t1": 37.74
+    },
+    {
+     "w": "tall,",
+     "t0": 37.82,
+     "t1": 38.08
+    }
+   ]
+  },
+  {
+   "line": "friends help friends, that's best of all!",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 36.0,
+   "t1": 43.2,
+   "words": [
+    {
+     "w": "friends",
+     "t0": 38.42,
+     "t1": 38.7
+    },
+    {
+     "w": "help",
+     "t0": 38.74,
+     "t1": 38.92
+    },
+    {
+     "w": "friends,",
+     "t0": 39.02,
+     "t1": 39.28
+    },
+    {
+     "w": "that's",
+     "t0": 39.36,
+     "t1": 39.6
+    },
+    {
+     "w": "best",
+     "t0": 39.64,
+     "t1": 39.94
+    },
+    {
+     "w": "of",
+     "t0": 40.04,
+     "t1": 40.22
+    },
+    {
+     "w": "all!",
+     "t0": 40.34,
+     "t1": 40.82
+    }
+   ]
+  }
+ ],
+ "sections": [
+  [
+   "Hook",
+   0.0,
+   3.6
+  ],
+  [
+   "Setup A",
+   3.6,
+   8.4
+  ],
+  [
+   "Setup B",
+   8.4,
+   13.2
+  ],
+  [
+   "Problem A",
+   13.2,
+   18.0
+  ],
+  [
+   "Problem B",
+   18.0,
+   25.2
+  ],
+  [
+   "Twist",
+   25.2,
+   32.4
+  ],
+  [
+   "Moral",
+   32.4,
+   36.0
+  ],
+  [
+   "Chorus",
+   36.0,
+   43.2
+  ],
+  [
+   "Button",
+   43.2,
+   46.2
+  ]
+ ],
+ "align_loss": 1.1434359816254163,
+ "all_inside": true
+}

@@ -1,0 +1,42 @@
+{
+ "stt": "Tumble and Pip",
+ "recall": 1.0,
+ "speakers": [
+  "speaker_0"
+ ],
+ "lines": [
+  {
+   "line": "Tumble and Pip!",
+   "who": "both",
+   "sec": "Sting",
+   "t0": 0.0,
+   "t1": 3.0,
+   "words": [
+    {
+     "w": "Tumble",
+     "t0": 0.06,
+     "t1": 0.9
+    },
+    {
+     "w": "and",
+     "t0": 0.92,
+     "t1": 1.14
+    },
+    {
+     "w": "Pip!",
+     "t0": 1.22,
+     "t1": 1.7
+    }
+   ]
+  }
+ ],
+ "sections": [
+  [
+   "Sting",
+   0.0,
+   3.0
+  ]
+ ],
+ "align_loss": 1.2897734324137369,
+ "all_inside": true
+}

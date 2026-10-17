@@ -18,10 +18,19 @@ Every new run reads this archive first and must differ from it: new format, worl
 | <img src="episodes/2026-10-10-pm-tumble-pip-big-small/stills/04_15.2s.jpg" width="120"> | [Tumble & Pip, Episode 2: Big and Small!](episodes/2026-10-10-pm-tumble-pip-big-small/plan.md) | series episode 2 (series: Tumble & Pip) | big and small | ElevenLabs Music duet + TTS | reviewer PASS (round 3), QA 0 |
 | <img src="episodes/2026-10-10-pm-lulu-bo-turns/stills/t22.3.jpg" width="120"> | [My Turn, Your Turn! (Lulu & Bo at the Pond)](episodes/2026-10-10-pm-lulu-bo-turns/plan.md) | story (one-off) | taking turns | af_heart (Bo spoken: am_eric) | done |
 
+## Batches
+
+Themed sets of Shorts that also join into one long-form episode.
+
+| Batch | Series | Shorts | Episode | Status |
+|---|---|---|---|---|
+| [01: Fables About Friendship](batches/01-fables-friendship/plan.md) | Tumble & Pip | 10 Aesop retellings | Story Stump episode, about 9 min, 16:9 | Fable 1 animatic done (QA 0, reviewer PASS), waiting for the song |
+
 ## Layout
 
-- `ENGINE.md`: the playbook each scheduled run follows.
+- `ENGINE.md`: the playbook each scheduled run follows (v3: batch mode).
 - `history.json`: one line per finished video.
+- `batches/<nn-slug>/plan.md`: batch plan (fables, song plan, episode running order, schedule).
 - `episodes/<job_id>/`: `plan.md`, `music.json`, `review.md` (when reviewed), `stills*/`, `code/`.
 - `tools/qa_geom.py`: geometry QA (objects passing through each other, floating perches, below-ground, pop check).
 - `tools/REVIEWER.md`: brief for the independent reviewer agent.

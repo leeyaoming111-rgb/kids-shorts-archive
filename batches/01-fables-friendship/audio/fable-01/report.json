@@ -1,0 +1,186 @@
+{
+ "fable": "fable-01-tiny-pip-big-help",
+ "verse": {
+  "seed": 301,
+  "recall": 1.0,
+  "all_inside": true,
+  "align_loss": 1.143,
+  "stt": "Up, up, up goes my big kite Can I help? I'm good at things This kite's too big for tiny wings Whoosh! The wind goes round and round Now Tumble's tangled on the ground [whistling] I can help! Peck, peck, peck Tiny friends can be big helpers Big or small, short or tall Friends help friends, that's best of all [whistling]"
+ },
+ "verse_takes_tried": {
+  "301": {
+   "recall": 1.0,
+   "all_inside": true
+  },
+  "302": {
+   "recall": 0.9661,
+   "all_inside": true
+  },
+  "303": {
+   "recall": 0.9831,
+   "all_inside": true
+  },
+  "304": {
+   "recall": 0.9322,
+   "all_inside": false
+  },
+  "305": {
+   "recall": 0.9831,
+   "all_inside": false
+  },
+  "306": {
+   "recall": 0.9831,
+   "all_inside": false
+  }
+ },
+ "series": {
+  "sting_seed": 104,
+  "chorus_seed": 202
+ },
+ "joins": [
+  {
+   "join": "verse->sting",
+   "chroma": 0.91,
+   "ok": true
+  },
+  {
+   "join": "sting->verse",
+   "chroma": 0.279,
+   "ok": false
+  },
+  {
+   "join": "verse->chorus",
+   "chroma": 0.798,
+   "ok": false
+  },
+  {
+   "join": "chorus->verse",
+   "chroma": 0.954,
+   "ok": true
+  }
+ ],
+ "joins_all_ok": false,
+ "joins_note": "instrumental-stem chroma 'under both spots' (el_batch.join_sim). The stored sting is near a cappella: its instrumental stem is about -76 dB for 0-1.2 s, then one decaying hit, so the sting joins compare against near-silence and failed on all 6 verse takes; no take passed all 4 joins.",
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 24.9,
+   "caption": "Uh-oh! Help!",
+   "tags": "[surprised] [wobbly]",
+   "dur": 2.24,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "chosen": "s00_tumble_take1.mp3",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 15.75
+      },
+      {
+       "seed": 22,
+       "range_st": 15.51
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 31.9,
+   "caption": "Wheee!",
+   "tags": "[delighted] [spinning]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "chosen": "s01_tumble_take1.mp3",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.06
+      },
+      {
+       "seed": 22,
+       "range_st": 16.15
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "chosen": "s02_both_tumble_take1.mp3",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 24.3
+      },
+      {
+       "seed": 22,
+       "range_st": 23.57
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "chosen": "s02_both_pip_take2.mp3",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.87
+      },
+      {
+       "seed": 22,
+       "range_st": 9.11
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "voices": {
+  "tumble": "Kx0fJ79cIgKz5YbJmR0t",
+  "pip": "tGxaydQ2FS8MHwM6syrt"
+ },
+ "tts": {
+  "model": "eleven_v3",
+  "stability": 0.0,
+  "takes": 2,
+  "pick": "widest 5-95% pitch range (semitones)"
+ },
+ "mix": {
+  "lufs": -14.44,
+  "target_lufs": -14,
+  "peak": 0.909,
+  "lyric_recall": 1.0,
+  "stt": "Up, up, up goes my big kite Tumble and Pip. Can I help? I'm good at things This kite's too big for tiny wings. Whoosh, the wind goes round and round. Now Tumble's tangled on the ground Uh-oh. Help! I can help. Wee! Peck, peck, peck Tiny friends can be big helpers Big or small, short or tall, friends help friends. That's best of all Bye-bye. Bye-bye",
+  "sfx": "none (optional, skipped)"
+ },
+ "sources": {
+  "music": "music_v2_5",
+  "stt": "scribe_v1",
+  "alignment": "forced-alignment",
+  "stems": "music/stem-separation two_stems_v1"
+ },
+ "chorus_join_fix": "stored chorus aligned to the verse take's beat (onset cross-correlation; fable-01 +80 ms, fable-02 -50 ms) and joined with a 0.3 s equal-power crossfade from the verse's own chorus; residual beat offset 0 ms",
+ "by_ear": "owner listen 2026-10-12: sting joins fine; the ~38 s chorus join was rough on the first mix (fixed above, needs a re-listen)"
+}

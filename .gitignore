@@ -6,3 +6,4 @@
 *.ttf
 __pycache__/
 out/
+series_audio/

@@ -1,0 +1,98 @@
+{
+ "model": "eleven_v3",
+ "stability": 0.0,
+ "takes": 2,
+ "pick": "widest 5-95% pitch range (semitones)",
+ "spoken": [
+  {
+   "file": "s00_pip.mp3",
+   "who": "pip",
+   "t0": 24.2,
+   "caption": "Whoa-whoa!",
+   "tags": "[surprised] [giggling]",
+   "dur": 2.08,
+   "voices": [
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 12.94
+      },
+      {
+       "seed": 22,
+       "range_st": 9.77
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 31.792,
+   "caption": "Ahh... scarf off!",
+   "tags": "[relieved] [happy sigh]",
+   "dur": 2.32,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 28.4
+      },
+      {
+       "seed": 22,
+       "range_st": 20.21
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.28,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.39
+      },
+      {
+       "seed": 22,
+       "range_st": 16.2
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 10.21
+      },
+      {
+       "seed": 22,
+       "range_st": 9.18
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
