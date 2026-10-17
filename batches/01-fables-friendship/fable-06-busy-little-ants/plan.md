@@ -1,7 +1,7 @@
 # Tumble & Pip Fables 6: Busy Little Ants
 
 - **job:** batch 01, fable 06 (`fable-06-busy-little-ants`)
-- **status:** plan written; animatic in progress.
+- **status:** done. Reviewer PASS (round 5), QA 0, audio mixed (recall 98.2%, -14.4 LUFS), final renders in `../renders/`.
 - **series:** Tumble & Pip (Fables About Friendship). Batch plan: [../plan.md](../plan.md)
 - **source:** Aesop's fable *The Ant and the Grasshopper* (public domain), retold with our cast, gags and song
 - **lesson (SEL):** helping a little every day; sharing with a friend who didn't plan ahead
