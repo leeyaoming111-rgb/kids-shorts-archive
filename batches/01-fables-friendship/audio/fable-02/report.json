@@ -183,5 +183,5 @@
   "stems": "music/stem-separation two_stems_v1"
  },
  "chorus_join_fix": "stored chorus aligned to the verse take's beat (onset cross-correlation; fable-01 +80 ms, fable-02 -50 ms) and joined with a 0.3 s equal-power crossfade from the verse's own chorus; residual beat offset 0 ms",
- "by_ear": "owner listen 2026-10-12: sting joins fine; the ~38 s chorus join was rough on the first mix (fixed above, needs a re-listen)"
+ "by_ear": "owner listen 2026-10-12: sting joins fine; ~38 s chorus join rough on the first mix, fixed by beat alignment + crossfade and approved on re-listen. Owner accepts the joins by ear despite the chroma scores below 0.9."
 }
