@@ -1,0 +1,157 @@
+{
+ "fable": "fable-05-the-other-fox",
+ "joins": [
+  {
+   "join": "verse->sting",
+   "chroma": 0.675,
+   "ok": false
+  },
+  {
+   "join": "sting->verse",
+   "chroma": 0.246,
+   "ok": false
+  },
+  {
+   "join": "verse->chorus",
+   "chroma": 0.934,
+   "ok": true
+  },
+  {
+   "join": "chorus->verse",
+   "chroma": 0.368,
+   "ok": false
+  }
+ ],
+ "joins_all_ok": false,
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 19.87,
+   "caption": "Blehhh!",
+   "tags": "[silly] [playful]",
+   "dur": 1.52,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 27.92
+      },
+      {
+       "seed": 22,
+       "range_st": 29.73
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 25.18,
+   "caption": "Whoa, wobbly!",
+   "tags": "[surprised] [giggles]",
+   "dur": 2.8,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 23.27
+      },
+      {
+       "seed": 22,
+       "range_st": 25.12
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_tumble.mp3",
+   "who": "tumble",
+   "t0": 32.49,
+   "caption": "Your berry is the best!",
+   "tags": "[happy] [laughing]",
+   "dur": 2.48,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.79
+      },
+      {
+       "seed": 22,
+       "range_st": 19.79
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s03_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.51
+      },
+      {
+       "seed": 22,
+       "range_st": 15.72
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 8.08
+      },
+      {
+       "seed": 22,
+       "range_st": 9.93
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "tts": {
+  "model": "eleven_v3",
+  "stability": 0.0,
+  "takes": 2,
+  "pick": "widest 5-95% pitch range (semitones)"
+ },
+ "mix": {
+  "lufs": -14.44,
+  "target_lufs": -14,
+  "peak": 0.594,
+  "lyric_recall": 1.0,
+  "stt": "Hey, who's that fox down there? Tumble and Pip. My shiny apple, red and round. That fox has a bigger one. Silly face, he copies me. Bleh. I want that one. Oh no, splash. [laughs] Whoa, wobbly. Here's my berry half for you. [laughs] Your berry is the best. Love what you've got and share it. Big or small, short or tall, friends help friends, that's best of all. Bye-bye.",
+  "note": "limited with tanh soft clip then renormalised to -14 LUFS (el_mix peak cap gave -15.9)"
+ }
+}

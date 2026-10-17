@@ -1,0 +1,123 @@
+{
+ "model": "eleven_v3",
+ "stability": 0.0,
+ "takes": 2,
+ "pick": "widest 5-95% pitch range (semitones)",
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 19.87,
+   "caption": "Blehhh!",
+   "tags": "[silly] [playful]",
+   "dur": 1.52,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 27.92
+      },
+      {
+       "seed": 22,
+       "range_st": 29.73
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 25.18,
+   "caption": "Whoa, wobbly!",
+   "tags": "[surprised] [giggles]",
+   "dur": 2.8,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 23.27
+      },
+      {
+       "seed": 22,
+       "range_st": 25.12
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_tumble.mp3",
+   "who": "tumble",
+   "t0": 32.49,
+   "caption": "Your berry is the best!",
+   "tags": "[happy] [laughing]",
+   "dur": 2.48,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.79
+      },
+      {
+       "seed": 22,
+       "range_st": 19.79
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s03_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.51
+      },
+      {
+       "seed": 22,
+       "range_st": 15.72
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 8.08
+      },
+      {
+       "seed": 22,
+       "range_st": 9.93
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
