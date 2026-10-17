@@ -1,0 +1,429 @@
+{
+ "stt": "Who can get the scarf off? Wind and sun, a friendly game. My stripy scarf is snug and warm. Huff and puff, I'll hold on tight. Round and round, it won't come off. [whistling] Sun's turn, shine so soft and kind. Gentle and kind works best. Big or small, short or tall, friends help friends, that's best of all. [whistling]",
+ "recall": 1.0,
+ "speakers": [
+  "speaker_0"
+ ],
+ "lines": [
+  {
+   "line": "Who can get the scarf off?",
+   "who": "pip",
+   "sec": "Hook",
+   "t0": 0.0,
+   "t1": 3.6,
+   "words": [
+    {
+     "w": "Who",
+     "t0": 0.64,
+     "t1": 0.78
+    },
+    {
+     "w": "can",
+     "t0": 0.9,
+     "t1": 1.14
+    },
+    {
+     "w": "get",
+     "t0": 1.24,
+     "t1": 1.44
+    },
+    {
+     "w": "the",
+     "t0": 1.52,
+     "t1": 1.62
+    },
+    {
+     "w": "scarf",
+     "t0": 1.76,
+     "t1": 2.4
+    },
+    {
+     "w": "off?",
+     "t0": 2.5,
+     "t1": 3.26
+    }
+   ]
+  },
+  {
+   "line": "Wind and Sun, a friendly game!",
+   "who": "pip",
+   "sec": "Setup A",
+   "t0": 3.6,
+   "t1": 8.4,
+   "words": [
+    {
+     "w": "Wind",
+     "t0": 4.24,
+     "t1": 4.5
+    },
+    {
+     "w": "and",
+     "t0": 4.54,
+     "t1": 4.72
+    },
+    {
+     "w": "Sun,",
+     "t0": 4.86,
+     "t1": 5.14
+    },
+    {
+     "w": "a",
+     "t0": 5.24,
+     "t1": 5.26
+    },
+    {
+     "w": "friendly",
+     "t0": 5.44,
+     "t1": 6.5
+    },
+    {
+     "w": "game!",
+     "t0": 6.68,
+     "t1": 7.36
+    }
+   ]
+  },
+  {
+   "line": "My stripy scarf is snug and warm!",
+   "who": "tumble",
+   "sec": "Setup B",
+   "t0": 8.4,
+   "t1": 13.2,
+   "words": [
+    {
+     "w": "My",
+     "t0": 9.32,
+     "t1": 9.52
+    },
+    {
+     "w": "stripy",
+     "t0": 9.6,
+     "t1": 10.06
+    },
+    {
+     "w": "scarf",
+     "t0": 10.18,
+     "t1": 10.56
+    },
+    {
+     "w": "is",
+     "t0": 10.62,
+     "t1": 10.8
+    },
+    {
+     "w": "snug",
+     "t0": 10.84,
+     "t1": 11.14
+    },
+    {
+     "w": "and",
+     "t0": 11.18,
+     "t1": 11.38
+    },
+    {
+     "w": "warm!",
+     "t0": 11.48,
+     "t1": 12.24
+    }
+   ]
+  },
+  {
+   "line": "Huff and puff! I'll hold on tight!",
+   "who": "tumble",
+   "sec": "Problem A",
+   "t0": 13.2,
+   "t1": 18.0,
+   "words": [
+    {
+     "w": "Huff",
+     "t0": 13.8,
+     "t1": 14.1
+    },
+    {
+     "w": "and",
+     "t0": 14.14,
+     "t1": 14.32
+    },
+    {
+     "w": "puff!",
+     "t0": 14.42,
+     "t1": 14.72
+    },
+    {
+     "w": "I'll",
+     "t0": 14.82,
+     "t1": 14.96
+    },
+    {
+     "w": "hold",
+     "t0": 15.06,
+     "t1": 15.62
+    },
+    {
+     "w": "on",
+     "t0": 15.72,
+     "t1": 16.059
+    },
+    {
+     "w": "tight!",
+     "t0": 16.2,
+     "t1": 16.86
+    }
+   ]
+  },
+  {
+   "line": "Round and round... it won't come off!",
+   "who": "tumble",
+   "sec": "Problem B",
+   "t0": 18.0,
+   "t1": 25.2,
+   "words": [
+    {
+     "w": "Round",
+     "t0": 18.64,
+     "t1": 18.94
+    },
+    {
+     "w": "and",
+     "t0": 18.98,
+     "t1": 19.1
+    },
+    {
+     "w": "round...",
+     "t0": 19.26,
+     "t1": 19.56
+    },
+    {
+     "w": "it",
+     "t0": 19.64,
+     "t1": 19.74
+    },
+    {
+     "w": "won't",
+     "t0": 19.88,
+     "t1": 20.3
+    },
+    {
+     "w": "come",
+     "t0": 20.44,
+     "t1": 21.04
+    },
+    {
+     "w": "off!",
+     "t0": 21.14,
+     "t1": 21.5
+    }
+   ]
+  },
+  {
+   "line": "Sun's turn! Shine so soft and kind...",
+   "who": "pip",
+   "sec": "Twist",
+   "t0": 25.2,
+   "t1": 32.4,
+   "words": [
+    {
+     "w": "Sun's",
+     "t0": 28.18,
+     "t1": 28.7
+    },
+    {
+     "w": "turn!",
+     "t0": 28.8,
+     "t1": 29.22
+    },
+    {
+     "w": "Shine",
+     "t0": 29.34,
+     "t1": 29.62
+    },
+    {
+     "w": "so",
+     "t0": 29.72,
+     "t1": 29.86
+    },
+    {
+     "w": "soft",
+     "t0": 30.02,
+     "t1": 30.34
+    },
+    {
+     "w": "and",
+     "t0": 30.38,
+     "t1": 30.52
+    },
+    {
+     "w": "kind...",
+     "t0": 30.66,
+     "t1": 31.6
+    }
+   ]
+  },
+  {
+   "line": "Gentle and kind works best!",
+   "who": "pip",
+   "sec": "Moral",
+   "t0": 32.4,
+   "t1": 36.0,
+   "words": [
+    {
+     "w": "Gentle",
+     "t0": 33.06,
+     "t1": 33.94
+    },
+    {
+     "w": "and",
+     "t0": 33.98,
+     "t1": 34.12
+    },
+    {
+     "w": "kind",
+     "t0": 34.26,
+     "t1": 34.74
+    },
+    {
+     "w": "works",
+     "t0": 34.88,
+     "t1": 35.3
+    },
+    {
+     "w": "best!",
+     "t0": 35.44,
+     "t1": 35.94
+    }
+   ]
+  },
+  {
+   "line": "Big or small, short or tall,",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 36.0,
+   "t1": 43.2,
+   "words": [
+    {
+     "w": "Big",
+     "t0": 36.32,
+     "t1": 36.62
+    },
+    {
+     "w": "or",
+     "t0": 36.68,
+     "t1": 36.84
+    },
+    {
+     "w": "small,",
+     "t0": 37.0,
+     "t1": 37.34
+    },
+    {
+     "w": "short",
+     "t0": 37.5,
+     "t1": 37.86
+    },
+    {
+     "w": "or",
+     "t0": 37.92,
+     "t1": 38.1
+    },
+    {
+     "w": "tall,",
+     "t0": 38.26,
+     "t1": 38.56
+    }
+   ]
+  },
+  {
+   "line": "friends help friends, that's best of all!",
+   "who": "both",
+   "sec": "Chorus",
+   "t0": 36.0,
+   "t1": 43.2,
+   "words": [
+    {
+     "w": "friends",
+     "t0": 39.02,
+     "t1": 39.32
+    },
+    {
+     "w": "help",
+     "t0": 39.36,
+     "t1": 39.54
+    },
+    {
+     "w": "friends,",
+     "t0": 39.6,
+     "t1": 39.88
+    },
+    {
+     "w": "that's",
+     "t0": 39.96,
+     "t1": 40.2
+    },
+    {
+     "w": "best",
+     "t0": 40.26,
+     "t1": 40.84
+    },
+    {
+     "w": "of",
+     "t0": 40.98,
+     "t1": 41.46
+    },
+    {
+     "w": "all!",
+     "t0": 41.54,
+     "t1": 42.16
+    }
+   ]
+  }
+ ],
+ "sections": [
+  [
+   "Hook",
+   0.0,
+   3.6
+  ],
+  [
+   "Setup A",
+   3.6,
+   8.4
+  ],
+  [
+   "Setup B",
+   8.4,
+   13.2
+  ],
+  [
+   "Problem A",
+   13.2,
+   18.0
+  ],
+  [
+   "Problem B",
+   18.0,
+   25.2
+  ],
+  [
+   "Twist",
+   25.2,
+   32.4
+  ],
+  [
+   "Moral",
+   32.4,
+   36.0
+  ],
+  [
+   "Chorus",
+   36.0,
+   43.2
+  ],
+  [
+   "Button",
+   43.2,
+   46.2
+  ]
+ ],
+ "align_loss": 1.0875189708316841,
+ "all_inside": true
+}
