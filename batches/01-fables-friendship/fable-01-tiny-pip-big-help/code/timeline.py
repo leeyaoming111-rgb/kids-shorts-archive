@@ -8,7 +8,7 @@ word time comes from it. Until then the planned grid below is used with estimate
 staging, stills and an animatic. Nothing else in the code changes when the real song arrives.
 
 ASPECT=short (default) renders the 1080x1920 Short; ASPECT=wide renders the 1920x1080 episode framing."""
-import json, os, re
+import json, math, os, re
 
 FPS = 30
 ASPECT = os.environ.get("ASPECT", "short")
@@ -57,9 +57,13 @@ def _syllables(w):
 
 if ALIGNED:
     _C = json.load(open(_check))
-    SECTIONS = [(n, a, b) for n, a, b in _C["sections"]]
+    # Breathing space between the moral line and the chorus: the final mix has GAP seconds of ring-out inserted at
+    # GAP_AT (the end of the Moral), so everything from there on is later by GAP. The Moral section runs on over it.
+    GAP_AT, GAP = 38.4, 1.5
+    def _sh(t, strict=False): return t + GAP if t > GAP_AT - 1e-6 else t
+    SECTIONS = [(n, a if a < GAP_AT - 1e-6 else a + GAP, b + GAP if b > GAP_AT - 1e-6 else b) for n, a, b in _C["sections"]]
     LINES = [dict(i=i, who=L["who"], text=L["line"], section=L["sec"],
-                  words=[dict(w=w["w"], t0=w["t0"], t1=w["t1"]) for w in L["words"]]) for i, L in enumerate(_C["lines"])]
+                  words=[dict(w=w["w"], t0=_sh(w["t0"]), t1=_sh(w["t1"])) for w in L["words"]]) for i, L in enumerate(_C["lines"])]
 else:
     SECTIONS = [(n, a * BAR, b * BAR) for n, a, b, _ in PLAN_SECTIONS]
     LINES = []
@@ -103,11 +107,20 @@ SPOKEN = [dict(file="s00_tumble", who="tumble", t0=GAG_UHOH, caption="Uh-oh! Hel
 _h, _s, _sa, _sb = sec("Hook"), sec("Sting"), sec("Setup A"), sec("Setup B")
 _pa, _m, _c, _bt = sec("Problem A"), sec("Moral"), sec("Chorus"), sec("Button")
 PB_SPLIT = _pb[0] + 1.5 * BAR              # topple seen from the side, then overhead once he's down
-TW_SPLIT = _tw[0] + 1.5 * BAR              # peck close-up, then the wide spin-out
+# peck close-up, then the wide spin-out. The cut is the first half-bar line at least 0.5 s after the last sung "peck"
+# (room for the knot to pop). The real take sings the pecks late in the Twist (after its instrumental break), so the
+# spin-out runs on over the Moral's first bars and the moral shot starts on the last half-bar line at or just before
+# the sung "Tiny", at least 1.9 s after the spin-out starts and a bar before the Moral ends.
+HALF = BAR / 2
+_pk = word_times("peck", "Twist")
+TW_SPLIT = _tw[0] + 1.5 * BAR if not _pk else _tw[0] + math.ceil((_pk[-1] + 0.5 - _tw[0]) / HALF - 1e-6) * HALF
+_tiny = line("Moral")["t0"]
+MORAL_CUT = math.floor((_tiny + 0.1) / HALF + 1e-6) * HALF
+MORAL_CUT = min(max(MORAL_CUT, _m[0], TW_SPLIT + 1.9), _m[1] - BAR)
 SHOTS = [(0.0, _h[1], "hook_track"), (_s[0], _s[1], "title_wide"), (_sa[0], _sa[1], "pip_ask"),
          (_sb[0], _sb[1], "tumble_no"), (_pa[0], _pa[1], "gust"), (_pb[0], PB_SPLIT, "topple"),
-         (PB_SPLIT, _pb[1], "overhead_tangled"), (_tw[0], TW_SPLIT, "peck"), (TW_SPLIT, _tw[1], "spin_out"),
-         (_m[0], _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
+         (PB_SPLIT, _pb[1], "overhead_tangled"), (_tw[0], TW_SPLIT, "peck"), (TW_SPLIT, MORAL_CUT, "spin_out"),
+         (MORAL_CUT, _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):
     for i, (a, b, n) in enumerate(SHOTS):
         if a <= t < b: return i, n, (t - a) / max(b - a, 1e-6), t - a
@@ -116,8 +129,10 @@ def shot_at(t):
 # story events, all from word times so they follow the real alignment
 PECKS = word_times("peck", "Twist")
 WHOOSH = (word_times("whoosh", "Problem A") or [_pa[0] + 0.2])[0]
-KNOT_POP = (PECKS[-1] if PECKS else _tw[0] + 2.5) + 0.45
+KNOT_POP = min((PECKS[-1] if PECKS else _tw[0] + 2.5) + 0.45, TW_SPLIT - 0.35)   # pop and puff seen before the cut
 GUST0, GUST1 = WHOOSH - 0.2, _pa[1] - 0.3             # kite swoops and circles Tumble
 TOPPLE = (word_times("tangled", "Problem B") or [_pb[0] + 1.4])[0]   # he tips over on "tangled", lands by "ground"
-SPIN0, SPIN1 = TW_SPLIT + 0.45, TW_SPLIT + 2.2              # Pip hops clear first, then Tumble rises and spins
+SPIN0 = TW_SPLIT + 0.45                                     # Pip hops clear first, then Tumble rises and spins
+SPIN1 = min(TW_SPLIT + 2.2, MORAL_CUT - 0.5)                # and is dizzy for at least half a second before the cut
+GAG_WHEE = TW_SPLIT + 0.7; SPOKEN[1]["t0"] = GAG_WHEE      # "Wheee!" as he starts to spin (mix v2: spliced from the song-only audio)
 HIGH_FIVE = _c[1] - 0.9

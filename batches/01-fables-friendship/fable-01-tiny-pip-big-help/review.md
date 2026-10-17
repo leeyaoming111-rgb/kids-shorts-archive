@@ -99,3 +99,69 @@ After the pass, Pip was moved clear of the kite's tail at the end (he read as up
 **Final checks:** geometry QA 0 issues at 15 fps; reviewer PASS (round 6) on both aspects.
 
 Audio checks are still to do, once the ElevenLabs song exists.
+
+## Song sync (real ElevenLabs song, aligned word times)
+
+The real take differs from the planned grid in one place that matters. The Twist opens with an instrumental whistle
+break (27.6-31.4 s), so Pip sings "I can help! Peck, peck, peck!" late (pecks at 32.42, 32.74, 33.06). On the old
+shot split, Tumble was already spinning free at 31.7 s and the knot popped after the spin. Fixes (all in
+`timeline.py` and `render.py`, driven by word times):
+
+- **Twist retimed:** the peck close-up runs from 27.6 s to the first half-bar line at least 0.5 s after the last
+  "peck" (33.6 s). The knot pops at 33.25 s, so the pop and puff show before the cut. The spin-out runs from 33.6 to
+  36.0 s (rises at 34.05, spins until 35.5, dizzy, Pip cheers). The moral shot starts on the half-bar line at the
+  sung "Tiny" (36.0 s), clamped to at least 1.9 s of spin-out and a bar before the Moral ends.
+- **Whistle break:** Pip studies the knot, looking one way and then the other, with a small hop every two beats.
+  From 30.8 s his wing goes up ("idea", then "I can help!") until just before the first peck.
+- **Hook:** the kite's tug follows the sung "kite!" (1.86 s), not the planned 2.55 s.
+- **Overhead:** Pip's flight down arcs higher (1.2 instead of 0.9), clearing a 1.2 cm wing-into-arm clip that the
+  real "tangled" time caused at 25.4 s.
+- **Unchanged:** captions, mouths and the spoken gags already ran from the aligned times. "Uh-oh! Help!" (24.9),
+  "Wheee!" (31.9) and "Bye-bye!" (46.3) match the mix.
+
+**Resolved after the first render (audio splice, `mix_v2.mp3`; the text below is the original problem):** the mix puts Tumble's "Wheee!" at 31.9 s, inside the peck close-up and
+over Pip's "help!", while Tumble is still tied up. Its caption is hidden behind Pip's sung line. To fix it, remix with
+the gag at about 34.3 s (0.25 s after Tumble starts to rise). `GAG_WHEE` in `timeline.py` would then follow.
+
+**Independent reviewer (song sync): PASS.**
+- **MED, fixed:** dead air in the whistle break; the pop shown for only 0.24 s; `KNOT_POP` and `MORAL_CUT`
+  robustness (an empty `PECKS`, a moral cut not tied to "Tiny").
+- **LOW, left as is:**
+  - Pip's 0.42 s hop clear at 33.6 is quick.
+  - The wing-up is small in the close-up.
+  - The moral caption covers Tumble's legs at the end of the push-in.
+  - A cropped kite corner at the 16:9 peck-shot edge.
+
+Geometry QA after the fixes: 0 issues (15 fps).
+
+## Moral-to-chorus cut at 38.4 s (owner: "not smooth")
+
+The owner's 2026-10-12 listen (audio/fable-01/report.json) and a later note said the transition into the chorus at about
+38 s was not smooth. Measured on the final mix: the beats stay in time across the join (onsets every 0.3 s) and there
+is no click, but the chorus is much brighter (about +9 dB above 4 kHz) and the chroma match is 0.80 (target 0.90).
+On the picture it was a hard cut from the tight moral push-in to the medium chorus shot, with Tumble's head tilt and
+second arm jumping.
+
+Fix (picture only, `render.py`): the moral shot now eases back out from the tight two-shot to exactly the chorus
+framing (centre, yaw, pitch and size), and a 0.3 s dissolve (38.25-38.55 s) blends Tumble's small pose change.
+Frames 1080-1160 re-rendered in both aspects and spliced in; the audio is unchanged (`mix_v2.mp3`).
+
+**Open (audio):** the brightness step at the join is untouched, because it can't be judged without listening. If it
+still sounds rough, ease the chorus highs in over its first second.
+
+## Breathing space before the chorus (owner: still choppy at 38 s)
+
+After the picture fix the owner still heard the join at about 38 s as choppy, and asked for 1-2 s of space between the
+moral line and the chorus. Measured: "helpers!" ended at 38.36 s and "Big" began at 38.46 s, with nothing between.
+
+Fix (`audio/fable-01/mix_v3.mp3`, `timeline.py`, `render.py`):
+- **Audio:** 1.5 s inserted at 38.4 s, filled by a reverb ring-out of the last 0.35 s of the band, fading from -22 dB
+  to about -50 dB over the gap (no digital silence). The chorus then enters on its own downbeat at 39.9 s.
+  Loudness -14.5 LUFS, peak -1.1 dBFS. `mix_v2.mp3` (no gap) is kept.
+- **Timeline:** everything from 38.4 s on is 1.5 s later (chorus 39.9-47.1, high-five 46.2, outro 47.1-49.5,
+  "Bye-bye!" 47.8). The Moral section runs on over the gap; its card fades out as the tail rings.
+- **Picture:** the moral shot eases back out to the chorus framing over its first 2.4 s and holds it through the gap,
+  then the 0.3 s dissolve into the chorus. Video is now 49.5 s (1485 frames). Frames 1080-1485 re-rendered in both aspects.
+
+Not checked by ear (the reviewer can only measure): if the ring-out sounds artificial, try a longer decay or a
+shorter gap (1.0 s). `GAP` in `timeline.py` and the build in this section's script are the only things to change.

@@ -107,7 +107,8 @@ def tumble(t):
             ph = t * 2 * math.pi * 2.3
             st["y"] += 0.06 * abs(math.sin(ph)); st["legs"] = [0.1 * max(0, math.sin(ph)), 0.1 * max(0, -math.sin(ph))]
             st["yaw"] = math.atan2(p1[0] - p0[0], p1[1] - p0[1]) * (1 - ease(clampu(t, 2.5, 3.0))) - 0.25 * ease(clampu(t, 2.5, 3.0))
-        lift = clampu(t, 2.55, 3.45)                                        # the kite tugs him up on "kite!"
+        k_ = (T.word_times("kite", "Hook") or [2.65])[0]
+        lift = clampu(t, k_ - 0.1, k_ + 0.8)                                # the kite tugs him up on the sung "kite!"
         if 0 < lift < 1:
             st["y"] += 0.62 * math.sin(math.pi * lift); st["legs"] = [0.12, 0.05]; st["sq"] += 0.06 * math.sin(math.pi * lift)
         st["arms"][0] = [0.45, 1.35 + 0.15 * lift]
@@ -362,7 +363,7 @@ def pip_state(t, st, mats):
         dest, kc = knot_ground(R)
         u = clampu(t, a + 0.5, a + 1.8)
         if u < 1:
-            p = lerp(STUMP_PIP, dest, ease(u)); p[1] += 0.9 * math.sin(math.pi * u)
+            p = lerp(STUMP_PIP, dest, ease(u)); p[1] += 1.2 * math.sin(math.pi * u)   # high enough to drop in clear of his arm (real "tangled" timing)
             return p, math.atan2(dest[0] - STUMP_PIP[0], dest[2] - STUMP_PIP[2]), u > 0, 0.0, False, {}
         kc = knot_ground(R)[1]
         return dest, math.atan2(kc[0] - dest[0], kc[2] - dest[2]), False, 0.0, False, {}
@@ -372,7 +373,15 @@ def pip_state(t, st, mats):
         for pt in T.PECKS:
             d = t - pt
             if -0.12 < d < 0.18: pitch = 0.65 * math.sin(math.pi * (d + 0.12) / 0.3)
-        return dest, math.atan2(c[0] - dest[0], c[2] - dest[2]), False, pitch, False, {}
+        L = T.line("Twist"); hw = next((w for w in L["words"] if w["w"].lower().startswith("help")), None)
+        a, b = SH[n]; yaw = math.atan2(c[0] - dest[0], c[2] - dest[2]); p = dest.copy()
+        if a + 0.6 <= t < L["t0"] - 0.6:                                   # instrumental break: studies the knot, hops round it
+            k = int((t - a - 0.6) / (2 * BEAT)); d = t - a - 0.6 - k * 2 * BEAT
+            if d < 0.3 and t - d + 0.3 <= L["t0"] - 0.6: p[1] += 0.08 * math.sin(math.pi * d / 0.3)   # only whole hops
+            yaw += 0.35 * math.sin(math.pi * (t - a - 0.6) / (2 * BEAT)) * (1 - clampu(t, L["t0"] - 1.2, L["t0"] - 0.6))   # looks one side, then the other
+        end = min(hw["t1"] + 0.15, T.PECKS[0] - 0.15) if hw and T.PECKS else L["t0"]
+        ex = {"point": True} if L["t0"] - 0.6 < t < end else {}               # wing up: an idea, then "I can help!"
+        return p, yaw, False, pitch, False, ex
     if n == "spin_out":
         a, b = SH[n]
         dest, _ = knot_ground(fox_mats(dict(tumble(SH["peck"][1] - 0.01)))[0])
@@ -468,9 +477,9 @@ def camera(t):
     if name == "spin_out":                                                  # wide: spins up like a top
         e = ease(clampu(t, SH[name][0], T.SPIN1))
         return fit_cam(np.array([lerp(TPOS[0] - 0.5, TPOS[0] + 0.35, e), 1.05, TPOS[1]]), -6, 6, lerp(2.4, 1.9, e), 1.7)
-    if name == "moral":                                                     # slow push-in two-shot
-        e = ease(u)
-        return fit_cam(np.array([TPOS[0] + 0.35, lerp(1.35, 1.45, e), TPOS[1]]), lerp(12, 6, e), 5, lerp(1.25, 1.05, e), lerp(1.4, 1.1, e))
+    if name == "moral":                                                     # tight two-shot that eases back out into the chorus framing (so the cut at 38.4 matches)
+        e = ease(clampu(t, SH[name][0], SH[name][0] + 2.4))               # eases out over the first 2.4 s, then holds the chorus framing through the ring-out
+        return fit_cam(np.array([TPOS[0] + 0.35, lerp(1.45, 1.2, e), TPOS[1]]), lerp(12, 6, e), lerp(5, 6, e), lerp(1.05, 1.3, e), lerp(1.1, 1.35, e))
     if name == "chorus":                                                    # medium front, both in frame for the dance
         return fit_cam(np.array([TPOS[0] + 0.35, 1.2, TPOS[1]]), 6, 6, 1.3, 1.35)
     # button: crane up, keeping Tumble, Pip and the climbing kite all in frame
@@ -643,7 +652,7 @@ def draw_pass(draws, contacts, eye, tgt, fov, vp):
         prog["seed"].value = u.get("seed", 0.0)
         mesh.vao.render()
 
-def render_frame(t):
+def render_frame_raw(t):
     draws, contacts = build_draws(t)
     shadow_fbo.use(); shadow_fbo.clear(depth=1.0); ctx.viewport = (0, 0, 2048, 2048)
     sprog["LVP"].value = gl(LVP)
@@ -658,6 +667,24 @@ def render_frame(t):
     img = np.frombuffer(res_fbo.read(components=4), np.uint8).reshape(H, W, 4)[::-1].copy()
     img[..., 3] = 255
     return img
+
+# short dissolve across the moral -> chorus cut (tight push-in to medium shot, Tumble's pose changes): both shots are
+# rendered over the overlap, the moral shot held on past the cut and the chorus shot started early.
+XF = 0.15
+def render_frame(t):
+    cut = T.SHOTS[[n for a, b, n in T.SHOTS].index("chorus")][0]
+    if not (cut - XF <= t < cut + XF): return render_frame_raw(t)
+    im, ic = [n for a, b, n in T.SHOTS].index("moral"), [n for a, b, n in T.SHOTS].index("chorus")
+    keep = list(T.SHOTS)
+    try:
+        T.SHOTS[im] = (keep[im][0], cut + XF, "moral"); T.SHOTS[ic] = (cut + XF, keep[ic][1], "chorus")
+        A = render_frame_raw(t).astype(np.float32)                       # moral shot continues
+        T.SHOTS[im] = (keep[im][0], cut - XF, "moral"); T.SHOTS[ic] = (cut - XF, keep[ic][1], "chorus")
+        B = render_frame_raw(t).astype(np.float32)                       # chorus shot already running
+    finally:
+        T.SHOTS[:] = keep
+    w = ease((t - (cut - XF)) / (2 * XF))
+    return (A * (1 - w) + B * w).astype(np.uint8)
 
 # ---------------- 2D overlay: captions, title, moral card ----------------
 tf = skia.Typeface.MakeFromFile("assets/Fredoka.ttf")
