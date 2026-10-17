@@ -30,3 +30,29 @@ is at the animatic stage: there is no audio yet and word times are estimated on 
 - **MED, spin.** Pip lay under the petals. Fixed by the new flower-head perch.
 - **MED, moral/chorus.** A tree crowned Tumble's head. Fixed: that tree is hidden in those shots.
 - **MED, scarf_off.** The hanging scarf looked like a rod. Fixed: a draped, swaying curve.
+
+## Round 2: FAIL (1 HIGH, 5 MED)
+
+- **HIGH, sunbathe.** He still looked like he fell. Fixed over rounds 3 to 5: a crouch first, then a slow lie-down onto
+  his side with his head rolled upright to the camera, eyes closed and smiling.
+- **MED, hold_tight short.** The camera was too far back and showed the ground edge. Fixed: hold_tight now ends as the
+  gust hits and a separate insert shot, `pip_blown`, films Pip's flight from the post onto the flower head.
+- **MED, Wind's mouth and streaks.** The mouth became an open "O" with a lip ring, and the gust streaks start in front of
+  it and follow the face direction. The wide camera is raised so the mouth clears the caption.
+- **MED, tree behind Tumble in moral/chorus.** Three trees are hidden in those shots.
+- **MED, scarf.** The hanging part is a draped curve with a rounded corner (Chaikin smoothing).
+- **MED, sky_faces short.** Tumble sat under the caption. The shot is now sky only (he and his scarf are not drawn).
+
+## Rounds 3 and 4: FAIL, then PASS (spot check)
+
+- Round 3 found a grey blob (the camera was beyond the ground disc in the short hold_tight) and streaks that
+  did not start at the mouth. Both fixed as above.
+- Round 4: PASS with one MED, the forward lean as he lies down.
+
+## Final pass (real song timing): FAIL, then PASS
+
+- With the real song the Twist line landed 3 s late, so the Sun shot was silent and the spoken "Ahh... scarf off!" was
+  hidden by the sung caption. Fixed by a new verse take (seed 5) whose Twist line starts 1.2 s into its section, and by
+  moving the spoken gags clear of the sung lines ("Whoa-whoa!" at 24.2, "Ahh... scarf off!" at 31.79).
+- Last pass: **PASS**, all 18 sheets read tile by tile, no HIGH, 1 MED left (the lie-down still tips forward a little
+  before he settles on his side), the rest LOW polish (a cropped cloud edge, the star puff reads as a ring of dots).
