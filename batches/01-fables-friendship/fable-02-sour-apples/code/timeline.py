@@ -86,12 +86,18 @@ def word_times(word, section=None):
 
 _h, _s, _sa, _sb = sec("Hook"), sec("Sting"), sec("Setup A"), sec("Setup B")
 _pa, _pb, _tw, _m, _c, _bt = sec("Problem A"), sec("Problem B"), sec("Twist"), sec("Moral"), sec("Chorus"), sec("Button")
-BIG_SPLIT = _sb[0] + 1.0 * BAR               # run-up and leap, then the leaf-pile close-up as he lands
+LEAP = (word_times("jump", "Setup B") or [_sb[0] + 1.2])[0]
+BIG_SPLIT = LEAP + 0.5                       # run-up and the leap up to its peak, then the leaf-pile close-up as he comes down
 PB_SPLIT = _pb[0] + 1.5 * BAR                # Pip's idea, then the climb onto the stump
-TW_SPLIT = _tw[0] + 1.5 * BAR                # the tug up in the tree, then the catch
+_tug_w = word_times("tug", "Twist")
+TUGS = _tug_w if _tug_w else [_tw[0] + 1.3, _tw[0] + 1.9, _tw[0] + 2.5]
+_comes = (word_times("comes", "Twist") or [_tw[0] + 5.0])[0]
+RELEASE = _comes - 0.2                       # the apple comes free as "here it comes" lands
+TW_SPLIT = RELEASE - 0.1                     # tug close-up, then the catch (the fall happens in the catch shot)
+READY_SPLIT = TUGS[0] - 1.2                  # Tumble waits on the stump while Pip flies up, then the tug close-up
 SHOTS = [(0.0, _h[1], "hook_reach"), (_s[0], _s[1], "title_wide"), (_sa[0], _sa[1], "jumps"),
          (_sb[0], BIG_SPLIT, "big_jump"), (BIG_SPLIT, _sb[1], "leaf_pile"), (_pa[0], _pa[1], "sour_face"),
-         (_pb[0], PB_SPLIT, "pip_idea"), (PB_SPLIT, _pb[1], "climb"), (_tw[0], TW_SPLIT, "tug"),
+         (_pb[0], PB_SPLIT, "pip_idea"), (PB_SPLIT, _tw[0], "climb"), (_tw[0], READY_SPLIT, "ready"), (READY_SPLIT, TW_SPLIT, "tug"),
          (TW_SPLIT, _tw[1], "catch"), (_m[0], _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):
     for i, (a, b, n) in enumerate(SHOTS):
@@ -100,14 +106,11 @@ def shot_at(t):
 
 # story events from word times
 JUMPS = word_times("jump", "Setup A")[:3]
-LEAP = (word_times("jump", "Setup B") or [_sb[0] + 1.2])[0]
 LAND = BIG_SPLIT + 0.2                        # lands head-first in the leaf pile just after the cut
 POP_OUT = _pa[0] + 0.2
-TUGS = word_times("tug", "Twist")
-RELEASE = (TUGS[-1] if TUGS else _tw[0] + 2.0) + 0.35
-CATCH = TW_SPLIT + 0.75
-GAG_SWEET = CATCH + 0.9
-HIGH_FIVE = _c[1] - 0.9
+CATCH = RELEASE + 0.55
+GAG_SWEET = _c[1] - 1.6                       # after the chorus lyric ends: the first crunchy bite ("Mmm, SWEET!")
+HIGH_FIVE = (line("Chorus") and [L for L in LINES if L["section"] == "Chorus"][-1]["t1"] - 0.25) or (_c[1] - 0.9)
 SPOKEN = [dict(file="s00_tumble", who="tumble", t0=LAND + 0.15, caption="Oof!", tags="[muffled] [surprised]"),
           dict(file="s01_tumble", who="tumble", t0=GAG_SWEET, caption="Mmm, SWEET!", tags="[delighted]"),
           dict(file="s02_both", who="both", t0=_bt[0] + 0.7, caption="Bye-bye!", tags="[cheerful]")]

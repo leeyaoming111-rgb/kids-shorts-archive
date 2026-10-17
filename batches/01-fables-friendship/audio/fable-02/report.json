@@ -65,7 +65,7 @@
   {
    "file": "s00_tumble.mp3",
    "who": "tumble",
-   "t0": 13.55,
+   "t0": 14.57,
    "caption": "Oof!",
    "tags": "[muffled] [surprised]",
    "dur": 1.2,
@@ -91,7 +91,7 @@
   {
    "file": "s01_tumble.mp3",
    "who": "tumble",
-   "t0": 32.85,
+   "t0": 44.0,
    "caption": "Mmm, SWEET!",
    "tags": "[delighted]",
    "dur": 2.16,
@@ -168,12 +168,13 @@
   "pick": "widest 5-95% pitch range (semitones)"
  },
  "mix": {
-  "lufs": -14.43,
+  "lufs": -14.46,
   "target_lufs": -14,
-  "peak": 0.81,
+  "peak": 0.833,
   "lyric_recall": 0.9828,
-  "stt": "One red apple way up high. Tumble and pit. Jump, jump, jump, I'll reach it, I'll try. One more big jump, whoa. Ooh. Those apples are sour anyway. Let's try together, you and me. [singing] Tug, tug, tug, here it comes. Mmm. Sweet. Don't say sour, ask a friend. Big or small, short or tall, friends help friends, that's best of all. Bye-bye. Bye-bye.",
-  "sfx": "none (optional, skipped)"
+  "stt": "One red apple way up high. Tumble and pit. Jump, jump, jump, I'll reach it, I'll try. One more big jump, whoa. Oof. Those apples are sour anyway. Let's try together, you and me. Tug, tug, tug, here it comes. Don't say sour, ask a friend. Big or small, short or tall, friends help friends, that's best of all. Mm, sweet. Bye bye. Bye bye",
+  "sfx": "none (optional, skipped)",
+  "note": "remixed after the Fable 2 staging fix moved the spoken lines (Oof 14.57 s, Mmm SWEET 44.0 s); song unchanged; recall from a fresh full-mix speech-to-text run"
  },
  "sources": {
   "music": "music_v2_5",
