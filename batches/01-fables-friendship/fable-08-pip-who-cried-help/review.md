@@ -36,3 +36,15 @@ estimated on the 100 BPM grid.
 - MED accepted: the open lid disc reads as a halo behind Tumble's head in some framings.
 - LOW (not fixed): Pip's hover shadow on the basket, Pip at the top edge in the wide splash, small faces in the
   short giggle and two-shot, no shake-off spray, weak wave, no clear star puff on the high-five, wide specks 28-29.5.
+
+## Round 5 (real song timing in): FAIL (1 HIGH, 4 MED)
+- The verse take changed (seed 3, so the Twist line sits early and leaves room for the rescue), and the retime moved
+  shots by up to 1.5 s. HIGH: the belly-flop and splash fell after the cut to the giggle. MED: the spin was cut by the
+  20.4 cut; [wide] Tumble's head cropped at 19.0.
+- Fixed: the splash shot runs to FLOP+0.6 and the giggle starts there, SPIN = LEAP2+1.0, wide rush2 taller, basket shot
+  holds through the lid flop (to LID_SHUT+0.3), the rescue is compressed to end before the moral cut at 34.8.
+
+## Round 6: PASS (0 HIGH, 2 MED accepted)
+- Accepted MEDs unchanged: the hold reads as a perch, the lid disc reads as a halo. LOW leftovers: splash droplets,
+  "Whoa!" caption about 0.3 s late, quick push-up at 12.0-12.5, wide ears at the top edge at 19.0, Pip's hover
+  shadow on the basket, polish items listed in round 4.
