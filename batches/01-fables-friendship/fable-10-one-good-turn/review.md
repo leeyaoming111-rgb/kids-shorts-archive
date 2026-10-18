@@ -16,3 +16,6 @@ ants moved to Tumble's feet for the moral/chorus; Tumble moved back from the ant
 - MED thank_you 9:16: a piece of Tumble's arm hung at the right edge. Fixed by moving the camera left (a tiny paw tip can still touch the edge at 14.5 s).
 - LOW, accepted: Pip on the nose covers part of Tumble's forehead (the kit draws the eyes, no cross-eyes); honey drip swells and falls on a 4.8 s cycle;
   slight Tumble crops at frame edges in the leaf shots; later heaves stretch more than the first.
+
+## Round 3: PASS (0 HIGH, 1 MED, 7 LOW)
+Reviewed with the real song times. MED: the nose landing was on screen for one frame before the moral cut; fixed by landing at POP+0.35 (QA 0 again).
