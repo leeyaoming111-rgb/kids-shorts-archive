@@ -327,13 +327,13 @@ def tumble(t):
             st["arms"] = [lerp([0.15, 1.5], [2.0, 0.3], v).tolist(), lerp([0.4, 0.5], [2.0, 0.3], v).tolist()]
             st["head"][0] = -0.1
         else:                                               # onto the bridge and across, arms out for balance
-            path = [tb0, (BRX - 0.07, -3.85), (BRX - 0.07, -7.15), (BRX - 0.5, -7.4)]
+            path = [tb0, (BRX + 0.12, -3.85), (BRX + 0.12, -7.15), (BRX - 0.5, -7.4)]
             c0, c1 = T.CROSS0, T.CROSS1
             ts = [c0, c0 + 0.35, c1 - 0.3, c1]
             for k in range(3):
                 if t < ts[k + 1] or k == 2:
                     walk_to(st, t, path[k], path[k + 1], ts[k], ts[k + 1], rate=2.6); break
-            if -6.85 < st["z"] < -4.35: st["legs"] = [l * 0.3 for l in st["legs"]]; st["y"] = 0.004   # feet stay on the deck (no bounce, small steps)
+            if -6.85 < st["z"] < -4.35: st["legs"] = [l * 0.2 for l in st["legs"]]; st["y"] = 0.004   # feet stay on the deck (no bounce, small steps)
             st["arms"] = [[0.5, 1.5 + 0.12 * math.sin(t * 5)], [0.5, -1.1 - 0.12 * math.sin(t * 5)]]       # balancing: one paw ahead, one behind (side-on to the camera)
             st["roll"] = 0.06 * math.sin(t * 5)
             st["stand_h"] = bridge_stand(st["x"], st["z"], t); st["tight"] = st["z"] > -7.1
@@ -353,7 +353,7 @@ def bridge_stand(x, z, t):
     s = s_of_z(z)
     top = float(top_at(bs, min(max(s, 0.0), 1.0))[1]) - surf(x, z) + 0.004
     on = clampu(-z, 3.6, 3.95) * clampu(z, -7.2, -6.95)
-    return max(0.0, top) * ease(on)
+    return max(0.0, top - 0.012) * ease(on)
 
 # ---------------- Pip ----------------
 def bench_perch(t, s=PIP_S):
@@ -396,7 +396,7 @@ def pip_state(t, st, mats):
         ex = {"wings": (-0.5 * pat + 0.05, 0.05)} if pat > 0 else ({"point": True} if t < L["t1"] else {"cheer": True})
         return p, to_t, False, 0.0, True, ex
     if n == "bridge":                                       # flies across ahead of him, in straight legs
-        legs_ = [np.array([BRX - 0.7, 1.95, -3.7]), np.array([BRX - 0.6, 2.3, -4.6]), np.array([BRX - 0.5, 2.1, -7.6]), PIP_ARRIVE]
+        legs_ = [np.array([BRX - 0.7, 1.95, -3.7]), np.array([BRX - 0.6, 2.3, -4.6]), np.array([BRX - 1.4, 2.4, -7.6]), PIP_ARRIVE]
         ts = [T.TW_SPLIT, T.THUMP, T.THUMP + 0.4, T.THUMP + 1.7, T.THUMP + 2.2]
         bob = np.array([0, 0.05 * math.sin(t * 6), 0])
         if t < ts[1]: return legs_[0] + bob, math.pi, True, 0.0, False, {"gentle": True}
@@ -421,7 +421,7 @@ def pip_state(t, st, mats):
         if 0 <= d < 0.4: hop = hh * math.sin(math.pi * d / 0.4)
     yaw = math.atan2(face[0] - dest[0], face[2] - dest[2]) * 0 + 0.3
     return dest + np.array([0, hop, 0]), yaw, hop > 0, 0.0, hop == 0, {"cheer": True}
-PIP_ARRIVE = np.array([BRX - 0.3, 2.3, -7.8])
+PIP_ARRIVE = np.array([BRX - 1.3, 2.5, -7.8])
 _ba = SH["button_crane"][0]
 BOINGS[:] = [_ba + 0.8, _ba + 1.2, _ba + 1.55]
 
