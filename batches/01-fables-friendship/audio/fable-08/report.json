@@ -1,0 +1,156 @@
+{
+ "fable": "fable-08-pip-who-cried-help",
+ "joins": [
+  {
+   "join": "verse->sting",
+   "chroma": 0.495,
+   "ok": false
+  },
+  {
+   "join": "sting->verse",
+   "chroma": 0.724,
+   "ok": false
+  },
+  {
+   "join": "verse->chorus",
+   "chroma": 0.953,
+   "ok": true
+  },
+  {
+   "join": "chorus->verse",
+   "chroma": 0.873,
+   "ok": false
+  }
+ ],
+ "joins_all_ok": false,
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 10.42,
+   "caption": "Whoa!",
+   "tags": "[surprised] [falling]",
+   "dur": 1.92,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 9.25
+      },
+      {
+       "seed": 22,
+       "range_st": 13.02
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 31.5,
+   "caption": "Is it a joke?",
+   "tags": "[curious] [thoughtful]",
+   "dur": 1.84,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 23.64
+      },
+      {
+       "seed": 22,
+       "range_st": 31.1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_pip.mp3",
+   "who": "pip",
+   "t0": 33.6,
+   "caption": "Sorry, Tumble!",
+   "tags": "[sheepish] [sincere]",
+   "dur": 2.0,
+   "voices": [
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 5.08
+      },
+      {
+       "seed": 22,
+       "range_st": 3.28
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s03_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.44,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.73
+      },
+      {
+       "seed": 22,
+       "range_st": 22.24
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.87
+      },
+      {
+       "seed": 22,
+       "range_st": 8.72
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "tts": {
+  "model": "eleven_v3",
+  "stability": 0.0,
+  "takes": 2,
+  "pick": "widest 5-95% pitch range (semitones)"
+ },
+ "mix": {
+  "lufs": -14.43,
+  "target_lufs": -14,
+  "peak": 0.907,
+  "lyric_recall": 1.0,
+  "stt": "Help, oh, help me come quick, Tumble and Pip. I'm coming, Pip, I'm on my way. Huh? Whoa! Just joking, it was just a game. Help me, Tumble, hurry, hurry. Oh, Pip, not another joke. Help, it's really true this time. Is it a joke? Sorry, Tumble. Tell the truth so friends know. Big or small, short or tall, friends help friends, that's best of all. Bye-bye."
+ }
+}

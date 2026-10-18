@@ -1,0 +1,123 @@
+{
+ "model": "eleven_v3",
+ "stability": 0.0,
+ "takes": 2,
+ "pick": "widest 5-95% pitch range (semitones)",
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 10.42,
+   "caption": "Whoa!",
+   "tags": "[surprised] [falling]",
+   "dur": 1.92,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 9.25
+      },
+      {
+       "seed": 22,
+       "range_st": 13.02
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 31.5,
+   "caption": "Is it a joke?",
+   "tags": "[curious] [thoughtful]",
+   "dur": 1.84,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 23.64
+      },
+      {
+       "seed": 22,
+       "range_st": 31.1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_pip.mp3",
+   "who": "pip",
+   "t0": 33.6,
+   "caption": "Sorry, Tumble!",
+   "tags": "[sheepish] [sincere]",
+   "dur": 2.0,
+   "voices": [
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 5.08
+      },
+      {
+       "seed": 22,
+       "range_st": 3.28
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s03_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.44,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.73
+      },
+      {
+       "seed": 22,
+       "range_st": 22.24
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.87
+      },
+      {
+       "seed": 22,
+       "range_st": 8.72
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
