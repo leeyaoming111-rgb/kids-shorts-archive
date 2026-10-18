@@ -272,7 +272,7 @@ def pip_state(t, st, mats):
     if n in ("muffled", "is_it_a_joke"):
         return pip_in(t), 0.0, False, 0.0, True, {"cling": 1.0, "wings": (0.6 + 0.3 * math.sin(t * 13), 0.6 + 0.3 * math.sin(t * 13))}
     if n == "rescue":
-        out1 = np.array([BASKET[0] - 0.35, RIM + 0.15, BASKET[1] + 0.95])   # just outside the front, left of Tumble
+        out1 = np.array([BASKET[0] - 1.3, RIM + 0.05, BASKET[1] + 0.9])   # just outside the front, left of Tumble
         if t < T.POP: return PIP_IN, 0.0, False, 0.0, True, {"cling": 1.0}
         if t < T.POP + 0.5:                                             # squeezes out under the lifted lid: a forward dive
             u = clampu(t, T.POP, T.POP + 0.5)
@@ -313,7 +313,7 @@ def camera(t):
         p = np.array([st["x"], 1.15, st["z"]])
         return fit_cam(p + np.array([-0.3, 0, 0]), -62, 6, 1.6, 1.5)
     if name == "splash":                                                # ground level, side
-        return fit_cam(np.array([FLOPPT[0] - 0.35, 0.6, FLOPPT[1]]), lerp(-62, -70, e), 5, 1.8, 1.2, lift=0.08)
+        return fit_cam(np.array([FLOPPT[0] - 0.35, 0.75 if WIDE else 0.6, FLOPPT[1]]), lerp(-62, -70, e), 5, 1.8, 1.9 if WIDE else 1.2, lift=0.08)
     if name == "giggle":                                                # close on Pip, Tumble in the puddle behind
         return fit_cam(np.array([-0.9, 1.05, -1.1]), -14, 6, 3.4, 1.6, lift=0.1)
     if name == "drip":
@@ -332,7 +332,7 @@ def camera(t):
         return fit_cam(np.array([SPINPT[0] + 0.15, 1.45, SPINPT[1]]), 38, 4, 1.0, 1.15)
     if name == "rescue":                                                # side-on to Tumble and the basket front
         c = np.array([BASKET[0] + 0.7, 1.15, BASKET[1] - 0.2])
-        return fit_cam(c, -30, 9, 2.1, 1.5)
+        return fit_cam(c, -52 if WIDE else -30, 14 if WIDE else 9, 2.1, 1.9 if WIDE else 1.5)
     if name == "moral":
         return fit_cam(np.array([MSPOT[0] + 0.25, lerp(1.35, 1.45, e), MSPOT[1]]), lerp(-12, -6, e), 5, lerp(1.3, 1.1, e), lerp(1.4, 1.15, e))
     if name == "chorus":
