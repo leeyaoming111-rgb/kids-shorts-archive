@@ -1,7 +1,7 @@
 # Tumble & Pip Fables 9: Stronger Together!
 
 - **job:** batch 01, fable 09 (`fable-09-stronger-together`), built on the shared kit (`common/fablekit.py`)
-- **status:** plan written; animatic in progress.
+- **status:** done. Geometry QA 0; reviewer PASS (round 5 on the animatic, round 6 on the real song timing); song, gags and mix done (recall 97.0%, -14.4 LUFS); final renders in renders/.
 - **source:** Aesop's fable *The Bundle of Sticks* (public domain), retold with our cast
 - **lesson (SEL, social-emotional learning):** one alone is easy to break; together we are strong
 - **length:** 48.0 s (20 bars at 100 BPM). Episode cut: 41.2 s
