@@ -1,0 +1,98 @@
+{
+ "model": "eleven_v3",
+ "stability": 0.0,
+ "takes": 2,
+ "pick": "widest 5-95% pitch range (semitones)",
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 26.2,
+   "caption": "Whoa-oa!",
+   "tags": "[surprised] [whoosh]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 23.72
+      },
+      {
+       "seed": 22,
+       "range_st": 15.85
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 26.9,
+   "caption": "It went BOING!",
+   "tags": "[dizzy] [amazed]",
+   "dur": 2.32,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 17.79
+      },
+      {
+       "seed": 22,
+       "range_st": 13.05
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_both.mp3",
+   "who": "both",
+   "t0": 46.5,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.52
+      },
+      {
+       "seed": 22,
+       "range_st": 23.04
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.97
+      },
+      {
+       "seed": 22,
+       "range_st": 12.76
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,131 @@
+{
+ "fable": "fable-09-stronger-together",
+ "joins": [
+  {
+   "join": "verse->sting",
+   "chroma": 0.547,
+   "ok": false
+  },
+  {
+   "join": "sting->verse",
+   "chroma": 0.504,
+   "ok": false
+  },
+  {
+   "join": "verse->chorus",
+   "chroma": 0.951,
+   "ok": true
+  },
+  {
+   "join": "chorus->verse",
+   "chroma": 0.682,
+   "ok": false
+  }
+ ],
+ "joins_all_ok": false,
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 26.2,
+   "caption": "Whoa-oa!",
+   "tags": "[surprised] [whoosh]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 23.72
+      },
+      {
+       "seed": 22,
+       "range_st": 15.85
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_tumble.mp3",
+   "who": "tumble",
+   "t0": 26.9,
+   "caption": "It went BOING!",
+   "tags": "[dizzy] [amazed]",
+   "dur": 2.32,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 17.79
+      },
+      {
+       "seed": 22,
+       "range_st": 13.05
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_both.mp3",
+   "who": "both",
+   "t0": 46.5,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.52
+      },
+      {
+       "seed": 22,
+       "range_st": 23.04
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.97
+      },
+      {
+       "seed": 22,
+       "range_st": 12.76
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "tts": {
+  "model": "eleven_v3",
+  "stability": 0.0,
+  "takes": 2,
+  "pick": "widest 5-95% pitch range (semitones)"
+ },
+ "mix": {
+  "lufs": -14.43,
+  "target_lufs": -14,
+  "peak": 0.856,
+  "lyric_recall": 0.9697,
+  "stt": "One little twig snaps so easy. Tumble and pit. Can you snap the whole big bundle? Easy peasy, watch me go. Pull and push, it will not snap. I'll sit on it as hard as I can. Whoa. It went boing. One stick snaps, but lots stay strong. Make a bridge and hop along. Together we're strong. Big or small. Short or tall. Friends help friends, that's best of all. Bye-bye. Bye-bye."
+ }
+}
