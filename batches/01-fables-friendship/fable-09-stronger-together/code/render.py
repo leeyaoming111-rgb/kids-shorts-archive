@@ -357,7 +357,7 @@ def bridge_stand(x, z, t):
 
 # ---------------- Pip ----------------
 def bench_perch(t, s=PIP_S):
-    return top_at(bundle_state(t), s) + UP
+    return top_at(bundle_state(t), s) + UP + np.array([0, 0.012 if T.LAUNCH + 0.3 < t < T.LAUNCH + 1.2 else 0.0, 0])
 BOINGS = []
 def pip_state(t, st, mats):
     n = T.shot_at(t)[1]
