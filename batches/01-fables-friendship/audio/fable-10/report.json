@@ -1,0 +1,131 @@
+{
+ "fable": "fable-10-one-good-turn",
+ "joins": [
+  {
+   "join": "verse->sting",
+   "chroma": 0.593,
+   "ok": false
+  },
+  {
+   "join": "sting->verse",
+   "chroma": 0.855,
+   "ok": false
+  },
+  {
+   "join": "verse->chorus",
+   "chroma": 0.933,
+   "ok": true
+  },
+  {
+   "join": "chorus->verse",
+   "chroma": 0.872,
+   "ok": false
+  }
+ ],
+ "joins_all_ok": false,
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 24.57,
+   "caption": "Uh-oh!",
+   "tags": "[worried]",
+   "dur": 1.28,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 22.41
+      },
+      {
+       "seed": 22,
+       "range_st": 22.19
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_pip.mp3",
+   "who": "pip",
+   "t0": 34.4,
+   "caption": "Wheee!",
+   "tags": "[excited] [laughing]",
+   "dur": 2.48,
+   "voices": [
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.99
+      },
+      {
+       "seed": 22,
+       "range_st": 15.25
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.8
+      },
+      {
+       "seed": 22,
+       "range_st": 15.14
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.57
+      },
+      {
+       "seed": 22,
+       "range_st": 9.17
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "tts": {
+  "model": "eleven_v3",
+  "stability": 0.0,
+  "takes": 2,
+  "pick": "widest 5-95% pitch range (semitones)"
+ },
+ "mix": {
+  "lufs": -14.44,
+  "target_lufs": -14,
+  "peak": 0.884,
+  "lyric_recall": 1.0,
+  "stt": "[singing] Oh no, little ant. Tumble and Pip. Here's a leaf, hop on, hop on. Thank you, Pip. I won't forget. Careful, Pip, the honey's sticky. Oh no, my feet are stuck. Uh-oh. [whistling] Heave ho, heave ho. One more pop. [laughs] [laughs] Whee! Help a friend, and a friend helps you. Big or small, short or tall, friends help friends. That's best of all. Bye-bye. Bye-bye"
+ }
+}
