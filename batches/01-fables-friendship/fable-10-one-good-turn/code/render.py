@@ -117,7 +117,7 @@ ANT_PAW = [0.45, 0.95]
 
 def nose_seat(mats):
     """where Pip stands on Tumble's nose (front-top of the nose ball, measured from the head mesh)"""
-    return apply(mats[1], (0.0, 1.43, 0.70)) + UP
+    return apply(mats[1], (0.0, 1.43, 0.71)) + UP
 
 # ======================================================================================================
 # ANT (Fable 10's own clay ant, built from kit primitives; the coordinator will unify it with Fable 6's)

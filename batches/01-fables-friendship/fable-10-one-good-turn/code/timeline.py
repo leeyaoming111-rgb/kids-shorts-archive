@@ -107,7 +107,7 @@ MARCH = WHISTLE + 0.35                               # the ant line sets off
 TUGS = word_times("heave", "Twist")[:2] + word_times("more", "Twist")[:1]
 POP = _w("pop", "Twist", 0, _tw[0] + 3.0)
 TW_SPLIT = POP - 0.7                                 # cut to the wide just before the pop
-LANDING = POP + 0.55                                 # Pip lands on Tumble's nose
+LANDING = POP + 0.35                                 # Pip lands on Tumble's nose
 HIGH_FIVE = _c[1] - 0.9
 SPOKEN = [dict(file="s00_tumble", who="tumble", t0=PB_SPLIT + 0.25, caption="Uh-oh!", tags="[worried]"),
           dict(file="s01_pip", who="pip", t0=POP + 0.2, caption="Wheee!", tags="[excited] [laughing]"),
