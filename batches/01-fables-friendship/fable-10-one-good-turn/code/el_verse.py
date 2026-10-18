@@ -15,6 +15,6 @@ if __name__ == "__main__":
         secs, _ = E.fable_sections(fd); out = os.path.join(fd, "code", "out", f"verse_{sys.argv[2]}.mp3")
         E.compose(secs, out, sys.argv[2]); E.check(out, secs)
     elif cmd == "check": E.check(sys.argv[2], E.fable_sections(fd)[0])
-    elif cmd == "assemble": E.assemble(fd, *sys.argv[2:4])
+    elif cmd == "assemble": E.assemble(fd, *sys.argv[2:5])
     elif cmd == "plan":
         for s in E.fable_sections(fd)[0]: print(s)

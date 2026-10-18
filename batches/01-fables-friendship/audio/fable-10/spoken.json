@@ -1,0 +1,98 @@
+{
+ "model": "eleven_v3",
+ "stability": 0.0,
+ "takes": 2,
+ "pick": "widest 5-95% pitch range (semitones)",
+ "spoken": [
+  {
+   "file": "s00_tumble.mp3",
+   "who": "tumble",
+   "t0": 24.57,
+   "caption": "Uh-oh!",
+   "tags": "[worried]",
+   "dur": 1.28,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 22.41
+      },
+      {
+       "seed": 22,
+       "range_st": 22.19
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s01_pip.mp3",
+   "who": "pip",
+   "t0": 34.4,
+   "caption": "Wheee!",
+   "tags": "[excited] [laughing]",
+   "dur": 2.48,
+   "voices": [
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.99
+      },
+      {
+       "seed": 22,
+       "range_st": 15.25
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "s02_both.mp3",
+   "who": "both",
+   "t0": 46.3,
+   "caption": "Bye-bye!",
+   "tags": "[cheerful]",
+   "dur": 1.6,
+   "voices": [
+    {
+     "voice": "tumble",
+     "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
+     "seed": 11,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 18.8
+      },
+      {
+       "seed": 22,
+       "range_st": 15.14
+      }
+     ]
+    },
+    {
+     "voice": "pip",
+     "voice_id": "tGxaydQ2FS8MHwM6syrt",
+     "seed": 22,
+     "takes": [
+      {
+       "seed": 11,
+       "range_st": 7.57
+      },
+      {
+       "seed": 22,
+       "range_st": 9.17
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
