@@ -94,7 +94,7 @@ SB_SPLIT = _sb[0] + 1.0 * BAR                  # Pip giggles, then Tumble drips 
 _lpa = line("Problem A")
 RUN2 = (word_times("tumble", "Problem A") or [_pa[0] + 0.9])[0]          # sets off when Pip calls his name
 LEAP2 = (word_times("hurry", "Problem A") or [_pa[0] + 2.0])[0] + 0.2    # jumps the puddle on the first "hurry"
-SPIN = LEAP2 + 1.6                             # skids past the flower and spins
+SPIN = LEAP2 + 1.0                             # skids past the flower and spins
 PB_SPLIT = max(line("Problem B")["t1"] + 0.4, _pb[0] + 2.6)               # dizzy line, then the basket
 P_FLY = PB_SPLIT + 0.1                         # Pip flutters to the basket rim
 P_RIM = P_FLY + 1.2
@@ -112,9 +112,9 @@ LOWER = SORRY + 0.15                           # lid goes back down gently
 CUDDLE = SORRY + 0.45                           # Pip hops onto his paws for the hug
 HIGH_FIVE = _c[1] - 0.9
 SHOTS = [(0.0, _h[1], "hook_flower"), (_s[0], _s[1], "title_wide"), (_sa[0], SA_SPLIT, "rush"),
-         (SA_SPLIT, _sa[1], "splash"), (_sb[0], SB_SPLIT, "giggle"), (SB_SPLIT, _sb[1], "drip"),
-         (_pa[0], _pa[1], "rush2"), (_pb[0], PB_SPLIT, "not_again"), (PB_SPLIT, _pb[1], "basket"),
-         (_tw[0], TW_SPLIT1, "muffled"), (TW_SPLIT1, TW_SPLIT2, "is_it_a_joke"), (TW_SPLIT2, _tw[1], "rescue"),
+         (SA_SPLIT, FLOP + 0.6, "splash"), (FLOP + 0.6, SB_SPLIT, "giggle"), (SB_SPLIT, _sb[1], "drip"),
+         (_pa[0], _pa[1], "rush2"), (_pb[0], PB_SPLIT, "not_again"), (PB_SPLIT, LID_SHUT + 0.3, "basket"),
+         (LID_SHUT + 0.3, TW_SPLIT1, "muffled"), (TW_SPLIT1, TW_SPLIT2, "is_it_a_joke"), (TW_SPLIT2, _tw[1], "rescue"),
          (_m[0], _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):
     for i, (a, b, n) in enumerate(SHOTS):

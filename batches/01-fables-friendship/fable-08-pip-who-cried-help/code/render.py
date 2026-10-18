@@ -132,7 +132,7 @@ def tumble(t):
                 st["pitch"] = 1.45; st["y"] = -0.45; st["sq"] = -0.1 * math.exp(-d * 6) * math.cos(d * 20)
                 st["arms"] = [[1.4, 2.4], [1.4, 2.4]]; st["tail"] = 0.6 * math.sin(d * 8)
     elif n == "giggle":                                                  # lies in the puddle, then pushes himself up
-        a = SH[n][0]; up = ease(clampu(t, a + 1.0, a + 2.0))
+        a = SH[n][0]; up = ease(clampu(t, a + 0.2, a + 1.1))
         st["x"], st["z"] = FLOPPT; st["yaw"] = RUN_YAW
         st["pitch"] = 1.45 * (1 - up); st["y"] = -0.45 * (1 - up)
         st["arms"] = lerp([[1.4, 2.4], [1.4, 2.4]], [[0.3, 0.2], [0.3, 0.2]], up).tolist()
@@ -253,7 +253,7 @@ def pip_state(t, st, mats):
         if n == "giggle": yaw = math.radians(-75)                      # giggles to us, Tumble behind him
         if n == "giggle" and SH[n][0] + 0.2 < t < SH[n][0] + 1.6:        # giggle hop
             d = (t - SH[n][0] - 0.2) % 0.45; p = PIP_FLOWER + np.array([0, 0.08 * math.sin(math.pi * d / 0.45), 0])
-            return p, yaw, False, 0.0, d < 0.03 or d > 0.42, giggle
+            return p, yaw, False, 0.0, p[1] - PIP_FLOWER[1] < 0.005, giggle
         return PIP_FLOWER, yaw, False, 0.0, True, ex
     if n == "basket":                                                   # flies to the basket, peeks, hops in
         if t < T.P_FLY: return PIP_FLOWER, look(PIP_FLOWER, RIM_FRONT), False, 0.0, True, {}
@@ -320,7 +320,7 @@ def camera(t):
         return fit_cam(np.array([lerp(FLOPPT[0], T_HOME[0], 0.5), 1.1, lerp(FLOPPT[1], T_HOME[1], 0.5)]), 25, 8, 2.0, 1.6)
     if name == "rush2":                                                 # wide side, tracking the leap, the skid and the spin
         cx = lerp(T_HOME[0] - 0.8, SPINPT[0] + 0.9, ease(clampu(t, T.RUN2, T.SPIN + 0.3)))
-        return fit_cam(np.array([cx, 1.15, -0.45]), 28, 8, 2.8, 1.7)
+        return fit_cam(np.array([cx, 1.15, -0.45]), 28, 8, 2.8, 2.2 if WIDE else 1.7)
     if name == "not_again":                                             # two-shot, Tumble and Pip on the flower
         c = lerp(np.array([SPINPT[0], 1.25, SPINPT[1]]), PIP_FLOWER, 0.45)
         return fit_cam(c, side_on_yaw(np.array([SPINPT[0], 0, SPINPT[1]]), PIP_FLOWER, 100) + lerp(-4, 4, e), 4, 3.0, 1.9)
@@ -387,7 +387,7 @@ def build_draws(t):
 
 def ground_objs(t):
     n = T.shot_at(t)[1]
-    if (n in ("splash", "giggle") or (n == "rush" and t > T.TRIP)) and not (n == "giggle" and t > SH["giggle"][0] + 2.0): return ("pip",)
+    if (n in ("splash", "giggle") or (n == "rush" and t > T.TRIP)) and not (n == "giggle" and t > SH["giggle"][0] + 1.2): return ("pip",)
     return ("fox", "pip")
 HOOKS.update(build=build_draws, camera=camera, tumble=tumble, ground_objs=ground_objs,
              qa_ignore={("lid", "fox"), ("fox", "lid")})                  # the lid in his paws while he lifts it
