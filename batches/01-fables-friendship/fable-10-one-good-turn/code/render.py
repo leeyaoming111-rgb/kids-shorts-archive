@@ -253,7 +253,7 @@ def ants(t):
         for k in range(6):
             pts = ant_path(k); sk = (t - march_start(k)) * MARCH_SPEED
             Lk = path_len(pts)
-            if n == "ants_march" and sk < Lk:
+            if n in ("ants_march", "tug") and sk < Lk:
                 if sk < 0: continue
                 (x, z), yaw = path_pt(pts, sk)
                 st = ant_on(x, z, yaw, walk=t * 26 + k, feelers=0.5)
@@ -473,9 +473,9 @@ def camera(t):
         a = SH[name][0]; tp = lerp(np.array([-0.2, 0.35, -3.3]), np.array([1.3, 0.45, -2.9]), ease(u))
         return fit_cam(tp + (np.array([0, 0.6, 0]) if WIDE else 0), lerp(-8, -22, e), 13, 2.1, 1.3 if not WIDE else 1.9)
     if name == "tug":                                       # side-on along the line
-        return fit_cam(np.array([HP[0] - 0.55, 0.4, HP[1] - 0.45]), lerp(-8, -20, e), 8, 1.35, 0.9 if not WIDE else 1.6, lift=0.06)
+        return fit_cam(np.array([HP[0] - 0.85, 0.5, HP[1] - 0.5]), lerp(-6, -18, e), 8, 2.0, 0.9 if not WIDE else 1.7, lift=0.06)
     if name == "pop":                                       # wide side: the pop and the somersault onto his nose
-        k = ease(clampu(t, T.LANDING, T.LANDING + 0.9))
+        k = ease(clampu(t, T.POP + 0.05, T.LANDING))
         return fit_cam(np.array([lerp(1.15, 0.35, k), lerp(1.3, 1.5, k), -3.5]), -4, 8, lerp(1.95, 1.45, k), lerp(2.2, 1.7, k), lift=0.05)
     if name == "moral":
         return fit_cam(np.array([TS[0] + 0.05, lerp(1.3, 1.38, e), TS[1]]), lerp(8, 3, e), 5, lerp(1.75, 1.55, e), lerp(1.45, 1.25, e))
