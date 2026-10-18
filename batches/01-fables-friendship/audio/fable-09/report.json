@@ -27,7 +27,7 @@
   {
    "file": "s00_tumble.mp3",
    "who": "tumble",
-   "t0": 26.2,
+   "t0": 25.75,
    "caption": "Whoa-oa!",
    "tags": "[surprised] [whoosh]",
    "dur": 1.6,
@@ -52,7 +52,7 @@
   {
    "file": "s01_tumble.mp3",
    "who": "tumble",
-   "t0": 26.9,
+   "t0": 27.3,
    "caption": "It went BOING!",
    "tags": "[dizzy] [amazed]",
    "dur": 2.32,
@@ -122,10 +122,10 @@
   "pick": "widest 5-95% pitch range (semitones)"
  },
  "mix": {
-  "lufs": -14.43,
+  "lufs": -14.44,
   "target_lufs": -14,
   "peak": 0.856,
   "lyric_recall": 0.9697,
-  "stt": "One little twig snaps so easy. Tumble and pit. Can you snap the whole big bundle? Easy peasy, watch me go. Pull and push, it will not snap. I'll sit on it as hard as I can. Whoa. It went boing. One stick snaps, but lots stay strong. Make a bridge and hop along. Together we're strong. Big or small. Short or tall. Friends help friends, that's best of all. Bye-bye. Bye-bye."
+  "stt": "One little twig snaps so easy. Tumble and tip. Can you snap the whole big bundle? Easy peasy, watch me go. Pull and push, it will not snap. I'll sit on it as hard as I can. Whoa, it went boing. One stick snaps, but lots stay strong. Make a bridge and hop along. Together we're strong. Big or small. Short or tall. Friends help friends, that's best of all. Bye-bye. Bye-bye"
  }
 }

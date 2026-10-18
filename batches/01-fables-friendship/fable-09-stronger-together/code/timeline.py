@@ -93,9 +93,9 @@ PULL = (word_times("pull", "Problem A") or [_pa[0] + 0.3])[0]
 PUSH = (word_times("push", "Problem A") or [_pa[0] + 1.0])[0]
 _lpb = line("Problem B")
 SAT = _pb[0] + 0.85                          # hops up and sits on the middle of the bundle
-STRAIN = _lpb["t1"] + 0.15                   # sits down HARD: the bundle bows under him...
+STRAIN = _lpb["t1"] - 0.3                    # sits down HARD: the bundle bows under him...
 LAUNCH = max(STRAIN + 0.75, _pb[0] + 3.0)    # ...and springs back: BOING, up he goes
-PB_SPLIT = min(LAUNCH + 0.55, _pb[1] - 1.8)  # cut while he is high in the air; he falls into the next shot
+PB_SPLIT = min(LAUNCH + 0.55, _pb[1] - 1.4)  # cut while he is high in the air; he falls into the next shot
 LANDED = PB_SPLIT + 0.75
 _ltw = [L for L in LINES if L["section"] == "Twist"]
 TW_SPLIT = max(_ltw[1]["t0"] - 0.15, _tw[0] + 1.4) if len(_ltw) > 1 else _tw[0] + 1.5 * BAR
