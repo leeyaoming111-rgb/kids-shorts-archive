@@ -7,7 +7,7 @@
   {
    "file": "s00_tumble.mp3",
    "who": "tumble",
-   "t0": 10.54,
+   "t0": 10.42,
    "caption": "Whoa!",
    "tags": "[surprised] [falling]",
    "dur": 1.92,
@@ -19,11 +19,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 9.75
+       "range_st": 9.25
       },
       {
        "seed": 22,
-       "range_st": 13.83
+       "range_st": 13.02
       }
      ]
     }
@@ -32,7 +32,7 @@
   {
    "file": "s01_tumble.mp3",
    "who": "tumble",
-   "t0": 34.54,
+   "t0": 31.5,
    "caption": "Is it a joke?",
    "tags": "[curious] [thoughtful]",
    "dur": 1.84,
@@ -44,11 +44,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 19.69
+       "range_st": 23.64
       },
       {
        "seed": 22,
-       "range_st": 27.56
+       "range_st": 31.1
       }
      ]
     }
@@ -57,7 +57,7 @@
   {
    "file": "s02_pip.mp3",
    "who": "pip",
-   "t0": 37.49,
+   "t0": 33.6,
    "caption": "Sorry, Tumble!",
    "tags": "[sheepish] [sincere]",
    "dur": 2.0,
@@ -69,11 +69,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 5.19
+       "range_st": 5.08
       },
       {
        "seed": 22,
-       "range_st": 3.52
+       "range_st": 3.28
       }
      ]
     }
@@ -85,20 +85,20 @@
    "t0": 46.3,
    "caption": "Bye-bye!",
    "tags": "[cheerful]",
-   "dur": 1.6,
+   "dur": 1.44,
    "voices": [
     {
      "voice": "tumble",
      "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
-     "seed": 11,
+     "seed": 22,
      "takes": [
       {
        "seed": 11,
-       "range_st": 18.61
+       "range_st": 18.73
       },
       {
        "seed": 22,
-       "range_st": 16.45
+       "range_st": 22.24
       }
      ]
     },
@@ -109,11 +109,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 7.71
+       "range_st": 7.87
       },
       {
        "seed": 22,
-       "range_st": 12.22
+       "range_st": 8.72
       }
      ]
     }

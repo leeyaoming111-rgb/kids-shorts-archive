@@ -3,22 +3,22 @@
  "joins": [
   {
    "join": "verse->sting",
-   "chroma": 0.529,
+   "chroma": 0.495,
    "ok": false
   },
   {
    "join": "sting->verse",
-   "chroma": 0.881,
+   "chroma": 0.724,
    "ok": false
   },
   {
    "join": "verse->chorus",
-   "chroma": 0.916,
+   "chroma": 0.953,
    "ok": true
   },
   {
    "join": "chorus->verse",
-   "chroma": 0.652,
+   "chroma": 0.873,
    "ok": false
   }
  ],
@@ -27,7 +27,7 @@
   {
    "file": "s00_tumble.mp3",
    "who": "tumble",
-   "t0": 10.54,
+   "t0": 10.42,
    "caption": "Whoa!",
    "tags": "[surprised] [falling]",
    "dur": 1.92,
@@ -39,11 +39,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 9.75
+       "range_st": 9.25
       },
       {
        "seed": 22,
-       "range_st": 13.83
+       "range_st": 13.02
       }
      ]
     }
@@ -52,7 +52,7 @@
   {
    "file": "s01_tumble.mp3",
    "who": "tumble",
-   "t0": 34.54,
+   "t0": 31.5,
    "caption": "Is it a joke?",
    "tags": "[curious] [thoughtful]",
    "dur": 1.84,
@@ -64,11 +64,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 19.69
+       "range_st": 23.64
       },
       {
        "seed": 22,
-       "range_st": 27.56
+       "range_st": 31.1
       }
      ]
     }
@@ -77,7 +77,7 @@
   {
    "file": "s02_pip.mp3",
    "who": "pip",
-   "t0": 37.49,
+   "t0": 33.6,
    "caption": "Sorry, Tumble!",
    "tags": "[sheepish] [sincere]",
    "dur": 2.0,
@@ -89,11 +89,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 5.19
+       "range_st": 5.08
       },
       {
        "seed": 22,
-       "range_st": 3.52
+       "range_st": 3.28
       }
      ]
     }
@@ -105,20 +105,20 @@
    "t0": 46.3,
    "caption": "Bye-bye!",
    "tags": "[cheerful]",
-   "dur": 1.6,
+   "dur": 1.44,
    "voices": [
     {
      "voice": "tumble",
      "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
-     "seed": 11,
+     "seed": 22,
      "takes": [
       {
        "seed": 11,
-       "range_st": 18.61
+       "range_st": 18.73
       },
       {
        "seed": 22,
-       "range_st": 16.45
+       "range_st": 22.24
       }
      ]
     },
@@ -129,11 +129,11 @@
      "takes": [
       {
        "seed": 11,
-       "range_st": 7.71
+       "range_st": 7.87
       },
       {
        "seed": 22,
-       "range_st": 12.22
+       "range_st": 8.72
       }
      ]
     }
@@ -147,10 +147,10 @@
   "pick": "widest 5-95% pitch range (semitones)"
  },
  "mix": {
-  "lufs": -14.68,
+  "lufs": -14.43,
   "target_lufs": -14,
-  "peak": 0.98,
+  "peak": 0.907,
   "lyric_recall": 1.0,
-  "stt": "Help, oh help me, come quick. Tumble and Pip play. I'm coming, Pip, I'm on my way. Ah, whoa! Just joking, it was just a game. Help me, Tumble, hurry, hurry. Oh, Pip, not another joke. [whistling] Help, it's really true this time. Is it a joke? Tell the truth so friends know. Sorry, Tumble. Big or small, short or tall, friends help friends, that's best of all. [upbeat music] Bye-bye. Bye-bye."
+  "stt": "Help, oh, help me come quick, Tumble and Pip. I'm coming, Pip, I'm on my way. Huh? Whoa! Just joking, it was just a game. Help me, Tumble, hurry, hurry. Oh, Pip, not another joke. Help, it's really true this time. Is it a joke? Sorry, Tumble. Tell the truth so friends know. Big or small, short or tall, friends help friends, that's best of all. Bye-bye."
  }
 }

@@ -24,7 +24,7 @@ FLOOR = BASE_Y + 0.09 * BS                                               # insid
 LX, LY, LZ = 0.98, 0.07, 0.80                                            # lid half-sizes (a flattened clay ball)
 HINGE = np.array([BASKET[0], RIM + 0.06, BASKET[1] - LZ])               # hinged on the basket's back edge
 LID_OPEN = 1.72                                                          # standing open, leaning back a little past upright
-LOWER_T = T.POP + 0.35                                                     # he sets the lid down once Pip is out, before the hug
+LOWER_T = T.POP + 0.25                                                     # he sets the lid down once Pip is out, before the hug
 LIFT_A = 0.55                                                            # how far Tumble raises the lid
 LID_TINT = (0.80, 0.58, 0.36)
 PIP_IN = np.array([BASKET[0] - 0.1, FLOOR - 0.033, BASKET[1] + 0.05]) + UP      # Pip inside, on the basket floor
@@ -274,8 +274,8 @@ def pip_state(t, st, mats):
     if n == "rescue":
         out1 = np.array([BASKET[0] - 1.3, RIM + 0.05, BASKET[1] + 0.9])   # just outside the front, left of Tumble
         if t < T.POP: return PIP_IN, 0.0, False, 0.0, True, {"cling": 1.0}
-        if t < T.POP + 0.5:                                             # squeezes out under the lifted lid: a forward dive
-            u = clampu(t, T.POP, T.POP + 0.5)
+        if t < T.POP + 0.4:                                             # squeezes out under the lifted lid: a forward dive
+            u = clampu(t, T.POP, T.POP + 0.4)
             x0 = PIP_IN[0] - 0.05
             p = legs3([PIP_IN, np.array([x0, RIM + 0.05, BASKET[1] + 0.3]), np.array([x0, RIM + 0.28, BASKET[1] + 0.85]), out1], u)
             pitch = 1.15 * math.sin(math.pi * clampu(u, 0.2, 0.85))
