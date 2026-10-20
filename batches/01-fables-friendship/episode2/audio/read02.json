@@ -1,0 +1,353 @@
+{
+ "scene": "read02",
+ "mode": "read",
+ "fable": null,
+ "page_from": 1,
+ "page_to": 2,
+ "closed_book": false,
+ "night": false,
+ "duration": 30.346,
+ "lines": [
+  {
+   "who": "tumble",
+   "line": "Story number two. Sour Apples?",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Story",
+     "t0": 2.35,
+     "t1": 2.67
+    },
+    {
+     "w": "number",
+     "t0": 2.79,
+     "t1": 3.05
+    },
+    {
+     "w": "two.",
+     "t0": 3.19,
+     "t1": 3.47
+    },
+    {
+     "w": "Sour",
+     "t0": 4.03,
+     "t1": 4.47
+    },
+    {
+     "w": "Apples?",
+     "t0": 4.61,
+     "t1": 5.05
+    }
+   ],
+   "t0": 2.15,
+   "t1": 5.129,
+   "tg": null,
+   "pg": null,
+   "look": "book",
+   "clip": "tumble_252c247874ea.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "This is the one where you got a bit grumpy!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "This",
+     "t0": 6.979,
+     "t1": 7.119
+    },
+    {
+     "w": "is",
+     "t0": 7.159,
+     "t1": 7.259
+    },
+    {
+     "w": "the",
+     "t0": 7.299,
+     "t1": 7.399
+    },
+    {
+     "w": "one",
+     "t0": 7.439,
+     "t1": 7.599
+    },
+    {
+     "w": "where",
+     "t0": 7.619,
+     "t1": 7.739
+    },
+    {
+     "w": "you",
+     "t0": 7.779,
+     "t1": 7.899
+    },
+    {
+     "w": "got",
+     "t0": 7.939,
+     "t1": 8.119
+    },
+    {
+     "w": "a",
+     "t0": 8.179,
+     "t1": 8.339
+    },
+    {
+     "w": "bit",
+     "t0": 8.379,
+     "t1": 8.559
+    },
+    {
+     "w": "grumpy!",
+     "t0": 8.719,
+     "t1": 9.379
+    }
+   ],
+   "t0": 5.879,
+   "t1": 9.446,
+   "tg": null,
+   "pg": "tilt",
+   "look": "other",
+   "clip": "pip_2d1107307440.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Maybe a teeny, tiny bit grumpy.",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Maybe",
+     "t0": 10.606,
+     "t1": 10.966
+    },
+    {
+     "w": "a",
+     "t0": 11.086,
+     "t1": 11.226
+    },
+    {
+     "w": "teeny,",
+     "t0": 11.446,
+     "t1": 11.866
+    },
+    {
+     "w": "tiny",
+     "t0": 12.066,
+     "t1": 12.446
+    },
+    {
+     "w": "bit",
+     "t0": 12.566,
+     "t1": 12.746
+    },
+    {
+     "w": "grumpy.",
+     "t0": 12.846,
+     "t1": 13.266
+    }
+   ],
+   "t0": 9.946,
+   "t1": 13.416,
+   "tg": null,
+   "pg": null,
+   "look": "other",
+   "clip": "tumble_ee07e5aa544c.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "There was one red apple, way, way up high.",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "There",
+     "t0": 13.896,
+     "t1": 14.096
+    },
+    {
+     "w": "was",
+     "t0": 14.136,
+     "t1": 14.296
+    },
+    {
+     "w": "one",
+     "t0": 14.456,
+     "t1": 14.716
+    },
+    {
+     "w": "red",
+     "t0": 14.876,
+     "t1": 15.096
+    },
+    {
+     "w": "apple,",
+     "t0": 15.256,
+     "t1": 15.576
+    },
+    {
+     "w": "way,",
+     "t0": 15.896,
+     "t1": 16.236
+    },
+    {
+     "w": "way",
+     "t0": 16.496,
+     "t1": 16.756
+    },
+    {
+     "w": "up",
+     "t0": 16.876,
+     "t1": 17.036
+    },
+    {
+     "w": "high.",
+     "t0": 17.076,
+     "t1": 17.436
+    }
+   ],
+   "t0": 13.736,
+   "t1": 17.496,
+   "tg": null,
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_16c1e6ded3e2.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Can you reach up high? Stretch, stretch, stretch!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Can",
+     "t0": 18.076,
+     "t1": 18.216
+    },
+    {
+     "w": "you",
+     "t0": 18.276,
+     "t1": 18.356
+    },
+    {
+     "w": "reach",
+     "t0": 18.416,
+     "t1": 18.676
+    },
+    {
+     "w": "up",
+     "t0": 18.776,
+     "t1": 18.876
+    },
+    {
+     "w": "high?",
+     "t0": 18.936,
+     "t1": 19.316
+    },
+    {
+     "w": "Stretch,",
+     "t0": 19.776,
+     "t1": 20.316
+    },
+    {
+     "w": "stretch,",
+     "t0": 20.516,
+     "t1": 20.916
+    },
+    {
+     "w": "stretch!",
+     "t0": 21.056,
+     "t1": 22.316
+    }
+   ],
+   "t0": 17.996,
+   "t1": 22.396,
+   "tg": null,
+   "pg": "flutter",
+   "look": "cam",
+   "clip": "pip_a96d02192cad.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Super stretching! Now, let's see if I can reach it.",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Super",
+     "t0": 25.306,
+     "t1": 25.866
+    },
+    {
+     "w": "stretching!",
+     "t0": 26.046,
+     "t1": 26.706
+    },
+    {
+     "w": "Now,",
+     "t0": 27.166,
+     "t1": 27.466
+    },
+    {
+     "w": "let's",
+     "t0": 27.606,
+     "t1": 27.846
+    },
+    {
+     "w": "see",
+     "t0": 27.926,
+     "t1": 28.086
+    },
+    {
+     "w": "if",
+     "t0": 28.166,
+     "t1": 28.266
+    },
+    {
+     "w": "I",
+     "t0": 28.386,
+     "t1": 28.446
+    },
+    {
+     "w": "can",
+     "t0": 28.486,
+     "t1": 28.646
+    },
+    {
+     "w": "reach",
+     "t0": 28.686,
+     "t1": 28.926
+    },
+    {
+     "w": "it.",
+     "t0": 28.986,
+     "t1": 29.126
+    }
+   ],
+   "t0": 25.046,
+   "t1": 29.446,
+   "tg": null,
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_d900864e39fc.mp3"
+  }
+ ],
+ "pauses": [
+  {
+   "t0": 22.646,
+   "t1": 25.046,
+   "tg": null,
+   "pg": "flutter",
+   "who": "pip"
+  }
+ ],
+ "acts": [
+  {
+   "name": "turn_page",
+   "t0": 0.85,
+   "t1": 2.15
+  }
+ ],
+ "pages": []
+}

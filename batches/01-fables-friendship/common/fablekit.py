@@ -62,9 +62,15 @@ def mouth_track(who):
             a, b = int(w["t0"] * FPS), int(max(w["t1"], w["t0"] + 0.18) * FPS)
             for f in range(a, min(b + 1, n)):
                 m[f] = max(m[f], math.sin(math.pi * (f - a + 0.5) / (b - a + 1)) * 0.95)
+    env = json.load(open("out/spoken_env.json")) if os.path.exists("out/spoken_env.json") else {}
     for s in T.SPOKEN:
         if s["who"] not in (who, "both"): continue
-        a, b = int(s["t0"] * FPS), int((s["t0"] + 0.75) * FPS)
+        a = int(s["t0"] * FPS); e = env.get(s["file"])
+        if e:                                       # 30 fps loudness envelope of the clip, 0..1 (polish pass 2026-10-20)
+            for k, v in enumerate(e):
+                if a + k < n and v > 0.08: m[a + k] = max(m[a + k], min(0.95, 0.25 + 0.75 * v))
+            continue
+        b = int((s["t0"] + s.get("dur", 0.75)) * FPS)
         for f in range(a, min(b + 1, n)): m[f] = max(m[f], 0.6 + 0.35 * math.sin((f - a) * 0.9))
     return m
 MOUTH = {}
@@ -153,7 +159,11 @@ def dance_tumble(st, t, shot):
         hc = hf_curves(t)
         if hc: st["arms"][0] = [paw_side_for_rise(hc[1]), DANCE_ARM[1]]
     return st
-def paw_seat(arms): return hand_pos(arms) + np.array([0, PAW_TOP, 0]) + UP
+def paw_seat(arms):
+    """Pip's feet on the outer half of the paw (along the arm, away from Tumble's cheek), on the paw ball's surface"""
+    h = hand_pos(arms); d = h - apply(arms[0], FOXD["arm0"]["pivot"]); d[1] = 0.0
+    d = d / (np.linalg.norm(d) + 1e-9) * 0.03
+    return h + d + np.array([0, PAW_TOP - 0.022, 0]) + UP
 def dance_pip(t, st, mats, shot, arrive_from=None):
     """Pip on Tumble's paw for the moral (arriving from arrive_from) and the chorus (with the high-five)"""
     arms = mats[2]; top = paw_seat(arms)
@@ -162,10 +172,10 @@ def dance_pip(t, st, mats, shot, arrive_from=None):
         if u < 1 and arrive_from is not None:
             p = lerp(arrive_from, top, ease(u)); p[1] += 0.4 * math.sin(math.pi * u)
             return p, 0.35, True, 0.0, False, {}
-        return top, 0.35, False, 0.0, True, {}
+        return top, 0.45, False, 0.0, True, {"tuck": True}
     hc = hf_curves(t)
-    if hc: return top + np.array([0, hc[0] - hc[1], 0]), 0.35, True, 0.0, False, {"highfive": True}
-    return top, 0.35, False, 0.0, True, {}
+    if hc: return top + np.array([0, hc[0] - hc[1], 0]), 0.45, True, 0.0, False, {"highfive": True}
+    return top, 0.45, False, 0.0, True, {"tuck": True}
 
 # ---------------- cameras (aspect-fitted) ----------------
 def fit_cam(tgt, yaw_deg, pitch_deg, fit_w, fit_h, fov=38.0, lift=None):
@@ -230,10 +240,10 @@ def draw_tumble(draws, contacts, t, st, mats):
     draws.append((FOXP["head"], Mh, u0, True))
     tp = FOXD["tail"]["pivot"]
     draws.append((FOXP["tail"], R @ trans(*tp) @ roty(st["tail"] * 0.5) @ trans(*(-np.array(tp))), u0, True))
-    eyes(draws, Mh, FOXD["eyes"]["centers"], FOXD["eyes"]["r"], 0.35 if st.get("eyes_closed") else blink(t))
+    eyes(draws, Mh, FOXD["eyes"]["centers"], FOXD["eyes"]["r"], 0.12 if st.get("eyes_closed") else blink(t))
     mo = mouth_at("tumble", t)
     if mo > 0.06:                                                           # one mouth, covering the carved smile while singing
-        draws.append((PR["mouth"], Mh @ trans(*(np.array(FOXD["mouth"]["c"]) + np.array([0, -0.025, 0.035]))) @ scale(0.1, 0.035 + 0.05 * mo, 0.045), U(mat=2, bump=0.0), False))
+        draws.append((PR["mouth"], Mh @ trans(*(np.array(FOXD["mouth"]["c"]) + np.array([0, -0.025, 0.016]))) @ scale(0.105, 0.035 + 0.05 * mo, 0.05), U(mat=2, bump=0.0), False))
     if st["lie"] < 0.5: contacts.append((st["x"], st["z"], 0.75, max(0.0, 1 - st["y"] * 1.5)))
     else: contacts.append((st["x"] - 0.4, st["z"], 1.0, 1.0))
 
@@ -262,10 +272,10 @@ def draw_pip(draws, contacts, t, pip, arms=None):
     eyes(draws, Mp, PIPD["eyes"]["centers"], PIPD["eyes"]["r"], blink(t, 1.3, 2.7))
     mp_ = mouth_at("pip", t)
     if mp_ > 0.08 and not pex.get("beak"):
-        draws.append((PR["mouth"], Mp @ trans(0, 0.295, 0.19) @ scale(0.028, 0.022 * mp_, 0.02), U(mat=0, bump=0.0), False))
+        draws.append((PR["mouth"], Mp @ trans(0, 0.305, 0.215) @ scale(0.032, 0.024 * mp_, 0.02), U(mat=0, bump=0.0), False))
     if not pfly: contacts.append((pp[0], pp[2], 0.2, 1.0))
     if arms is not None and T.shot_at(t)[1] == "chorus":                    # star puff on the series high-five
-        puff(draws, hand_pos(arms) + np.array([0.12, 0.24, 0.12]), T.HIGH_FIVE, t, n=8, size=0.05, spread=0.7, dur=0.4, tint=(1.0, 0.88, 0.35), axis=(0, 0, 0.3))   # where wing meets paw
+        puff(draws, hand_pos(arms) + np.array([0.08, 0.12, 0.16]), T.HIGH_FIVE, t, n=6, size=0.032, spread=0.55, dur=0.35, tint=(1.0, 0.88, 0.35), axis=(0, 0.25, 0.25))   # where wing meets paw
     return Mp
 def beak_pos(Mp): return apply(Mp, (0, 0.31, 0.27))
 
@@ -355,13 +365,15 @@ def current_line(t):
         start = ws[0]["t0"] - 0.12
         start = max(start, next((a for (a, b, n) in T.SHOTS if a <= ws[0]["t0"] < b), start))
         nxt = CAP_LINES[li + 1]["words"][0]["t0"] - 0.25 if li + 1 < len(CAP_LINES) else 1e9
+        nxt = min([nxt] + [s["t0"] - 0.05 for s in T.SPOKEN if ws[0]["t0"] < s["t0"] < nxt])
         end = min(ws[-1]["t1"] + 0.55, nxt)
         sh_end = next((b for (a, b, n) in T.SHOTS if a <= ws[-1]["t1"] < b), end)
         end = min(end, sh_end)
         if start <= t < end: return L, start, end
     for s in T.SPOKEN:
-        if s["t0"] - 0.05 <= t < s["t0"] + 1.1:
-            return dict(section="spoken", words=[dict(w=x, t0=s["t0"], t1=s["t0"] + 0.8) for x in s["caption"].split()]), s["t0"] - 0.05, s["t0"] + 1.1
+        e = max(1.1, s.get("dur", 0.8) + 0.3)
+        if s["t0"] - 0.05 <= t < s["t0"] + e:
+            return dict(section="spoken", words=[dict(w=x, t0=s["t0"], t1=s["t0"] + e - 0.3) for x in s["caption"].split()]), s["t0"] - 0.05, s["t0"] + e
     return None, 0, 0
 def outlined(cv, text, x, y, font, rgb, a, sw=16):
     st = skia.Paint(AntiAlias=True, Style=skia.Paint.kStroke_Style, StrokeWidth=sw * K, Color=skia.Color(*PLUMC, int(255 * a)), StrokeJoin=skia.Paint.kRound_Join)
@@ -431,10 +443,12 @@ def overlay(img, t):
             y += rh
     out = img[..., :3].astype(np.float32) * vig[..., None]
     out += (grain[..., None].astype(np.float32) - 127) * (8 / 255.0)
+    fz = clamp01((T.DURATION - t) / 0.5)
+    if fz < 1: out = out * fz + np.array([255, 248, 236], np.float32) * (1 - fz)
     return np.clip(out, 0, 255).astype(np.uint8)
 
 # ---------------- geometry QA and reviewer sheets ----------------
-def qa(fps=15, out="out/qa_report.json"):
+def qa(fps=30, out="out/qa_report.json"):
     import qa_geom
     meshes = {}
     def walk(o):
@@ -462,6 +476,17 @@ def qa(fps=15, out="out/qa_report.json"):
                 if seen and not cut:
                     issues.append(dict(t=round(t, 3), kind="pop_" + ("in" if o in exist else "out"), a=o, depth=0))
         prev_exist, prev_on = exist, onscr
+        hd = [(M, m.name) for (m, M, u, c) in draws if u.get("obj") == "fox" and m is FOXP["head"]]
+        pb = [(M, m.name) for (m, M, u, c) in draws if u.get("obj") == "pip" and m is PIPP["body"]]
+        if hd and pb:
+            (Mh_, nh), (Mp_, npb) = hd[0], pb[0]
+            def proj(M, nm):
+                cc, rr = bank.v[nm + ":bs"]; w = M @ np.r_[cc, 1]; p = VPm @ w
+                r = rr * abs(np.linalg.det(M[:3, :3])) ** (1 / 3)
+                d = np.linalg.norm(w[:3] - eye); return p[:2] / p[3], r / max(d, 1e-3), d
+            (ph, rh, dh), (pp_, rp, dp) = proj(Mh_, nh), proj(Mp_, npb)
+            if np.linalg.norm((ph - pp_) * np.array([W / H, 1.0])) < (rh * 0.6 + rp * 0.6) / math.tan(math.radians(fov) / 2) and abs(dh - dp) < 0.5:
+                issues.append(dict(t=round(t, 3), kind="screen_contact", a="pip:body", b="fox:head", depth=round(abs(dh - dp), 3)))
         for e in qa_geom.check_frame(t, items, bank, ground=ground_h, masks={}, ground_objs=HOOKS["ground_objs"](t), float_tol=0.02):
             if (e["a"].split(":")[0], (e.get("b") or ":").split(":")[0]) in HOOKS["qa_ignore"]: continue
             issues.append(e)
