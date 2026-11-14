@@ -1,29 +1,37 @@
 {
  "model": "eleven_v3",
- "stability": 0.0,
- "takes": 2,
- "pick": "widest 5-95% pitch range (semitones)",
+ "stability": 0.5,
+ "takes": 3,
+ "pick": "closest to the character's anchor voice",
  "spoken": [
   {
    "file": "s00_tumble.mp3",
    "who": "tumble",
-   "t0": 19.87,
+   "t0": 19.31,
    "caption": "Blehhh!",
    "tags": "[silly] [playful]",
-   "dur": 1.52,
+   "dur": 1.35,
    "voices": [
     {
      "voice": "tumble",
      "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
-     "seed": 22,
+     "seed": 11,
+     "sim": 0.666,
      "takes": [
       {
        "seed": 11,
-       "range_st": 27.92
+       "sim": 0.666,
+       "range_st": 16.44
       },
       {
        "seed": 22,
-       "range_st": 29.73
+       "sim": 0.603,
+       "range_st": 1.15
+      },
+      {
+       "seed": 33,
+       "sim": 0.59,
+       "range_st": 23.61
       }
      ]
     }
@@ -32,23 +40,31 @@
   {
    "file": "s01_tumble.mp3",
    "who": "tumble",
-   "t0": 25.18,
+   "t0": 25.22,
    "caption": "Whoa, wobbly!",
    "tags": "[surprised] [giggles]",
-   "dur": 2.8,
+   "dur": 2.39,
    "voices": [
     {
      "voice": "tumble",
      "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
-     "seed": 22,
+     "seed": 33,
+     "sim": 0.833,
      "takes": [
       {
        "seed": 11,
-       "range_st": 23.27
+       "sim": 0.817,
+       "range_st": 30.97
       },
       {
        "seed": 22,
-       "range_st": 25.12
+       "sim": 0.691,
+       "range_st": 16.45
+      },
+      {
+       "seed": 33,
+       "sim": 0.833,
+       "range_st": 38.48
       }
      ]
     }
@@ -57,23 +73,31 @@
   {
    "file": "s02_tumble.mp3",
    "who": "tumble",
-   "t0": 32.49,
+   "t0": 32.1,
    "caption": "Your berry is the best!",
    "tags": "[happy] [laughing]",
-   "dur": 2.48,
+   "dur": 2.88,
    "voices": [
     {
      "voice": "tumble",
      "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
      "seed": 22,
+     "sim": 0.876,
      "takes": [
       {
        "seed": 11,
-       "range_st": 18.79
+       "sim": 0.814,
+       "range_st": 30.2
       },
       {
        "seed": 22,
-       "range_st": 19.79
+       "sim": 0.876,
+       "range_st": 31.3
+      },
+      {
+       "seed": 33,
+       "sim": 0.836,
+       "range_st": 15.6
       }
      ]
     }
@@ -85,35 +109,51 @@
    "t0": 46.3,
    "caption": "Bye-bye!",
    "tags": "[cheerful]",
-   "dur": 1.6,
+   "dur": 0.9,
    "voices": [
     {
      "voice": "tumble",
      "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
-     "seed": 11,
+     "seed": 33,
+     "sim": 0.68,
      "takes": [
       {
        "seed": 11,
-       "range_st": 18.51
+       "sim": 0.65,
+       "range_st": 9.2
       },
       {
        "seed": 22,
-       "range_st": 15.72
+       "sim": 0.71,
+       "range_st": 4.06
+      },
+      {
+       "seed": 33,
+       "sim": 0.68,
+       "range_st": 17.49
       }
      ]
     },
     {
      "voice": "pip",
      "voice_id": "tGxaydQ2FS8MHwM6syrt",
-     "seed": 22,
+     "seed": 11,
+     "sim": 0.802,
      "takes": [
       {
        "seed": 11,
-       "range_st": 8.08
+       "sim": 0.802,
+       "range_st": 10.21
       },
       {
        "seed": 22,
-       "range_st": 9.93
+       "sim": 0.774,
+       "range_st": 8.3
+      },
+      {
+       "seed": 33,
+       "sim": 0.733,
+       "range_st": 6.4
       }
      ]
     }

@@ -96,10 +96,17 @@ SPLASH = max(_first("splash", "Problem B", _pb[0] + 2.4), SLIP + 0.45)
 PB_SPLIT = max(_pb[0] + 1.4, SPLASH + 0.55)                   # the splash, then the wobble shot
 BERRY_W = _first("berry", "Twist", _tw[0] + 0.8)
 HALF = _first("half", "Twist", _tw[0] + 1.4)                  # Pip pecks the berry in two
-TW_SPLIT = max(_tw[0] + 1.4, min(_tw[0] + 1.5 * BAR, _tw[1] - 1.4))
+_twl0 = line("Twist")
+PIP_TAKE = max(HALF + 0.45, _twl0["t1"] + 0.12)              # Pip picks up his half once he has finished singing
+TW_SPLIT = max(_tw[0] + 1.4, min(PIP_TAKE + 0.3, _tw[1] - 1.4))
+_spk = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "audio", "fable-05", "spoken.json")
+SPOKEN_DUR = {s["file"].replace(".mp3", ""): s["dur"] for s in json.load(open(_spk))["spoken"]} if os.path.exists(_spk) else {}
+_pal0 = line("Problem A")
+BLEH = max(_pal0["t1"] + 0.3, PA_SPLIT + 0.6)
+PA_END = min(max(_pa[1], BLEH + SPOKEN_DUR.get("s00_tumble", 1.0) + 0.4), line("Problem B")["t0"] - 0.7)   # "Blehhh!" ends inside the copycat shot
 SHOTS = [(0.0, _h[1], "hook_mirror"), (_s[0], _s[1], "title_wide"), (_sa[0], _sa[1], "proud"),
-         (_sb[0], _sb[1], "bigger"), (_pa[0], PA_SPLIT, "silly_face"), (PA_SPLIT, _pa[1], "copycat"),
-         (_pb[0], PB_SPLIT, "reach"), (PB_SPLIT, _pb[1], "wobble"), (_tw[0], TW_SPLIT, "berry"),
+         (_sb[0], _sb[1], "bigger"), (_pa[0], PA_SPLIT, "silly_face"), (PA_SPLIT, PA_END, "copycat"),
+         (PA_END, PB_SPLIT, "reach"), (PB_SPLIT, _pb[1], "wobble"), (_tw[0], TW_SPLIT, "berry"),
          (TW_SPLIT, _tw[1], "share"), (_m[0], _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):
     for i, (a, b, n) in enumerate(SHOTS):
@@ -112,15 +119,14 @@ SHINY = word_times("shiny", "Setup A") + word_times("red", "Setup A") + word_tim
 BIGGER = _first("bigger", "Setup B", _sb[0] + 1.3)
 _pal = line("Problem A")
 FACE = max(_pa[0] + 0.15, _pal["t0"] - 0.2)                  # pulls the face as he starts the line
-BLEH = max(_pal["t1"] + 0.35, PA_SPLIT + 0.6)
 REACH = line("Problem B")["t0"]
 _pbl = line("Problem B")
-WOBBLY = max(_pbl["t1"] + 0.5, PB_SPLIT + 0.7)
+WOBBLY = max(_pbl["t1"] + 0.3, PB_SPLIT + 0.3)              # early enough that the clip ends before the cut to the berry shot
 _twl = line("Twist")
-BITE = max(_twl["t1"] + 0.4, TW_SPLIT + 0.35)
-BEST = BITE + 0.55
+BITE = max(_twl["t1"] + 0.4, TW_SPLIT + 0.3)
+BEST = BITE + 0.3                                             # the clip (2.9 s, speech to 2.6 s) ends before the moral
 HIGH_FIVE = _c[1] - 0.9
-SPOKEN = [dict(file="s00_tumble", who="tumble", t0=BLEH, caption="Blehhh!", tags="[silly] [playful]"),
-          dict(file="s01_tumble", who="tumble", t0=WOBBLY, caption="Whoa, wobbly!", tags="[surprised] [giggles]"),
-          dict(file="s02_tumble", who="tumble", t0=BEST, caption="Your berry is the best!", tags="[happy] [laughing]"),
-          dict(file="s03_both", who="both", t0=_bt[0] + 0.7, caption="Bye-bye!", tags="[cheerful]")]
+SPOKEN = [dict(file="s00_tumble", who="tumble", t0=BLEH, dur=SPOKEN_DUR.get("s00_tumble", 0.8), caption="Blehhh!", tags="[silly] [playful]"),
+          dict(file="s01_tumble", who="tumble", t0=WOBBLY, dur=SPOKEN_DUR.get("s01_tumble", 0.8), caption="Whoa, wobbly!", tags="[surprised] [giggles]"),
+          dict(file="s02_tumble", who="tumble", t0=BEST, dur=min(SPOKEN_DUR.get("s02_tumble", 0.8), _tw[1] - BEST - 0.32), caption="Your berry is the best!", tags="[happy] [laughing]"),
+          dict(file="s03_both", who="both", t0=_bt[0] + 0.7, dur=SPOKEN_DUR.get("s03_both", 0.8), caption="Bye-bye!", tags="[cheerful]")]

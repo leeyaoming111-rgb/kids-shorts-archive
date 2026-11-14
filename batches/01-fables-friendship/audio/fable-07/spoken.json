@@ -1,29 +1,37 @@
 {
  "model": "eleven_v3",
- "stability": 0.0,
- "takes": 2,
- "pick": "widest 5-95% pitch range (semitones)",
+ "stability": 0.5,
+ "takes": 3,
+ "pick": "closest to the character's anchor voice",
  "spoken": [
   {
    "file": "s00_pip.mp3",
    "who": "pip",
-   "t0": 24.2,
+   "t0": 24.26,
    "caption": "Whoa-whoa!",
    "tags": "[surprised] [giggling]",
-   "dur": 2.08,
+   "dur": 1.94,
    "voices": [
     {
      "voice": "pip",
      "voice_id": "tGxaydQ2FS8MHwM6syrt",
-     "seed": 11,
+     "seed": 22,
+     "sim": 0.784,
      "takes": [
       {
        "seed": 11,
-       "range_st": 12.94
+       "sim": 0.758,
+       "range_st": 12.3
       },
       {
        "seed": 22,
-       "range_st": 9.77
+       "sim": 0.784,
+       "range_st": 12.71
+      },
+      {
+       "seed": 33,
+       "sim": 0.737,
+       "range_st": 12.5
       }
      ]
     }
@@ -35,20 +43,28 @@
    "t0": 31.792,
    "caption": "Ahh... scarf off!",
    "tags": "[relieved] [happy sigh]",
-   "dur": 2.32,
+   "dur": 2.14,
    "voices": [
     {
      "voice": "tumble",
      "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
      "seed": 11,
+     "sim": 0.788,
      "takes": [
       {
        "seed": 11,
-       "range_st": 28.4
+       "sim": 0.788,
+       "range_st": 12.63
       },
       {
        "seed": 22,
-       "range_st": 20.21
+       "sim": 0.708,
+       "range_st": 28.5
+      },
+      {
+       "seed": 33,
+       "sim": 0.779,
+       "range_st": 9.72
       }
      ]
     }
@@ -60,20 +76,28 @@
    "t0": 46.3,
    "caption": "Bye-bye!",
    "tags": "[cheerful]",
-   "dur": 1.28,
+   "dur": 1.33,
    "voices": [
     {
      "voice": "tumble",
      "voice_id": "Kx0fJ79cIgKz5YbJmR0t",
-     "seed": 11,
+     "seed": 22,
+     "sim": 0.714,
      "takes": [
       {
        "seed": 11,
-       "range_st": 18.39
+       "sim": 0.666,
+       "range_st": 16.9
       },
       {
        "seed": 22,
-       "range_st": 16.2
+       "sim": 0.714,
+       "range_st": 9.5
+      },
+      {
+       "seed": 33,
+       "sim": 0.717,
+       "range_st": 4.65
       }
      ]
     },
@@ -81,14 +105,22 @@
      "voice": "pip",
      "voice_id": "tGxaydQ2FS8MHwM6syrt",
      "seed": 11,
+     "sim": 0.788,
      "takes": [
       {
        "seed": 11,
-       "range_st": 10.21
+       "sim": 0.788,
+       "range_st": 10.28
       },
       {
        "seed": 22,
-       "range_st": 9.18
+       "sim": 0.755,
+       "range_st": 8.57
+      },
+      {
+       "seed": 33,
+       "sim": 0.757,
+       "range_st": 17.48
       }
      ]
     }

@@ -127,5 +127,36 @@
   "peak": 0.875,
   "lyric_recall": 0.9836,
   "stt": "Who can get the scarf off? Tumble and Pip. Wind and sun, a friendly game. My stripey scarf is snug and warm. Huff and puff, I'll hold on tight. Round and round, it won't come off. [laughs] Whoa, whoa. Sun's turn, shine so soft and kind. Ah. Scarf off. Gentle and kind works best. Big or small, short or tall, friends help friends, that's best of all. Bye-bye."
+ },
+ "v2": {
+  "song_take": "take_11.mp3",
+  "song_recall": 0.9672,
+  "singer_pitch_ok": 1.0,
+  "singer_voice_sim": 0.803,
+  "duration": 50.400000000000006,
+  "spoken": [
+   [
+    "s00_pip",
+    24.25,
+    1.94
+   ],
+   [
+    "s01_tumble",
+    33.81,
+    2.14
+   ],
+   [
+    "s02_both",
+    46.3,
+    1.33
+   ]
+  ],
+  "problems": [],
+  "mix": {
+   "lufs": -14.0,
+   "peak": 0.908,
+   "lyric_recall": 0.9672131147540983,
+   "stt": "Who can get the scarf off? Tumble and pit. Wind and sun, a friendly game. My stripey scarf is snug and warm. Huff and puff, I'll hold on tight. Round and round, it won't come off. [laughs] Whoa, whoa. Sun's turn, shine, so soft and kind. Ah, scarf off. Gentle and kind works best. Big or small, short or tall, friends help friends, that's best of all. Bye-bye. [whistles]"
+  }
  }
 }

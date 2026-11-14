@@ -40,7 +40,8 @@ def sky(t):
     return tuple(tuple(lerp(lerp(c0, c1, wy), c2, sn)) for c0, c1, c2 in zip(SKY, SKY_WINDY, SKY_SUNNY))
 def key_i(t):
     wy, sn = weather(t)
-    return 1.05 - 0.12 * wy + 0.12 * sn
+    k = 1.05 - 0.12 * wy + 0.12 * sn
+    return k - (0.2 if T.shot_at(t)[1] == "sunbathe" else 0.0)  # the high overhead shot reads hazy at full key (polish pass)
 
 def draw_pass(draws, contacts, eye, tgt, fov, vp, sky_):
     """the kit's draw_pass with the key light intensity from key_i(t) instead of a constant"""
@@ -82,7 +83,7 @@ def solve_arm(target, i=0):
             d = np.linalg.norm(arm_hand(sd, fw, i) - target)
             if best is None or d < best[0]: best = (d, sd, fw)
     return [best[1], best[2]]
-HUG = [[0.3, 1.25, 0.62], [0.3, 1.25, 0.62]]                           # paws clutching the scarf at his chest
+HUG = [[0.8, 1.3, 0.7], [0.8, 1.3, 0.7]]                               # paws clutching the scarf at his collar (polish pass: was at his chest)
 PULL_OUT = [1.4, 0.45]                                      # right paw out to the side, pulling the scarf through
 
 def tumble(t):
@@ -111,7 +112,7 @@ def tumble(t):
         u = clampu(t, T.SPIN0, T.SPIN1)
         st["yaw"] = -0.05 + 4 * math.pi * ease(u)
         st["arms"] = [list(HUG[0]), list(HUG[1])]
-        st["y"] += 0.06 * math.sin(math.pi * u); st["tail"] = 0.8 * gusty(t)
+        st["y"] += 0.06 * math.sin(math.pi * u); st["tail"] = -0.6 * gusty(t)   # polish: the tail swings to the upwind side, away from the streaming scarf ends
         d = t - T.SPIN1
         if d > 0:                                            # dizzy wobble to a stop
             st["roll"] = 0.12 * math.sin(d * 9) * math.exp(-d * 1.6); st["head"][2] = -0.15 * math.sin(d * 7) * math.exp(-d * 1.2)
@@ -136,13 +137,16 @@ def tumble(t):
         st["sq"] = -0.16 * crouch
         st["lie"] = lie; st["eyes_closed"] = t > T.LIE1 - 0.2
         if lie > 0: st["arms"] = [lerp([0.4, 0.2, 0.0], [0.35, 1.0, 0.5], lie).tolist(), lerp([0.4, 0.2], [0.3, 0.4], lie).tolist()]
-        st["head"][2] = 0.7 * lie; st["head"][0] = 0.0 * lie                 # head stays up, resting, while the body lies on its side
+        # polish pass: the body tips by +pi/2*lie (fox_mats rotz(tip)), so the head rolls back the other way and stays
+        # upright with only a small cosy tilt (the old +0.7 roll added to the tip and turned his face upside down)
+        st["head"][2] = -(math.pi / 2 - 0.3) * lie; st["head"][0] = -0.1 * lie
         st["tail"] = 0.3 * math.sin(t * 2)
     elif n in ("moral", "chorus"):
         dance_tumble(st, t, n)
     else:                                                    # button: waves up to Wind and Sun, Pip on his paw
         a = SH["button_crane"][0]
-        st["arms"] = [list(DANCE_ARM), [1.5 + 0.3 * math.sin((t - a) * 9), 0.2]]
+        wv = 1 - ease(clampu(t, T.END_HOLD - 1.2, T.END_HOLD - 0.3))       # the wave settles before the end hold
+        st["arms"] = [list(DANCE_ARM), [1.5 + 0.3 * math.sin((t - a) * 9) * wv, 0.2]]
         st["head"][0] = -0.3 * ease(clampu(t, a, a + 0.6)); st["tail"] = 0.4 * math.sin(t * 6)
     return st
 
@@ -159,8 +163,16 @@ def collar_pt(phi): return np.array([COL_RX * math.sin(phi), COL_Y + 0.025 * mat
 def push_out(p, c, r, m):
     q = (p - c) / (r + m); d = np.linalg.norm(q)
     return c + q / d * (r + m) if d < 1.0 else p
+TAIL_SPH = [((0.33, 1.22, -0.87), 0.13), ((0.30, 0.99, -0.86), 0.22), ((0.27, 0.74, -0.84), 0.24),
+            ((0.20, 0.55, -0.72), 0.22), ((0.10, 0.42, -0.56), 0.2)]   # tail mesh as spheres (body frame, measured)
+_TAIL = [0.0]                                                 # current tail swing (st["tail"]), set by scarf_points
+def tail_spheres():
+    tp = np.array(FOXD["tail"]["pivot"]); Rt = roty(_TAIL[0] * 0.5)[:3, :3]
+    return [(tp + Rt @ (np.array(c) - tp), r) for c, r in TAIL_SPH]
 def drape(root, length, wl, w, t, ph):
-    """one hanging end in the body frame: steps down (gravity) or downwind (wind), kept out of his body and head"""
+    """one hanging end in the body frame: steps down (gravity) or downwind (wind), kept out of his body, head and tail
+    (polish pass: the tail, so the streaming ends no longer sweep through it in the weathervane spin)"""
+    tsph = tail_spheres()
     pts = [root]; n = max(2, int(round(length / SEG)))
     g = np.array([0, -1.0, 0]); p = root.copy()
     for k in range(n):
@@ -169,6 +181,7 @@ def drape(root, length, wl, w, t, ph):
         d = d / np.linalg.norm(d)
         p = p + d * (length / n)
         p = push_out(push_out(p, BODY_C, BODY_R, 0.07), HEAD_C, HEAD_R, 0.07)
+        for c_, r_ in tsph: p = push_out(p, c_, np.array([r_, r_, r_]), 0.08)
         pts.append(p)
     return pts
 def local_wind(R):
@@ -208,13 +221,18 @@ def take_len(pts, L):
 def plen(pts): return sum(np.linalg.norm(np.asarray(b) - np.asarray(a)) for a, b in zip(pts[:-1], pts[1:]))
 G1 = np.array([0.45, 0.0, 0.89]); G1 /= np.linalg.norm(G1)       # the gathered scarf runs along the grass this way
 G2 = np.array([0.97, 0.0, -0.25]); G2 /= np.linalg.norm(G2)      # the hanging part falls this way when he lets go
-def ground_run(foot, d, L):
-    n = max(2, int(L / 0.1) + 1)
-    return [np.array([foot[0] + d[0] * L * k / (n - 1), 0, foot[2] + d[2] * L * k / (n - 1)]) for k in range(n)]
+def ground_run(foot, d, L, amp=1.05, k_=2.6, ph=0.0):
+    """the scarf lying on the grass from foot along d in soft S-waves (polish pass: was a dead-straight run).
+    The shape depends only on the distance from the foot, so it stays put while more scarf is fed down."""
+    n = max(2, int(L / 0.05) + 1); th0 = math.atan2(d[0], d[2]); p = np.array([foot[0], 0.0, foot[2]]); out = [p.copy()]
+    for k in range(1, n):
+        s_ = L * k / (n - 1); th = th0 + amp * math.sin(k_ * s_ + ph)
+        p = p + np.array([math.sin(th), 0, math.cos(th)]) * (L / (n - 1)); out.append(p.copy())
+    return out
 def on_grass(p): return np.array([p[0], surf(p[0], p[2]) + SC_R * 0.9, p[2]])
 def _drape(top, bottom_y, length):
     """points from the bottom (y=bottom_y) up to top: a soft cloth curve that bulges and sways, not a rod"""
-    n = max(3, int(length / 0.08) + 1); amp = 0.3 + 0.06 * math.sin(_NOW[0] * 5.5); side = -G1
+    n = max(3, int(length / 0.05) + 1); amp = 0.3 + 0.06 * math.sin(_NOW[0] * 5.5); side = -G1
     out = []
     for k in range(n):
         f = k / (n - 1)                                          # 0 at the bottom, 1 at the paw
@@ -230,6 +248,7 @@ def hanging(hand, h):
     return [on_grass(p) for p in run] + _drape(hand, gy, drop)[1:]
 def scarf_points(t, st, mats):
     R, Mh, arms, legs = mats
+    _TAIL[0] = st["tail"]
     if t < T.GRAB:
         ta, ring, tb, root = worn_parts(t, R, wind_w(t))
         return ta + ring[1:] + tb[1:]
@@ -255,15 +274,17 @@ def _rest_base():
     foot = np.array([hand[0], gy, hand[2]])
     return hand, foot, drop
 def rest_points(t):
-    """after he lets go: the hanging part swings down onto the grass about its foot, then lies still"""
+    """after he lets go: the hanging part falls onto the grass in a soft curl beside the part already lying there"""
     hand, foot, drop = _rest_base()
-    u = ease(clampu(t, T.DROP, T.DROP + 0.4))
+    u = ease(clampu(t, T.DROP, T.DROP + 0.45))
     run = [on_grass(p) for p in ground_run(foot, G1, LTOT - drop)[::-1]]
-    ang = u * math.pi / 2; n = max(2, int(drop / 0.08) + 1); up = []
-    for k in range(1, n):
-        s = drop * k / (n - 1)
-        p = foot + np.array([0, math.cos(ang) * s, 0]) + G2 * math.sin(ang) * s
-        up.append(p if u < 1 else on_grass(p))
+    hang = _drape(hand, foot[1], drop)                                   # the shape it had in his paw (bottom to paw)
+    lie = [on_grass(p) for p in ground_run(foot, G2, drop, amp=0.45, k_=2.0, ph=-0.6)]
+    m = min(len(hang), len(lie)); up = []
+    for k in range(1, m):
+        q = lerp(hang[k], lie[k], u)
+        q[1] = max(q[1], surf(q[0], q[2]) + SC_R * 0.9)
+        up.append(q)
     return run + up
 STRIPES = [(0.92, 0.3, 0.33), (0.92, 0.3, 0.33), (1.0, 0.95, 0.86), (1.0, 0.95, 0.86), (0.3, 0.72, 0.74), (1.0, 0.95, 0.86)]
 def chaikin(pts, n):
@@ -321,7 +342,8 @@ def pip_state(t, st, mats):
             top = np.array([POST_PIP[0], max(HOVER[1], POST_PIP[1]) + 0.3, POST_PIP[2]])
             p = lerp(HOVER, top, ease(min(u * 1.4, 1.0))) if u < 0.7 else lerp(top, POST_PIP, ease((u - 0.7) / 0.3))
             return p, 0.2, True, 0.0, False, {"gentle": True}
-        return POST_PIP, to_tumble, False, 0.0, True, {}
+        ex = {"beak": True, "point": True} if abs(t - T.WHISTLE_HOOK - 0.2) < 0.45 else {}
+        return POST_PIP, to_tumble, False, 0.0, True, ex
     if n in ("sky_faces", "whistle", "snug", "wind_puff"):
         ex = {}
         if abs(t - T.WHISTLE_GO - 0.2) < 0.45: ex = {"beak": True, "point": True}
@@ -344,7 +366,15 @@ def pip_state(t, st, mats):
         if abs(t - T.WHISTLE_WIN - 0.2) < 0.45: ex = {"beak": True, "point": True}
         return POST_PIP, (-0.6 if ex else to_tumble), False, 0.0, True, ex
     if n in ("moral", "chorus"):
-        return dance_pip(t, st, mats, n, arrive_from=POST_PIP)
+        p_, y_, f_, pt_, pe_, ex_ = dance_pip(t, st, mats, n, arrive_from=POST_PIP)
+        # polish pass: Pip sits further out along the paw (still on the paw ball), turns a little towards us and folds his
+        # wings, so nothing of him overlaps Tumble's cheek on screen (QA geometry stays clean: measured, 0 issues)
+        k_ = ease(clampu(t, SH["moral"][0], SH["moral"][0] + 0.6))      # eased in over his hop onto the paw
+        d_ = hand_pos(arms) - apply(arms[0], FOXD["arm0"]["pivot"]); d_[1] = 0.0; d_ = d_ / (np.linalg.norm(d_) + 1e-9)
+        p_ = p_ + (d_ * 0.05 - np.array([0, 0.04, 0])) * k_          # 0.08 out from the paw ball's centre: 0.04 lower on its surface
+        if ex_.get("highfive"): ex_ = dict(ex_, wings=(-0.2, -0.35))   # both wings folded: the only wing that reaches the paw on screen would sit on his cheek
+        elif not f_: ex_ = dict(ex_, wings=(-0.35, -0.35))            # wings folded flat against his sides while he sits
+        return p_, y_ - 0.3 * k_, f_, pt_, pe_, ex_
     top = paw_seat(arms)
     return top, 0.35, False, 0.0, True, {"cheer": t > SH["button_crane"][0] + 0.5}
 def pip_blowing(t):
@@ -394,8 +424,18 @@ def draw_wind(draws, t):
     sq = 1 + 0.06 * pf - 0.05 * tired
     M = face_mat(WIND_P + bob, look, WIND_S) @ scale(sq, 1 / sq, 1)
     if T.shot_at(t)[1] == "sky_faces": M = M @ rotz(0.08 * math.sin(math.pi * clampu(t, SH["sky_faces"][0] + 0.3, SH["sky_faces"][1] - 0.2)))   # a friendly nod
+    wv = math.sin(math.pi * clampu(t, WAVE0, WAVE1)) ** 0.5 if T.shot_at(t)[1] == "button_crane" else 0.0
+    if wv > 0: M = M @ rotz(0.07 * math.sin(2 * math.pi * 1.6 * (t - WAVE0)) * wv)          # a friendly rock as he waves
     soft = U(mat=0, bump=0.4, tint=(0.94, 0.96, 1.0), tintMix=1.0)
     draws.append((SC["cloud"], M, soft, False))
+    if wv > 0:                                                    # a puffy cloud mitt slides out from behind him and waves bye-bye
+        sw = math.sin(2 * math.pi * 1.6 * (t - WAVE0))
+        base = np.array([-1.3, 0.45, 0.15])
+        mp = base + wv * np.array([-0.45 + 0.18 * sw, 0.7, 0.12])
+        for f in (0.35, 0.68):                                    # a soft puffy arm out of his side
+            draws.append((PR["ball"], M @ trans(*lerp(base, mp, f)) @ scale(0.17 + 0.03 * f), soft, False))
+        draws.append((PR["ball"], M @ trans(*mp) @ scale(0.27, 0.25, 0.22), soft, False))
+        draws.append((PR["ball"], M @ trans(*(mp + np.array([0.12, 0.2, 0.02]))) @ scale(0.1, 0.13, 0.09), soft, False))   # thumb
     for sx in (-1, 1):                                            # cheeks: swell when he blows
         r = 0.26 + 0.24 * pf
         draws.append((PR["ball"], M @ trans((0.5 + 0.08 * pf) * sx, -0.2, 0.6 + 0.12 * pf) @ scale(r, r * 0.85, r * 0.75), soft, False))
@@ -450,11 +490,13 @@ def draw_sun(draws, t):
     s = SUN_S * (1 + 0.08 * shine)
     M = face_mat(SUN_P + np.array([0.1 * 0 + (2.5 if T.shot_at(t)[1] == "wind_puff" else 0.0), 0.1 * math.sin(t * 1.1 + 1), 0]), look, s)
     if T.shot_at(t)[1] == "sky_faces": M = M @ rotz(-0.08 * math.sin(math.pi * clampu(t, SH["sky_faces"][0] + 0.3, SH["sky_faces"][1] - 0.2)))
+    if T.shot_at(t)[1] == "button_crane":                         # rocks side to side as she waves goodbye with her rays
+        M = M @ rotz(0.1 * math.sin(2 * math.pi * 1.6 * (t - WAVE0) + 1.0) * math.sin(math.pi * clampu(t, WAVE0, WAVE1)) ** 0.5)
     draws.append((SC["sun"], M @ rotz(0.15 * t + 0.6 * shine), U(mat=0, bump=0.3, tint=(1.0, 0.93 + 0.04 * shine, 0.6), tintMix=-1.0), False))
     for sx in (-1, 1):
         draws.append((PR["ball"], M @ trans(0.55 * sx, -0.15, 0.33) @ scale(0.16, 0.1, 0.05), U(mat=0, bump=0.0, tint=(1.0, 0.6, 0.45), tintMix=1.0), False))
     n = T.shot_at(t)[1]
-    wink = n == "button_crane" and t > SH["button_crane"][0] + 1.2
+    wink = n == "button_crane" and t > WAVE0 + 0.5
     bl = blink(t, 2.0, 3.6)
     eyes(draws, M, [(0.32, 0.22, 0.34)], 0.13, 0.25 if wink else bl)
     eyes(draws, M, [(-0.32, 0.22, 0.34)], 0.13, bl)
@@ -467,12 +509,13 @@ def draw_sun(draws, t):
 def camera(t):
     i, name, u, lt = T.shot_at(t); e = ease(u)
     if name == "hook_sky":                                    # low angle close to Tumble, looking up at the faces (push-in)
-        eye = np.array([0.25, 0.75, lerp(4.4, 3.9, e)] if not WIDE else [0.3, 1.0, lerp(4.9, 4.5, e)])
-        return eye, np.array([0.15, 3.4 if not WIDE else 2.5, -2.5]), (58.0 if not WIDE else 46.0)
+        eye = np.array([0.15, 0.75, lerp(4.4, 3.9, e)] if not WIDE else [0.3, 1.0, lerp(4.9, 4.5, e)])
+        return eye, np.array([-0.15, 3.4 if not WIDE else 2.5, -2.5]), (62.0 if not WIDE else 48.0)   # wider: Wind's cloud stays in frame
     if name == "title_wide":
-        return fit_cam(np.array([0.9, 1.7, -1.0]), -10, 9, 3.4, 2.6 if not WIDE else 2.1, lift=0.05)
+        if not WIDE: return fit_cam(np.array([0.2, 3.3, -3.0]), -4, -16, 3.6, 2.6, lift=-0.28)   # low and wide: the sky faces sit below the title
+        return fit_cam(np.array([0.4, 2.0, -1.0]), -16, 9, 3.4, 2.5, lift=-0.04)              # the post lands right of "Scarf Off!"
     if name == "sky_faces":
-        return fit_cam(lerp(WIND_P, SUN_P, 0.5) + np.array([0, 0.1, 0]), 0, -14, 3.5, 1.5 if not WIDE else 2.3, fov=34, lift=0.0 if not WIDE else 0.1)
+        return fit_cam(lerp(WIND_P, SUN_P, 0.5) + np.array([0 if not WIDE else -0.35, 0.1, 0]), 0, -14, 3.5, 1.5 if not WIDE else 2.45, fov=34, lift=0.0 if not WIDE else 0.1)
     if name == "whistle":                                     # macro on Pip at the post, side-on
         return fit_cam(POST_PIP + np.array([0, 0.25, 0]), lerp(-24, -16, e), 8, 0.45, 0.55 if not WIDE else 0.42, fov=34, lift=0.12)
     if name == "snug":
@@ -480,28 +523,32 @@ def camera(t):
     if name == "wind_puff":
         return fit_cam(WIND_P + np.array([0, 0.05, 0]), lerp(16, 20, e), -3, lerp(1.6, 1.35, e), lerp(1.5, 1.25, e), fov=34, lift=0.0 if not WIDE else 0.26)
     if name == "hold_tight":                                  # low three-quarter on Tumble holding on
-        return fit_cam(np.array([0.45, 1.2, 0.0]), -18, -4, 1.5, 1.35)
+        return fit_cam(np.array([0.6, 1.2, 0.0]), 25, 6, 1.5, 1.35)        # from his right: the streaming scarf end clears Pip's post
     if name == "pip_blown":                                   # insert: Pip is blown from the post onto the flower
-        return fit_cam(np.array([2.15, 1.0, 0.3]), -8, 4, 1.75, 1.6, lift=-0.08 if not WIDE else 0.1)
+        if WIDE: return fit_cam(np.array([1.35, 1.0, 0.3]), -8, 4, 1.75, 1.6, lift=0.1)        # Tumble whole on the left, the flower right
+        return fit_cam(np.array([2.15, 1.0, 0.3]), -8, 4, 1.75, 1.6, lift=-0.08)
     if name == "spin":                                        # high angle wide
-        return fit_cam(np.array([0.6, 0.9, 0.1]), 8, 42, 2.0, 1.7)
+        return fit_cam(np.array([0.6 if WIDE else 1.2, 0.9, 0.1]), 8, 42, 2.0 if WIDE else 1.95, 1.7)   # Pip on the flower stays in frame
     if name == "pip_cling":
         return fit_cam(CLING_P + np.array([0.12 if WIDE else -0.05, 0.1, 0]), lerp(8, 14, e), 8, 0.85, 0.7, fov=34, lift=0.12)
     if name == "wind_tired":
-        return fit_cam(lerp(WIND_P, SUN_P, 0.5) + np.array([0, -0.1, 0]), -4, -4, 3.5, 1.7, fov=34, lift=0.08)
+        return fit_cam(lerp(WIND_P, SUN_P, 0.5) + np.array([-0.45 if not WIDE else -0.95, -0.1, 0]), -4, -4, 3.9, 1.7 if not WIDE else 2.1, fov=34, lift=0.08)   # Wind's whole cloud in frame
     if name == "sun_shine":
         return fit_cam(SUN_P + np.array([-0.1, 0, 0]), lerp(-12, -16, e), -3, lerp(1.8, 1.5, e), lerp(1.8, 1.5, e), fov=34, lift=0.0)
     if name == "scarf_off":
         return fit_cam(np.array([0.35, 1.25, 0.1]), lerp(6, 10, e), 4, 1.4, 1.35)
     if name == "sunbathe":                                    # overhead
-        return fit_cam(np.array([-0.3, 0.6, 0.2]), 12, 30, 2.0, 1.7, lift=0.1)
+        return fit_cam(np.array([-0.3 if WIDE else 0.05, 0.6, 0.2]), 12, 30, 2.0 if WIDE else 2.15, 1.7, lift=0.1)   # [short] Pip on the post stays in frame
     if name == "moral":
-        return fit_cam(np.array([0.3, lerp(1.35, 1.45, e), 0]), lerp(12, 6, e), 5, lerp(1.3, 1.1, e), lerp(1.4, 1.15, e))
+        return fit_cam(np.array([0.3, lerp(1.35, 1.45, e), 0]), lerp(-20, -30, e), 5, lerp(1.3, 1.1, e), lerp(1.4, 1.15, e))
     if name == "chorus":
-        return fit_cam(np.array([0.3, 1.2, 0]), 6, 6, 1.35, 1.35)
-    e = ease(clampu(t, SH["button_crane"][0] + 1.35, SH["button_crane"][1]))   # hold on Tumble and Pip through "Bye-bye!", then crane up to the sky faces
+        return fit_cam(np.array([0.3, 1.2, 0]), -32, 6, 1.35, 1.35)   # from his right: Pip on the paw clears his cheek on screen
+    e = ease(clampu(t, CRANE0, CRANE1))      # hold on Tumble and Pip through "Bye-bye!", crane up to the sky faces, settle and hold
     tgt = lerp(np.array([0.3, 1.25, 0]), lerp(WIND_P, SUN_P, 0.5) + np.array([0, -1.3, 0]), e)
-    return fit_cam(tgt, 2, lerp(4, -6, e), lerp(1.4, 3.6, e), lerp(1.4, 3.2, e), lift=lerp(0.15 if not WIDE else 0.1, 0.02, e))
+    return fit_cam(tgt, 2, lerp(4, -6, e), lerp(1.4, 3.6 if WIDE else 4.1, e), lerp(1.4, 3.4, e), lift=lerp(0.15 if not WIDE else 0.1, 0.02, e))
+CRANE0 = T.SPOKEN[2]["t0"] + 0.85                            # after "Bye-bye!"
+CRANE1 = T.END_HOLD - 0.9                                     # the crane lands just before the still end frame
+WAVE0, WAVE1 = CRANE1 - 0.6, T.END_HOLD - 0.15                 # Wind and Sun wave bye-bye as the camera arrives
 
 # ---------------- draws ----------------
 SKY_SHOTS = ("sky_faces", "wind_puff", "wind_tired", "sun_shine")
@@ -537,17 +584,27 @@ def build_draws(t):
     draw_wind(draws, t); draw_sun(draws, t); draw_wind_streaks(draws, t)
     st = tumble(t); mats = fox_mats(st); R, Mh, arms, legs = mats
     if T.shot_at(t)[1] != "sky_faces":                        # a sky-only shot: Tumble and his scarf are out of frame
+        k0 = len(draws)
         draw_tumble(draws, contacts, t, st, mats)
+        eye_, tgt_, fov_ = camera(t)
+        fwd = apply(Mh, (0, 1.5, 1.0)) - apply(Mh, (0, 1.5, 0.0)); to_cam = eye_ - apply(Mh, (0, 1.5, 0.0))
+        away = float(np.dot(fwd, to_cam / np.linalg.norm(to_cam))) < -0.15   # face turned away (weathervane spin)
+        for k in range(k0, len(draws)):
+            m_, M_, u_, c_ = draws[k]
+            if m_ is FOXP["tail"]: draws[k] = (m_, M_, dict(u_, obj="tail"), c_)        # own QA tag: scarf vs tail is checked
+            if away and (m_ is EYE_W or m_ is EYE_P): draws[k] = None                     # eyes would poke out past the back of the head
+        draws[:] = [d for d in draws if d is not None]
         draw_scarf(draws, t, st, mats)
     pip = pip_state(t, st, mats)
     Mp = draw_pip(draws, contacts, t, pip, arms)
     draw_whistle(draws, t, Mp)
-    puff(draws, hand_pos(arms, 0) + np.array([0.1, 0.3, 0.45]), T.HIGH_FIVE, t, n=12, size=0.09, spread=1.0, dur=0.75, tint=(1.0, 0.88, 0.35), axis=(0, 0, 0.5))   # a bigger star puff, in front of the paw and wing
-    return draws, contacts
+    return draws, contacts                                   # polish pass: the high-five puff is the kit's small one at the wing-paw contact
 
 T.SH_BUTTON = SH["button_crane"][0]
-HOOKS.update(build=build_draws, camera=camera, tumble=tumble, sky=sky,
-             ground_objs=lambda t: ("pip",) if T.shot_at(t)[1] == "sunbathe" else ("fox", "pip"),
-             qa_ignore={("scarf", "fox"), ("fox", "scarf")})          # the scarf is worn round his neck and held in his paw
+def _hold(t): return min(t, T.END_HOLD)                      # the last action settles and holds a still frame under the kit's end fade
+HOOKS.update(build=lambda t: build_draws(_hold(t)), camera=lambda t: camera(_hold(t)), tumble=tumble, sky=lambda t: sky(_hold(t)),
+             ground_objs=lambda t: ("pip",) if T.shot_at(t)[1] == "sunbathe" else ("fox", "tail", "pip"),
+             qa_ignore={("scarf", "fox"), ("fox", "scarf"),          # the scarf is worn round his neck and held in his paw
+                        ("tail", "fox"), ("fox", "tail")})           # the tail is part of Tumble (tagged apart only to check the scarf against it)
 if __name__ == "__main__":
     main()

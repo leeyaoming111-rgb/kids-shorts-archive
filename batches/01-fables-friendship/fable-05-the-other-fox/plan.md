@@ -5,7 +5,7 @@
 - **series:** Tumble & Pip (Fables About Friendship). Batch plan: [../plan.md](../plan.md)
 - **source:** Aesop's fable *The Dog and His Reflection* (public domain), retold with our cast, gags and song
 - **lesson (SEL):** be happy with what you have, and share it
-- **length:** 48.0 s (20 bars at 100 BPM). Episode cut: 41.2 s (drops the sting and the button)
+- **length:** 50.4 s after the polish pass (one continuous ElevenLabs take; the button is 2 bars). Was 48.0 s (20 bars at 100 BPM). Episode cut: 41.2 s (drops the sting and the button)
 - **aspects:** 9:16 Short (`render.py`) and 16:9 episode framing (`render.py --wide`), same scene and timing
 
 ## Prompt
@@ -63,7 +63,7 @@ Syllable budget: every sung line is 6 to 8 syllables in a 3.6 s or longer sectio
 | 4 | 10.8-15.6 | water close-up, tilt down | the reflection's apple, Tumble's real paw and apple at the top of frame; on "BIGGER" the water apple swells with a sparkle |
 | 5 | 15.6-~17.6 | close front, slight high angle | Tumble pulls a silly face at the water: paws at his ears waggling, tongue out, head wobble |
 | 6 | ~17.6-20.4 | low wide, along the stream | both foxes pull the same face at the same time ("He copies me!"), then "Blehhh!" |
-| 7 | 20.4-~23.6 | side-on medium from the near bank | "I want THAT one!" he leans and reaches down with both paws; on "Oh no" the apple slips; on "SPLASH" it hits the water with a splash |
+| 7 | ~20.8-~24.5 | high three-quarter from downstream (polish pass) | "I want THAT one!" he turns a little towards the near-bank water, goes up on his toes, leans out over the stream and reaches down with both paws (apple held out low); on "Oh no" the apple slips; on "SPLASH" it hits the water just below him; he turns back to watch it float away |
 | 8 | ~23.6-27.6 | low along the stream, wider | ripple rings spread, the reflection wobbles ("Whoa, wobbly!"), the apple bobs away towards the camera and out of frame; Tumble droops |
 | 9 | 27.6-31.2 | macro, side-on | Pip hops over with the berry, puts it in Tumble's open paw ("Here's my berry"), pecks it in two on "half" (puff) |
 | 10 | 31.2-34.8 | medium two-shot | Tumble laughs, eats his half ("Your berry is the best!"), Pip gulps the other half |

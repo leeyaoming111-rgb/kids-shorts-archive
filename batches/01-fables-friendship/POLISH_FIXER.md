@@ -15,7 +15,11 @@ Paths: B = `/tmp/claude-0/-home-claude/80866f71-e121-5bdb-af5b-e747e72471cc/scra
 Your fable folder is `B/fable-NN-slug/`; its code is in `code/`. Read `B/FABLE_WORKER.md` (how the fables are built,
 lessons from earlier reviews) and your fable's `plan.md` and `review.md` first.
 
-## UPDATE 2026-10-20 12:05: ElevenLabs quota exhausted
+## UPDATE 2026-11-13: ElevenLabs credits are back. Re-voice your spoken lines with `el_voice2.py` (stability 0.5, anchor-matched) and run `el_mix2.py` WITH speech-to-text. Subagents cannot spawn reviewers here: message the coordinator a reviewer brief.
+
+## (superseded) UPDATE 2026-10-21 00:20: ElevenLabs credits are available again
+
+## (superseded) UPDATE 2026-10-20 12:05: ElevenLabs quota exhausted
 
 Do NOT call `el_voice2.py` or any ElevenLabs API until the coordinator says so. Keep the spoken clips already in
 `audio/fable-NN/`, re-time `SPOKEN` so no line overlaps sung words or runs past the end, and mix with

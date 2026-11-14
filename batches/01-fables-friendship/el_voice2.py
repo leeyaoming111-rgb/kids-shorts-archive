@@ -84,15 +84,47 @@ def trim(x, thr_db=-45):
     a, b = max(0, idx[0] - int(0.04 * SR)), min(len(x), idx[-1] + int(0.08 * SR))
     return x[a:b]
 
+def align(path, text):
+    for attempt in range(6):
+        r = requests.post(f"{API}/forced-alignment", headers=key(), data={"text": text}, files={"file": open(path, "rb")}, timeout=300)
+        if r.status_code == 200:
+            return [(w["start"], w["end"]) for w in r.json().get("words", []) if w["text"].strip()]
+        if r.status_code == 429: import time; time.sleep(5 + 5 * attempt); continue
+        return []
+    return []
+
+def word_sync(x, src_words, dst_words, n):
+    """re-time a clip word by word so each word starts and ends where the lead voice's word does (unison lines)"""
+    import librosa
+    m = x.mean(1); out = np.zeros(n + SR, np.float32)
+    for k, ((a, b), (c, d)) in enumerate(zip(src_words, dst_words)):
+        a1 = src_words[k + 1][0] if k + 1 < len(src_words) else min(len(m) / SR, b + 0.25)
+        c1 = dst_words[k + 1][0] if k + 1 < len(dst_words) else min(n / SR, d + 0.25)
+        seg = m[int(a * SR):int(a1 * SR)]
+        if len(seg) < 256: continue
+        rate = max(0.6, min(1.7, (a1 - a) / max(c1 - c, 0.05)))
+        y = librosa.effects.time_stretch(seg, rate=rate)
+        f = min(len(y), int(0.01 * SR)); y[:f] *= np.linspace(0, 1, f); y[-f:] *= np.linspace(1, 0, f)
+        i = int(c * SR); out[i:i + len(y)] += y[:len(out) - i]
+    out = out[:max(n, len(m))]
+    return np.stack([out, out], 1)
+
 def say(who, text, out):
     """one line -> out (trimmed); returns its info"""
     whos = ["tumble", "pip"] if who == "both" else [who]
-    parts, info = [], []
+    parts, info, words = [], [], []
+    plain = re.sub(r"\[[^\]]*\]", "", text).strip()
     for w in whos:
         tmp = out.replace(".mp3", f"_{w}.mp3"); best, takes = best_take(w, text, tmp)
-        parts.append(trim(load(tmp))); os.remove(tmp)
+        x = trim(load(tmp)); parts.append(x)
+        if who == "both" and len(plain.split()) > 1:
+            sf.write(tmp[:-4] + "_t.wav", x, SR); words.append(align(tmp[:-4] + "_t.wav", plain)); os.remove(tmp[:-4] + "_t.wav")
+        os.remove(tmp)
         info.append(dict(voice=w, voice_id=VOICES[w]["voice_id"], seed=best["seed"], sim=best["sim"],
                          takes=[{k: t[k] for k in ("seed", "sim", "range_st")} for t in takes]))
+    if len(words) == 2 and len(words[0]) == len(words[1]) and words[0]:
+        parts[1] = word_sync(parts[1], words[1], words[0], len(parts[0]))   # Pip says every word with Tumble
+        info.append(dict(word_sync=True))
     L = max(len(p) for p in parts); line = np.zeros((L, 2), np.float32)
     for p in parts: line[:len(p)] += p / len(parts) ** 0.5
     wav = out[:-4] + ".wav"; sf.write(wav, line, SR)
