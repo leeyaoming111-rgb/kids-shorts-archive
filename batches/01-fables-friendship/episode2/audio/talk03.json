@@ -1,0 +1,676 @@
+{
+ "scene": "talk03",
+ "mode": "talk",
+ "fable": 3,
+ "page_from": null,
+ "page_to": null,
+ "closed_book": false,
+ "night": false,
+ "duration": 57.873,
+ "lines": [
+  {
+   "who": "pip",
+   "line": "Plop, plop, plop! The water came up, and up, and up!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Plop,",
+     "t0": 0.72,
+     "t1": 1.04
+    },
+    {
+     "w": "plop,",
+     "t0": 1.22,
+     "t1": 1.52
+    },
+    {
+     "w": "plop!",
+     "t0": 1.64,
+     "t1": 2.06
+    },
+    {
+     "w": "The",
+     "t0": 2.56,
+     "t1": 2.68
+    },
+    {
+     "w": "water",
+     "t0": 2.8,
+     "t1": 3.14
+    },
+    {
+     "w": "came",
+     "t0": 3.28,
+     "t1": 3.48
+    },
+    {
+     "w": "up,",
+     "t0": 3.74,
+     "t1": 3.92
+    },
+    {
+     "w": "and",
+     "t0": 4.3,
+     "t1": 4.5
+    },
+    {
+     "w": "up,",
+     "t0": 4.78,
+     "t1": 5.0
+    },
+    {
+     "w": "and",
+     "t0": 5.34,
+     "t1": 5.54
+    },
+    {
+     "w": "up!",
+     "t0": 5.82,
+     "t1": 6.22
+    }
+   ],
+   "t0": 0.6,
+   "t1": 6.28,
+   "tg": null,
+   "pg": "flutter",
+   "look": "cam",
+   "clip": "pip_144da9421a39.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "You dropped in pebbles! How many pebbles, Pip?",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "You",
+     "t0": 6.88,
+     "t1": 6.96
+    },
+    {
+     "w": "dropped",
+     "t0": 7.08,
+     "t1": 7.48
+    },
+    {
+     "w": "in",
+     "t0": 7.54,
+     "t1": 7.66
+    },
+    {
+     "w": "pebbles!",
+     "t0": 7.8,
+     "t1": 8.4
+    },
+    {
+     "w": "How",
+     "t0": 8.96,
+     "t1": 9.08
+    },
+    {
+     "w": "many",
+     "t0": 9.14,
+     "t1": 9.34
+    },
+    {
+     "w": "pebbles,",
+     "t0": 9.46,
+     "t1": 9.8
+    },
+    {
+     "w": "Pip?",
+     "t0": 9.94,
+     "t1": 10.24
+    }
+   ],
+   "t0": 6.78,
+   "t1": 10.288,
+   "tg": "think",
+   "pg": null,
+   "look": "other",
+   "clip": "tumble_698611a5d0d3.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Let's count them together. Ready?",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Let's",
+     "t0": 11.158,
+     "t1": 11.378
+    },
+    {
+     "w": "count",
+     "t0": 11.438,
+     "t1": 11.618
+    },
+    {
+     "w": "them",
+     "t0": 11.638,
+     "t1": 11.798
+    },
+    {
+     "w": "together.",
+     "t0": 11.818,
+     "t1": 12.278
+    },
+    {
+     "w": "Ready?",
+     "t0": 12.638,
+     "t1": 12.918
+    }
+   ],
+   "t0": 11.038,
+   "t1": 12.978,
+   "tg": null,
+   "pg": "hop",
+   "look": "cam",
+   "clip": "pip_5b97cb5b1041.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "One!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "One!",
+     "t0": 13.708,
+     "t1": 14.088
+    }
+   ],
+   "t0": 13.548,
+   "t1": 14.611,
+   "tg": null,
+   "pg": "hop",
+   "look": "cam",
+   "clip": "pip_a17a39a97398.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Two!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Two!",
+     "t0": 15.191,
+     "t1": 15.531
+    }
+   ],
+   "t0": 15.111,
+   "t1": 15.783,
+   "tg": "count",
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_156671b16eed.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Three!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Three!",
+     "t0": 16.743,
+     "t1": 17.183
+    }
+   ],
+   "t0": 16.283,
+   "t1": 17.643,
+   "tg": null,
+   "pg": "hop",
+   "look": "cam",
+   "clip": "pip_b0c3a94949cd.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Four!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Four!",
+     "t0": 18.343,
+     "t1": 18.703
+    }
+   ],
+   "t0": 18.143,
+   "t1": 18.783,
+   "tg": "count",
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_cbaa8b512fd7.mp3"
+  },
+  {
+   "who": "both",
+   "line": "Five!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Five!",
+     "t0": 19.403,
+     "t1": 20.083
+    }
+   ],
+   "t0": 19.283,
+   "t1": 20.405,
+   "tg": "excited",
+   "pg": "cheer",
+   "look": "cam",
+   "clip": "both_07d830743dfb.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Five pebbles! Great counting, friends!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Five",
+     "t0": 21.065,
+     "t1": 21.525
+    },
+    {
+     "w": "pebbles!",
+     "t0": 21.605,
+     "t1": 22.225
+    },
+    {
+     "w": "Great",
+     "t0": 22.665,
+     "t1": 23.025
+    },
+    {
+     "w": "counting,",
+     "t0": 23.145,
+     "t1": 23.505
+    },
+    {
+     "w": "friends!",
+     "t0": 23.605,
+     "t1": 24.005
+    }
+   ],
+   "t0": 20.905,
+   "t1": 24.068,
+   "tg": "clap",
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_7051acd872e2.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "My paw got stuck, but Pip had a better idea.",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "My",
+     "t0": 25.368,
+     "t1": 25.488
+    },
+    {
+     "w": "paw",
+     "t0": 25.608,
+     "t1": 25.788
+    },
+    {
+     "w": "got",
+     "t0": 25.888,
+     "t1": 26.068
+    },
+    {
+     "w": "stuck,",
+     "t0": 26.208,
+     "t1": 26.528
+    },
+    {
+     "w": "but",
+     "t0": 26.828,
+     "t1": 27.068
+    },
+    {
+     "w": "Pip",
+     "t0": 27.128,
+     "t1": 27.408
+    },
+    {
+     "w": "had",
+     "t0": 27.548,
+     "t1": 27.688
+    },
+    {
+     "w": "a",
+     "t0": 27.728,
+     "t1": 27.828
+    },
+    {
+     "w": "better",
+     "t0": 27.868,
+     "t1": 28.148
+    },
+    {
+     "w": "idea.",
+     "t0": 28.228,
+     "t1": 28.668
+    }
+   ],
+   "t0": 24.388,
+   "t1": 28.706,
+   "tg": "shrug",
+   "pg": null,
+   "look": "other",
+   "clip": "tumble_fbca3ae337fd.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "When something is tricky, think it through...",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "When",
+     "t0": 29.326,
+     "t1": 29.466
+    },
+    {
+     "w": "something",
+     "t0": 29.686,
+     "t1": 30.066
+    },
+    {
+     "w": "is",
+     "t0": 30.126,
+     "t1": 30.286
+    },
+    {
+     "w": "tricky,",
+     "t0": 30.366,
+     "t1": 30.746
+    },
+    {
+     "w": "think",
+     "t0": 31.206,
+     "t1": 31.386
+    },
+    {
+     "w": "it",
+     "t0": 31.446,
+     "t1": 31.566
+    },
+    {
+     "w": "through...",
+     "t0": 31.586,
+     "t1": 32.006
+    }
+   ],
+   "t0": 29.206,
+   "t1": 32.048,
+   "tg": null,
+   "pg": "tilt",
+   "look": "cam",
+   "clip": "pip_bd41bbb7d308.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "...and try something new!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "...and",
+     "t0": 32.628,
+     "t1": 32.788
+    },
+    {
+     "w": "try",
+     "t0": 32.928,
+     "t1": 33.308
+    },
+    {
+     "w": "something",
+     "t0": 33.468,
+     "t1": 33.888
+    },
+    {
+     "w": "new!",
+     "t0": 34.008,
+     "t1": 34.388
+    }
+   ],
+   "t0": 32.548,
+   "t1": 34.868,
+   "tg": "nod",
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_cdd76b969156.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Look at the jug. Is the water high, or low?",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Look",
+     "t0": 35.488,
+     "t1": 35.648
+    },
+    {
+     "w": "at",
+     "t0": 35.688,
+     "t1": 35.808
+    },
+    {
+     "w": "the",
+     "t0": 35.848,
+     "t1": 35.948
+    },
+    {
+     "w": "jug.",
+     "t0": 36.088,
+     "t1": 36.488
+    },
+    {
+     "w": "Is",
+     "t0": 36.988,
+     "t1": 37.108
+    },
+    {
+     "w": "the",
+     "t0": 37.168,
+     "t1": 37.288
+    },
+    {
+     "w": "water",
+     "t0": 37.328,
+     "t1": 37.648
+    },
+    {
+     "w": "high,",
+     "t0": 37.788,
+     "t1": 38.108
+    },
+    {
+     "w": "or",
+     "t0": 38.448,
+     "t1": 38.548
+    },
+    {
+     "w": "low?",
+     "t0": 38.668,
+     "t1": 38.968
+    }
+   ],
+   "t0": 35.188,
+   "t1": 39.028,
+   "tg": null,
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_7bee2b7e1bc9.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "It's coming up high! Plop!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "It's",
+     "t0": 42.068,
+     "t1": 42.308
+    },
+    {
+     "w": "coming",
+     "t0": 42.348,
+     "t1": 42.628
+    },
+    {
+     "w": "up",
+     "t0": 42.688,
+     "t1": 42.808
+    },
+    {
+     "w": "high!",
+     "t0": 42.848,
+     "t1": 43.268
+    },
+    {
+     "w": "Plop!",
+     "t0": 43.888,
+     "t1": 44.208
+    }
+   ],
+   "t0": 41.928,
+   "t1": 44.323,
+   "tg": null,
+   "pg": null,
+   "look": "other",
+   "clip": "pip_ae3875a43901.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Let's do a big drink. Glug, glug, glug... ahh!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Let's",
+     "t0": 44.943,
+     "t1": 45.283
+    },
+    {
+     "w": "do",
+     "t0": 45.343,
+     "t1": 45.543
+    },
+    {
+     "w": "a",
+     "t0": 45.643,
+     "t1": 45.743
+    },
+    {
+     "w": "big",
+     "t0": 45.943,
+     "t1": 46.523
+    },
+    {
+     "w": "drink.",
+     "t0": 46.643,
+     "t1": 47.083
+    },
+    {
+     "w": "Glug,",
+     "t0": 47.423,
+     "t1": 47.683
+    },
+    {
+     "w": "glug,",
+     "t0": 47.863,
+     "t1": 48.123
+    },
+    {
+     "w": "glug...",
+     "t0": 48.263,
+     "t1": 48.603
+    },
+    {
+     "w": "ahh!",
+     "t0": 49.203,
+     "t1": 49.543
+    }
+   ],
+   "t0": 44.823,
+   "t1": 50.023,
+   "tg": "hug",
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_8b0fe6468a90.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Mmm! Lovely and cool!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Mmm!",
+     "t0": 53.613,
+     "t1": 54.333
+    },
+    {
+     "w": "Lovely",
+     "t0": 54.773,
+     "t1": 55.293
+    },
+    {
+     "w": "and",
+     "t0": 55.333,
+     "t1": 55.473
+    },
+    {
+     "w": "cool!",
+     "t0": 55.633,
+     "t1": 56.253
+    }
+   ],
+   "t0": 52.673,
+   "t1": 56.673,
+   "tg": null,
+   "pg": "cheer",
+   "look": "cam",
+   "clip": "pip_20ec778af7b3.mp3"
+  }
+ ],
+ "pauses": [
+  {
+   "t0": 39.528,
+   "t1": 41.928,
+   "tg": null,
+   "pg": null,
+   "who": "tumble"
+  },
+  {
+   "t0": 50.273,
+   "t1": 52.673,
+   "tg": "nod",
+   "pg": "hop",
+   "who": "tumble"
+  }
+ ],
+ "acts": [],
+ "pages": [
+  {
+   "t0": 34.838,
+   "t1": 44.773,
+   "fable": 3,
+   "still": 30.0
+  }
+ ]
+}

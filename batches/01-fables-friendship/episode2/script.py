@@ -47,7 +47,16 @@ SCENES["intro"] = dict(mode="read", closed_book=True, beats=[
     L("T", "Welcome to the Story Stump. Our book has ten stories, all about friends.", "[warm]", tg="tiny", look="cam"),
     L("P", "Ten! That's lots and lots!", "[excited]", pg="hop", look="other"),
     L("T", "Let's count to ten on our fingers. Ready?", "[playful]", tg="count", look="cam"),
-    L("B", "One, two, three, four, five, six, seven, eight, nine, ten!", "[cheerful] [slowly]", tg="count", pg="hop", look="cam"),
+    L("T", "One!", "[cheerful]", tg="count", look="cam"),
+    L("P", "Two!", "[cheerful]", pg="hop", look="cam"),
+    L("T", "Three!", "[cheerful]", tg="count", look="cam"),
+    L("P", "Four!", "[cheerful]", pg="hop", look="cam"),
+    L("T", "Five!", "[cheerful]", tg="count", look="cam"),
+    L("P", "Six!", "[cheerful]", pg="hop", look="cam"),
+    L("T", "Seven!", "[cheerful]", tg="count", look="cam"),
+    L("P", "Eight!", "[cheerful]", pg="hop", look="cam"),
+    L("T", "Nine!", "[cheerful]", tg="count", look="cam"),
+    L("B", "Ten!", "[cheerful] [shouting]", tg="excited", pg="cheer", look="cam"),
     L("P", "Great counting! Open the book, Tumble!", "[excited]", pg="flutter", look="other"),
     act("open_book", 1.6),
     L("T", "Story number one. A big kite, and a tiny helper.", "[storyteller voice] [warm]", tg="rest", look="book"),
@@ -343,6 +352,33 @@ SCENES["outro"] = dict(mode="read", page_from=8, page_to="end", night=True, beat
     pause(3.0, None, "sleepy"),
 ])
 
+# ------------------------------------------------------------------ v2.1: recall the last moral before each page turn
+def recall(n, k):
+    """two short ways of asking, alternating who asks; the other answers with the moral after a real pause"""
+    m = MORALS[n]
+    if k % 2 == 0:
+        return [L("T", "Before we turn the page... what did we learn in that story?", "[curious]", tg="think", look="cam"),
+                pause(2.2, "nod", "tilt"),
+                L("P", m, "[cheerful]", pg="cheer", look="cam"),
+                L("T", "That's right! Clever friends.", "[warm]", tg="clap", look="cam")]
+    return [L("P", "Wait, Tumble! Can our friends remember what we learned?", "[excited]", pg="hop", look="cam"),
+            pause(2.2, "nod", "tilt"),
+            L("T", m, "[warm]", tg="nod", look="cam"),
+            L("P", "Yay! You remembered!", "[delighted]", pg="flutter", look="cam")]
+for k, (nm, prev) in enumerate([("read02", 1), ("read03", 2), ("read04", 3), ("read05", 4), ("read06", 5), ("read07", 6),
+                                 ("read08", 10), ("read09", 9), ("read10", 7)]):
+    SCENES[nm]["beats"] = recall(prev, k) + SCENES[nm]["beats"]
+# ------------------------------------------------------------------ v2.1: a second dance break before the last two stories
+SCENES["break2"] = dict(mode="dance", beats=[
+    L("P", "Tumble, my wings are all wiggly again!", "[giggles]", pg="flutter", look="other"),
+    L("T", "Mine too! Time for another dance break!", "[excited]", tg="excited", look="cam"),
+    L("P", "Everybody, up, up, up!", "[excited] [shouting]", pg="cheer", look="cam"),
+    act("dance", 0.0),
+    L("T", "Wow! Super dancing, everybody!", "[out of breath] [laughs]", tg="clap", look="cam"),
+    L("P", "Now let's sit down for our last stories.", "[warm]", pg="wave", look="cam"),
+    pause(2.0, "nod", "sleepy"),
+])
+
 ORDER = ["intro", 1, "talk01", "read02", 2, "talk02", "read03", 3, "talk03", "read04", 4, "talk04", "read05", 5, "talk05",
-         "break", "read06", 6, "talk06", "read07", 10, "talk10", "read08", 9, "talk09", "read09", 7, "talk07", "read10", 8,
+         "break", "read06", 6, "talk06", "read07", 10, "talk10", "read08", 9, "talk09", "break2", "read09", 7, "talk07", "read10", 8,
          "talk08", "outro"]

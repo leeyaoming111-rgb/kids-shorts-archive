@@ -94,10 +94,11 @@ TUGS = _tug_w if _tug_w else [_tw[0] + 1.3, _tw[0] + 1.9, _tw[0] + 2.5]
 _comes = (word_times("comes", "Twist") or [_tw[0] + 5.0])[0]
 RELEASE = _comes - 0.2                       # the apple comes free as "here it comes" lands
 TW_SPLIT = RELEASE - 0.1                     # tug close-up, then the catch (the fall happens in the catch shot)
-READY_SPLIT = TUGS[0] - 1.2                  # Tumble waits on the stump while Pip flies up, then the tug close-up
+READY_SPLIT = TUGS[0] - 0.9                  # Tumble waits on the stump while Pip flies up, then the tug close-up
+CLIMB_END = max(PB_SPLIT + 2.2, min(_tw[0], READY_SPLIT - 1.8))   # the ready shot is at least 1.8 s even when "tug" comes early
 SHOTS = [(0.0, _h[1], "hook_reach"), (_s[0], _s[1], "title_wide"), (_sa[0], _sa[1], "jumps"),
          (_sb[0], BIG_SPLIT, "big_jump"), (BIG_SPLIT, _sb[1], "leaf_pile"), (_pa[0], _pa[1], "sour_face"),
-         (_pb[0], PB_SPLIT, "pip_idea"), (PB_SPLIT, _tw[0], "climb"), (_tw[0], READY_SPLIT, "ready"), (READY_SPLIT, TW_SPLIT, "tug"),
+         (_pb[0], PB_SPLIT, "pip_idea"), (PB_SPLIT, CLIMB_END, "climb"), (CLIMB_END, READY_SPLIT, "ready"), (READY_SPLIT, TW_SPLIT, "tug"),
          (TW_SPLIT, _tw[1], "catch"), (_m[0], _m[1], "moral"), (_c[0], _c[1], "chorus"), (_bt[0], DURATION + 0.1, "button_crane")]
 def shot_at(t):
     for i, (a, b, n) in enumerate(SHOTS):
@@ -107,10 +108,17 @@ def shot_at(t):
 # story events from word times
 JUMPS = word_times("jump", "Setup A")[:3]
 LAND = BIG_SPLIT + 0.2                        # lands head-first in the leaf pile just after the cut
-POP_OUT = _pa[0] + 0.2
+_whoa = [w for L in LINES if L["section"] == "Setup B" for w in L["words"] if w["w"].lower().startswith("whoa")]
+OOF = (_whoa[0]["t1"] + 0.08) if _whoa else LAND + 0.15   # muffled "Oof!" from inside the pile, after the sung "whoa!"
+POP_OUT = _pa[0] - 0.75   # pops out of the pile at the end of the leaf-pile shot (start of the pop)
 CATCH = RELEASE + 0.55
 GAG_SWEET = _c[1] - 1.6                       # after the chorus lyric ends: the first crunchy bite ("Mmm, SWEET!")
 HIGH_FIVE = (line("Chorus") and [L for L in LINES if L["section"] == "Chorus"][-1]["t1"] - 0.25) or (_c[1] - 0.9)
-SPOKEN = [dict(file="s00_tumble", who="tumble", t0=LAND + 0.15, caption="Oof!", tags="[muffled] [surprised]"),
+SPOKEN = [dict(file="s00_tumble", who="tumble", t0=OOF, caption="Oof!", tags="[muffled] [surprised]"),
           dict(file="s01_tumble", who="tumble", t0=GAG_SWEET, caption="Mmm, SWEET!", tags="[delighted]"),
-          dict(file="s02_both", who="both", t0=_bt[0] + 0.7, caption="Bye-bye!", tags="[cheerful]")]
+          dict(file="s02_both", who="both", t0=_bt[0] + 2.1, caption="Bye-bye!", tags="[cheerful]")]
+_sp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "audio", "fable-02", "spoken.json")
+if os.path.exists(_sp):                       # real clip lengths (captions stay up while the line is spoken)
+    _d = {x["file"].replace(".mp3", ""): x.get("dur") for x in json.load(open(_sp)).get("spoken", [])}
+    for _s in SPOKEN:
+        if _d.get(_s["file"]): _s["dur"] = _d[_s["file"]]

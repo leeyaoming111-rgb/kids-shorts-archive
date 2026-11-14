@@ -1,0 +1,384 @@
+{
+ "scene": "read07",
+ "mode": "read",
+ "fable": null,
+ "page_from": 6,
+ "page_to": 10,
+ "closed_book": false,
+ "night": false,
+ "duration": 30.877,
+ "lines": [
+  {
+   "who": "pip",
+   "line": "Wait, Tumble! Can our friends remember what we learned?",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Wait,",
+     "t0": 0.76,
+     "t1": 0.98
+    },
+    {
+     "w": "Tumble!",
+     "t0": 1.1,
+     "t1": 1.5
+    },
+    {
+     "w": "Can",
+     "t0": 1.9,
+     "t1": 2.08
+    },
+    {
+     "w": "our",
+     "t0": 2.14,
+     "t1": 2.28
+    },
+    {
+     "w": "friends",
+     "t0": 2.4,
+     "t1": 2.68
+    },
+    {
+     "w": "remember",
+     "t0": 2.72,
+     "t1": 3.14
+    },
+    {
+     "w": "what",
+     "t0": 3.24,
+     "t1": 3.34
+    },
+    {
+     "w": "we",
+     "t0": 3.44,
+     "t1": 3.58
+    },
+    {
+     "w": "learned?",
+     "t0": 3.64,
+     "t1": 4.06
+    }
+   ],
+   "t0": 0.6,
+   "t1": 4.162,
+   "tg": null,
+   "pg": "hop",
+   "look": "cam",
+   "clip": "pip_d8e732d6cbdf.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Help a little every day!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Help",
+     "t0": 6.942,
+     "t1": 7.182
+    },
+    {
+     "w": "a",
+     "t0": 7.262,
+     "t1": 7.322
+    },
+    {
+     "w": "little",
+     "t0": 7.382,
+     "t1": 7.662
+    },
+    {
+     "w": "every",
+     "t0": 7.982,
+     "t1": 8.242
+    },
+    {
+     "w": "day!",
+     "t0": 8.362,
+     "t1": 8.742
+    }
+   ],
+   "t0": 6.862,
+   "t1": 9.244,
+   "tg": "nod",
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_bb77e0b022ce.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Yay! You remembered!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Yay!",
+     "t0": 9.944,
+     "t1": 10.404
+    },
+    {
+     "w": "You",
+     "t0": 10.704,
+     "t1": 10.784
+    },
+    {
+     "w": "remembered!",
+     "t0": 10.864,
+     "t1": 11.684
+    }
+   ],
+   "t0": 9.744,
+   "t1": 12.107,
+   "tg": null,
+   "pg": "flutter",
+   "look": "cam",
+   "clip": "pip_a79aa238cd72.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Story number seven. One Good Turn.",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Story",
+     "t0": 13.837,
+     "t1": 14.197
+    },
+    {
+     "w": "number",
+     "t0": 14.337,
+     "t1": 14.617
+    },
+    {
+     "w": "seven.",
+     "t0": 14.817,
+     "t1": 15.217
+    },
+    {
+     "w": "One",
+     "t0": 15.817,
+     "t1": 16.097
+    },
+    {
+     "w": "Good",
+     "t0": 16.257,
+     "t1": 16.497
+    },
+    {
+     "w": "Turn.",
+     "t0": 16.617,
+     "t1": 17.017
+    }
+   ],
+   "t0": 13.657,
+   "t1": 17.097,
+   "tg": null,
+   "pg": null,
+   "look": "book",
+   "clip": "tumble_4bce3b1b4046.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Oh no! It starts with a little ant, spinning in the water!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Oh",
+     "t0": 17.677,
+     "t1": 17.777
+    },
+    {
+     "w": "no!",
+     "t0": 17.917,
+     "t1": 18.177
+    },
+    {
+     "w": "It",
+     "t0": 18.637,
+     "t1": 18.757
+    },
+    {
+     "w": "starts",
+     "t0": 18.857,
+     "t1": 19.137
+    },
+    {
+     "w": "with",
+     "t0": 19.177,
+     "t1": 19.257
+    },
+    {
+     "w": "a",
+     "t0": 19.317,
+     "t1": 19.357
+    },
+    {
+     "w": "little",
+     "t0": 19.417,
+     "t1": 19.657
+    },
+    {
+     "w": "ant,",
+     "t0": 19.757,
+     "t1": 20.017
+    },
+    {
+     "w": "spinning",
+     "t0": 20.357,
+     "t1": 20.617
+    },
+    {
+     "w": "in",
+     "t0": 20.637,
+     "t1": 20.717
+    },
+    {
+     "w": "the",
+     "t0": 20.757,
+     "t1": 20.797
+    },
+    {
+     "w": "water!",
+     "t0": 20.877,
+     "t1": 21.257
+    }
+   ],
+   "t0": 17.597,
+   "t1": 21.316,
+   "tg": null,
+   "pg": "droop",
+   "look": "other",
+   "clip": "pip_1ab100e21144.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Who can help the little ant? What do you think?",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Who",
+     "t0": 21.896,
+     "t1": 22.036
+    },
+    {
+     "w": "can",
+     "t0": 22.176,
+     "t1": 22.396
+    },
+    {
+     "w": "help",
+     "t0": 22.476,
+     "t1": 22.816
+    },
+    {
+     "w": "the",
+     "t0": 22.856,
+     "t1": 22.976
+    },
+    {
+     "w": "little",
+     "t0": 23.036,
+     "t1": 23.296
+    },
+    {
+     "w": "ant?",
+     "t0": 23.416,
+     "t1": 23.696
+    },
+    {
+     "w": "What",
+     "t0": 24.236,
+     "t1": 24.316
+    },
+    {
+     "w": "do",
+     "t0": 24.356,
+     "t1": 24.396
+    },
+    {
+     "w": "you",
+     "t0": 24.436,
+     "t1": 24.556
+    },
+    {
+     "w": "think?",
+     "t0": 24.596,
+     "t1": 24.896
+    }
+   ],
+   "t0": 21.816,
+   "t1": 24.969,
+   "tg": null,
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_6428d23c7459.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Me! I've got an idea!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Me!",
+     "t0": 27.989,
+     "t1": 28.289
+    },
+    {
+     "w": "I've",
+     "t0": 28.649,
+     "t1": 28.849
+    },
+    {
+     "w": "got",
+     "t0": 28.869,
+     "t1": 29.009
+    },
+    {
+     "w": "an",
+     "t0": 29.049,
+     "t1": 29.109
+    },
+    {
+     "w": "idea!",
+     "t0": 29.189,
+     "t1": 29.609
+    }
+   ],
+   "t0": 27.869,
+   "t1": 29.977,
+   "tg": null,
+   "pg": "cheer",
+   "look": "cam",
+   "clip": "pip_acb57afdad29.mp3"
+  }
+ ],
+ "pauses": [
+  {
+   "t0": 4.662,
+   "t1": 6.862,
+   "tg": "nod",
+   "pg": "tilt",
+   "who": "pip"
+  },
+  {
+   "t0": 25.469,
+   "t1": 27.869,
+   "tg": null,
+   "pg": "tilt",
+   "who": "tumble"
+  }
+ ],
+ "acts": [
+  {
+   "name": "turn_page",
+   "t0": 12.357,
+   "t1": 13.657
+  }
+ ],
+ "pages": []
+}

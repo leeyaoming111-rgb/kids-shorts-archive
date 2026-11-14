@@ -1,0 +1,624 @@
+{
+ "scene": "break",
+ "mode": "dance",
+ "fable": null,
+ "page_from": null,
+ "page_to": null,
+ "closed_book": false,
+ "night": false,
+ "duration": 64.997,
+ "lines": [
+  {
+   "who": "tumble",
+   "line": "Stretch up high, and touch the sky!",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 8.06,
+   "t1": 10.22,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "Stretch",
+     "t0": 8.06,
+     "t1": 8.4
+    },
+    {
+     "w": "up",
+     "t0": 8.48,
+     "t1": 8.66
+    },
+    {
+     "w": "high,",
+     "t0": 8.7,
+     "t1": 9.0
+    },
+    {
+     "w": "and",
+     "t0": 9.06,
+     "t1": 9.18
+    },
+    {
+     "w": "touch",
+     "t0": 9.3,
+     "t1": 9.56
+    },
+    {
+     "w": "the",
+     "t0": 9.64,
+     "t1": 9.74
+    },
+    {
+     "w": "sky!",
+     "t0": 9.82,
+     "t1": 10.22
+    }
+   ]
+  },
+  {
+   "who": "tumble",
+   "line": "Wiggle, wiggle, wiggle, my, oh my!",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 10.54,
+   "t1": 12.78,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "Wiggle,",
+     "t0": 10.54,
+     "t1": 10.76
+    },
+    {
+     "w": "wiggle,",
+     "t0": 10.82,
+     "t1": 11.08
+    },
+    {
+     "w": "wiggle,",
+     "t0": 11.14,
+     "t1": 11.58
+    },
+    {
+     "w": "my,",
+     "t0": 11.72,
+     "t1": 12.0
+    },
+    {
+     "w": "oh",
+     "t0": 12.08,
+     "t1": 12.2
+    },
+    {
+     "w": "my!",
+     "t0": 12.34,
+     "t1": 12.78
+    }
+   ]
+  },
+  {
+   "who": "pip",
+   "line": "Flap your arms like a little bird!",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 17.66,
+   "t1": 19.94,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "Flap",
+     "t0": 17.66,
+     "t1": 18.0
+    },
+    {
+     "w": "your",
+     "t0": 18.08,
+     "t1": 18.32
+    },
+    {
+     "w": "arms",
+     "t0": 18.36,
+     "t1": 18.6
+    },
+    {
+     "w": "like",
+     "t0": 18.64,
+     "t1": 18.78
+    },
+    {
+     "w": "a",
+     "t0": 18.84,
+     "t1": 18.88
+    },
+    {
+     "w": "little",
+     "t0": 18.94,
+     "t1": 19.38
+    },
+    {
+     "w": "bird!",
+     "t0": 19.52,
+     "t1": 19.94
+    }
+   ]
+  },
+  {
+   "who": "pip",
+   "line": "Tweet, tweet, tweet is the magic word!",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 20.08,
+   "t1": 22.36,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "Tweet,",
+     "t0": 20.08,
+     "t1": 20.26
+    },
+    {
+     "w": "tweet,",
+     "t0": 20.4,
+     "t1": 20.56
+    },
+    {
+     "w": "tweet",
+     "t0": 20.68,
+     "t1": 21.02
+    },
+    {
+     "w": "is",
+     "t0": 21.06,
+     "t1": 21.16
+    },
+    {
+     "w": "the",
+     "t0": 21.2,
+     "t1": 21.26
+    },
+    {
+     "w": "magic",
+     "t0": 21.34,
+     "t1": 21.84
+    },
+    {
+     "w": "word!",
+     "t0": 21.94,
+     "t1": 22.36
+    }
+   ]
+  },
+  {
+   "who": "both",
+   "line": "Big or small, short or tall,",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 27.32,
+   "t1": 29.4,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "Big",
+     "t0": 27.32,
+     "t1": 27.6
+    },
+    {
+     "w": "or",
+     "t0": 27.66,
+     "t1": 27.76
+    },
+    {
+     "w": "small,",
+     "t0": 27.86,
+     "t1": 28.3
+    },
+    {
+     "w": "short",
+     "t0": 28.48,
+     "t1": 28.82
+    },
+    {
+     "w": "or",
+     "t0": 28.86,
+     "t1": 29.0
+    },
+    {
+     "w": "tall,",
+     "t0": 29.1,
+     "t1": 29.4
+    }
+   ]
+  },
+  {
+   "who": "both",
+   "line": "friends help friends, that's best of all!",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 29.7,
+   "t1": 31.92,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "friends",
+     "t0": 29.7,
+     "t1": 29.98
+    },
+    {
+     "w": "help",
+     "t0": 30.02,
+     "t1": 30.22
+    },
+    {
+     "w": "friends,",
+     "t0": 30.28,
+     "t1": 30.56
+    },
+    {
+     "w": "that's",
+     "t0": 30.64,
+     "t1": 30.86
+    },
+    {
+     "w": "best",
+     "t0": 30.92,
+     "t1": 31.22
+    },
+    {
+     "w": "of",
+     "t0": 31.34,
+     "t1": 31.52
+    },
+    {
+     "w": "all!",
+     "t0": 31.56,
+     "t1": 31.92
+    }
+   ]
+  },
+  {
+   "who": "both",
+   "line": "Stomp, stomp, stomp, and turn around!",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 34.48,
+   "t1": 36.68,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "Stomp,",
+     "t0": 34.48,
+     "t1": 34.7
+    },
+    {
+     "w": "stomp,",
+     "t0": 34.78,
+     "t1": 34.98
+    },
+    {
+     "w": "stomp,",
+     "t0": 35.1,
+     "t1": 35.4
+    },
+    {
+     "w": "and",
+     "t0": 35.46,
+     "t1": 35.6
+    },
+    {
+     "w": "turn",
+     "t0": 35.72,
+     "t1": 36.06
+    },
+    {
+     "w": "around!",
+     "t0": 36.14,
+     "t1": 36.68
+    }
+   ]
+  },
+  {
+   "who": "both",
+   "line": "Jump up high, and land on the ground!",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 36.94,
+   "t1": 39.16,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "Jump",
+     "t0": 36.94,
+     "t1": 37.22
+    },
+    {
+     "w": "up",
+     "t0": 37.3,
+     "t1": 37.42
+    },
+    {
+     "w": "high,",
+     "t0": 37.52,
+     "t1": 37.82
+    },
+    {
+     "w": "and",
+     "t0": 37.88,
+     "t1": 38.0
+    },
+    {
+     "w": "land",
+     "t0": 38.12,
+     "t1": 38.42
+    },
+    {
+     "w": "on",
+     "t0": 38.48,
+     "t1": 38.56
+    },
+    {
+     "w": "the",
+     "t0": 38.6,
+     "t1": 38.66
+    },
+    {
+     "w": "ground!",
+     "t0": 38.72,
+     "t1": 39.16
+    }
+   ]
+  },
+  {
+   "who": "both",
+   "line": "Big or small, short or tall,",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 42.92,
+   "t1": 44.98,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "Big",
+     "t0": 42.92,
+     "t1": 43.22
+    },
+    {
+     "w": "or",
+     "t0": 43.26,
+     "t1": 43.38
+    },
+    {
+     "w": "small,",
+     "t0": 43.48,
+     "t1": 43.94
+    },
+    {
+     "w": "short",
+     "t0": 44.08,
+     "t1": 44.4
+    },
+    {
+     "w": "or",
+     "t0": 44.46,
+     "t1": 44.58
+    },
+    {
+     "w": "tall,",
+     "t0": 44.7,
+     "t1": 44.98
+    }
+   ]
+  },
+  {
+   "who": "both",
+   "line": "friends help friends, that's best of all!",
+   "sec": "Song",
+   "kind": "song",
+   "t0": 45.28,
+   "t1": 47.7,
+   "look": "cam",
+   "tg": null,
+   "pg": null,
+   "words": [
+    {
+     "w": "friends",
+     "t0": 45.28,
+     "t1": 45.58
+    },
+    {
+     "w": "help",
+     "t0": 45.62,
+     "t1": 45.84
+    },
+    {
+     "w": "friends,",
+     "t0": 45.88,
+     "t1": 46.16
+    },
+    {
+     "w": "that's",
+     "t0": 46.24,
+     "t1": 46.48
+    },
+    {
+     "w": "best",
+     "t0": 46.52,
+     "t1": 46.82
+    },
+    {
+     "w": "of",
+     "t0": 47.02,
+     "t1": 47.14
+    },
+    {
+     "w": "all!",
+     "t0": 47.18,
+     "t1": 47.7
+    }
+   ]
+  },
+  {
+   "who": "tumble",
+   "line": "Phew! Great dancing, everybody!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Phew!",
+     "t0": 55.166,
+     "t1": 55.506
+    },
+    {
+     "w": "Great",
+     "t0": 55.986,
+     "t1": 56.246
+    },
+    {
+     "w": "dancing,",
+     "t0": 56.386,
+     "t1": 56.806
+    },
+    {
+     "w": "everybody!",
+     "t0": 56.886,
+     "t1": 57.366
+    }
+   ],
+   "t0": 53.946,
+   "t1": 57.762,
+   "tg": "excited",
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_59cb3fa053ac.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Now sit down, nice and comfy, for more stories.",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Now",
+     "t0": 58.402,
+     "t1": 58.542
+    },
+    {
+     "w": "sit",
+     "t0": 58.642,
+     "t1": 58.762
+    },
+    {
+     "w": "down,",
+     "t0": 58.862,
+     "t1": 59.202
+    },
+    {
+     "w": "nice",
+     "t0": 59.582,
+     "t1": 59.862
+    },
+    {
+     "w": "and",
+     "t0": 59.902,
+     "t1": 60.022
+    },
+    {
+     "w": "comfy,",
+     "t0": 60.122,
+     "t1": 60.542
+    },
+    {
+     "w": "for",
+     "t0": 60.782,
+     "t1": 60.882
+    },
+    {
+     "w": "more",
+     "t0": 61.002,
+     "t1": 61.162
+    },
+    {
+     "w": "stories.",
+     "t0": 61.302,
+     "t1": 61.802
+    }
+   ],
+   "t0": 58.262,
+   "t1": 61.847,
+   "tg": null,
+   "pg": "wave",
+   "look": "cam",
+   "clip": "pip_6ac50c815b4e.mp3"
+  }
+ ],
+ "pauses": [
+  {
+   "t0": 62.097,
+   "t1": 64.097,
+   "tg": "nod",
+   "pg": "sleepy",
+   "who": "pip"
+  }
+ ],
+ "acts": [
+  {
+   "name": "dance",
+   "t0": 0.9,
+   "t1": 53.746,
+   "sections": [
+    [
+     "Intro",
+     0.9,
+     5.7
+    ],
+    [
+     "Stretch",
+     5.7,
+     15.3
+    ],
+    [
+     "Flap",
+     15.3,
+     24.9
+    ],
+    [
+     "Chorus",
+     24.9,
+     32.1
+    ],
+    [
+     "Stomp",
+     32.1,
+     41.7
+    ],
+    [
+     "Chorus 2",
+     41.7,
+     48.9
+    ],
+    [
+     "Button",
+     48.9,
+     53.7
+    ]
+   ]
+  }
+ ],
+ "pages": []
+}

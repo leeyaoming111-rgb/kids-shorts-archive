@@ -183,5 +183,36 @@
   "stems": "music/stem-separation two_stems_v1"
  },
  "chorus_join_fix": "stored chorus aligned to the verse take's beat (onset cross-correlation; fable-01 +80 ms, fable-02 -50 ms) and joined with a 0.3 s equal-power crossfade from the verse's own chorus; residual beat offset 0 ms",
- "by_ear": "owner listen 2026-10-12: sting joins fine; ~38 s chorus join rough on the first mix, fixed by beat alignment + crossfade and approved on re-listen. Owner accepts the joins by ear despite the chroma scores below 0.9."
+ "by_ear": "owner listen 2026-10-12: sting joins fine; ~38 s chorus join rough on the first mix, fixed by beat alignment + crossfade and approved on re-listen. Owner accepts the joins by ear despite the chroma scores below 0.9.",
+ "v2": {
+  "song_take": "take_14.mp3",
+  "song_recall": 1.0,
+  "singer_pitch_ok": 1.0,
+  "singer_voice_sim": 0.777,
+  "duration": 50.400000000000006,
+  "spoken": [
+   [
+    "s00_tumble",
+    14.34,
+    0.65
+   ],
+   [
+    "s01_tumble",
+    44.0,
+    2.0
+   ],
+   [
+    "s02_both",
+    47.7,
+    0.94
+   ]
+  ],
+  "problems": [],
+  "mix": {
+   "lufs": -14.0,
+   "peak": 0.948,
+   "lyric_recall": 1.0,
+   "stt": "One red apple way up high. Tumble and pip. Jump, jump, jump, I'll reach it, I'll try. One more big jump. Whoa. Oof. Those apples are sour anyway. Let's try together, you and me. [whistling] Tug, tug, tug, here it comes. [whistling] Don't say sour, ask a friend. Big or small, short or tall, friends help friends, that's best of all. Mm, sweet. [whistling] Bye-bye. Bye-bye."
+  }
+ }
 }

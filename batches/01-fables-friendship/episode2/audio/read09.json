@@ -1,0 +1,438 @@
+{
+ "scene": "read09",
+ "mode": "read",
+ "fable": null,
+ "page_from": 9,
+ "page_to": 7,
+ "closed_book": false,
+ "night": false,
+ "duration": 36.026,
+ "lines": [
+  {
+   "who": "pip",
+   "line": "Wait, Tumble! Can our friends remember what we learned?",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Wait,",
+     "t0": 0.76,
+     "t1": 0.98
+    },
+    {
+     "w": "Tumble!",
+     "t0": 1.1,
+     "t1": 1.5
+    },
+    {
+     "w": "Can",
+     "t0": 1.9,
+     "t1": 2.08
+    },
+    {
+     "w": "our",
+     "t0": 2.14,
+     "t1": 2.28
+    },
+    {
+     "w": "friends",
+     "t0": 2.4,
+     "t1": 2.68
+    },
+    {
+     "w": "remember",
+     "t0": 2.72,
+     "t1": 3.14
+    },
+    {
+     "w": "what",
+     "t0": 3.24,
+     "t1": 3.34
+    },
+    {
+     "w": "we",
+     "t0": 3.44,
+     "t1": 3.58
+    },
+    {
+     "w": "learned?",
+     "t0": 3.64,
+     "t1": 4.06
+    }
+   ],
+   "t0": 0.6,
+   "t1": 4.162,
+   "tg": null,
+   "pg": "hop",
+   "look": "cam",
+   "clip": "pip_d8e732d6cbdf.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Together we're strong!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Together",
+     "t0": 6.942,
+     "t1": 7.642
+    },
+    {
+     "w": "we're",
+     "t0": 7.902,
+     "t1": 8.262
+    },
+    {
+     "w": "strong!",
+     "t0": 8.382,
+     "t1": 9.002
+    }
+   ],
+   "t0": 6.862,
+   "t1": 9.073,
+   "tg": "nod",
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_a039d12ccd8f.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Yay! You remembered!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Yay!",
+     "t0": 9.773,
+     "t1": 10.233
+    },
+    {
+     "w": "You",
+     "t0": 10.533,
+     "t1": 10.613
+    },
+    {
+     "w": "remembered!",
+     "t0": 10.693,
+     "t1": 11.513
+    }
+   ],
+   "t0": 9.573,
+   "t1": 11.936,
+   "tg": null,
+   "pg": "flutter",
+   "look": "cam",
+   "clip": "pip_a79aa238cd72.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Story number nine. Scarf Off!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Story",
+     "t0": 13.686,
+     "t1": 14.006
+    },
+    {
+     "w": "number",
+     "t0": 14.086,
+     "t1": 14.326
+    },
+    {
+     "w": "nine.",
+     "t0": 14.406,
+     "t1": 14.786
+    },
+    {
+     "w": "Scarf",
+     "t0": 15.206,
+     "t1": 15.586
+    },
+    {
+     "w": "Off!",
+     "t0": 15.686,
+     "t1": 15.946
+    }
+   ],
+   "t0": 13.486,
+   "t1": 15.987,
+   "tg": null,
+   "pg": "hop",
+   "look": "other",
+   "clip": "pip_4b64e0c1d016.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "I had my stripy scarf, all snug and warm.",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "I",
+     "t0": 16.707,
+     "t1": 16.767
+    },
+    {
+     "w": "had",
+     "t0": 16.827,
+     "t1": 17.027
+    },
+    {
+     "w": "my",
+     "t0": 17.087,
+     "t1": 17.247
+    },
+    {
+     "w": "stripy",
+     "t0": 17.347,
+     "t1": 17.707
+    },
+    {
+     "w": "scarf,",
+     "t0": 17.827,
+     "t1": 18.267
+    },
+    {
+     "w": "all",
+     "t0": 18.467,
+     "t1": 18.707
+    },
+    {
+     "w": "snug",
+     "t0": 18.927,
+     "t1": 19.207
+    },
+    {
+     "w": "and",
+     "t0": 19.227,
+     "t1": 19.327
+    },
+    {
+     "w": "warm.",
+     "t0": 19.447,
+     "t1": 19.707
+    }
+   ],
+   "t0": 16.487,
+   "t1": 19.748,
+   "tg": null,
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_acee9c918b37.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "And the Wind and the Sun had a friendly game. Who can get the scarf off?",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "And",
+     "t0": 20.348,
+     "t1": 20.468
+    },
+    {
+     "w": "the",
+     "t0": 20.528,
+     "t1": 20.608
+    },
+    {
+     "w": "Wind",
+     "t0": 20.728,
+     "t1": 21.068
+    },
+    {
+     "w": "and",
+     "t0": 21.108,
+     "t1": 21.208
+    },
+    {
+     "w": "the",
+     "t0": 21.248,
+     "t1": 21.308
+    },
+    {
+     "w": "Sun",
+     "t0": 21.428,
+     "t1": 21.708
+    },
+    {
+     "w": "had",
+     "t0": 21.748,
+     "t1": 21.868
+    },
+    {
+     "w": "a",
+     "t0": 21.928,
+     "t1": 22.008
+    },
+    {
+     "w": "friendly",
+     "t0": 22.048,
+     "t1": 22.368
+    },
+    {
+     "w": "game.",
+     "t0": 22.508,
+     "t1": 22.828
+    },
+    {
+     "w": "Who",
+     "t0": 23.228,
+     "t1": 23.368
+    },
+    {
+     "w": "can",
+     "t0": 23.488,
+     "t1": 23.608
+    },
+    {
+     "w": "get",
+     "t0": 23.648,
+     "t1": 23.788
+    },
+    {
+     "w": "the",
+     "t0": 23.828,
+     "t1": 23.948
+    },
+    {
+     "w": "scarf",
+     "t0": 23.988,
+     "t1": 24.388
+    },
+    {
+     "w": "off?",
+     "t0": 24.508,
+     "t1": 24.808
+    }
+   ],
+   "t0": 20.248,
+   "t1": 24.89,
+   "tg": null,
+   "pg": "tilt",
+   "look": "other",
+   "clip": "pip_c596780b7e43.mp3"
+  },
+  {
+   "who": "tumble",
+   "line": "Can you blow like the wind? Whoooosh!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Can",
+     "t0": 25.76,
+     "t1": 25.96
+    },
+    {
+     "w": "you",
+     "t0": 26.16,
+     "t1": 26.3
+    },
+    {
+     "w": "blow",
+     "t0": 26.42,
+     "t1": 26.7
+    },
+    {
+     "w": "like",
+     "t0": 26.76,
+     "t1": 26.96
+    },
+    {
+     "w": "the",
+     "t0": 27.0,
+     "t1": 27.08
+    },
+    {
+     "w": "wind?",
+     "t0": 27.2,
+     "t1": 27.54
+    },
+    {
+     "w": "Whoooosh!",
+     "t0": 28.06,
+     "t1": 29.02
+    }
+   ],
+   "t0": 25.64,
+   "t1": 29.24,
+   "tg": null,
+   "pg": null,
+   "look": "cam",
+   "clip": "tumble_ca3f0909d536.mp3"
+  },
+  {
+   "who": "pip",
+   "line": "Whoa! You nearly blew me away!",
+   "sec": "Talk",
+   "kind": "tts",
+   "words": [
+    {
+     "w": "Whoa!",
+     "t0": 32.73,
+     "t1": 33.13
+    },
+    {
+     "w": "You",
+     "t0": 33.49,
+     "t1": 33.59
+    },
+    {
+     "w": "nearly",
+     "t0": 33.69,
+     "t1": 33.97
+    },
+    {
+     "w": "blew",
+     "t0": 34.07,
+     "t1": 34.25
+    },
+    {
+     "w": "me",
+     "t0": 34.29,
+     "t1": 34.39
+    },
+    {
+     "w": "away!",
+     "t0": 34.45,
+     "t1": 34.97
+    }
+   ],
+   "t0": 31.89,
+   "t1": 35.126,
+   "tg": null,
+   "pg": "flutter",
+   "look": "cam",
+   "clip": "pip_c2d34460c2a2.mp3"
+  }
+ ],
+ "pauses": [
+  {
+   "t0": 4.662,
+   "t1": 6.862,
+   "tg": "nod",
+   "pg": "tilt",
+   "who": "pip"
+  },
+  {
+   "t0": 29.49,
+   "t1": 31.89,
+   "tg": null,
+   "pg": "flutter",
+   "who": "tumble"
+  }
+ ],
+ "acts": [
+  {
+   "name": "turn_page",
+   "t0": 12.186,
+   "t1": 13.486
+  }
+ ],
+ "pages": []
+}

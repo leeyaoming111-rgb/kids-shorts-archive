@@ -6,7 +6,7 @@
   - Song, voices and mix done: `../audio/fable-02/` has verse recall 100%, mix recall 98% and -14.4 LUFS.
 - **source:** Aesop's fable *The Fox and the Grapes* (public domain), retold with our cast
 - **lesson (SEL, social-emotional learning):** don't pretend you didn't want it ("sour grapes"); ask a friend for help
-- **length:** 48.0 s (20 bars at 100 BPM). Episode cut: 41.2 s
+- **length:** 50.4 s since the polish pass (one continuous ElevenLabs take, take_14; the Button is 2 bars and the final chord rings out). Section times now follow the real phrasing (Hook 0-2.47, Sting 2.47-6.0).
 
 ## Prompt
 
@@ -49,15 +49,15 @@ Spoken gags (cast voices, eleven_v3):
 | 2 | 3.6-6.0 | wide | tree, stump, leaf pile; Pip on the stump; title card |
 | 3 | 6.0-10.8 | medium side | three jumps on the three sung "jump"s |
 | 4 | 10.8-13.2 | wide, following | run-up, big leap past the apple, the dive begins |
-| 5 | 13.2-15.6 | close on the pile | head-first landing, legs and tail kicking, leaves fly up |
-| 6 | 15.6-20.4 | medium front | pops out with leaves on his head; arms crossed, nose up |
+| 5 | 13.3-15.6 | close on the pile, then wider | head-first landing, legs and tail kicking, muffled "Oof!"; he pops out backwards with a leaf stuck on his head |
+| 6 | 15.6-20.4 | medium front | arms crossed, nose up and turned away; Pip flies over to his other side |
 | 7 | 20.4-24.0 | two-shot | Pip at his face, wing up; Tumble uncrosses his arms, nods |
 | 8 | 24.0-27.6 | wide | walks to the stump, hops up; Pip flies up to the apple |
-| 9 | 27.6-31.2 | side-on close-up in the tree | Pip grips the apple and tugs on each "tug"; it swings and comes loose |
-| 10 | 31.2-34.8 | low medium | the apple drops into his paws; the bite; Pip cheers |
+| 9 | 28.1-31.1 | three-quarter close-up in the tree | Pip grips the apple's side stalk and tugs on each "tug"; the apple swings out towards him |
+| 10 | 31.1-34.8 | low medium | the apple comes loose and drops into his paw; Pip cheers; he hops down off the stump |
 | 11 | 34.8-38.4 | push-in two-shot | Pip on his paw, apple in the other paw; moral card |
 | 12 | 38.4-45.6 | medium front | the series dance and high-five |
-| 13 | 45.6-48.0 | crane up | Pip hops onto the apple for a peck; "Bye-bye!" |
+| 13 | 45.6-50.4 | crane up, then hold | Pip flies round low in front of him to the apple and pecks it; "Bye-bye!"; still frame fades to cream |
 
 ## Differences from Fable 1
 
@@ -68,6 +68,12 @@ Spoken gags (cast voices, eleven_v3):
 - Tumble stands on the stump (in Fable 1, Pip perched on it).
 
 ## Build notes
+
+- Polish pass (2026-10-20): one leaf from the pile stays stuck on Tumble's forehead from the pop-out to the end (a
+  running gag). Pip's two-shot hover is in world space beside the cheek (it was parented to the turning head). The
+  apple has a short side stalk; the tug swings the apple out towards Pip, and his beak stays on the stalk's end. His
+  arms are too short to hold the apple in front of him without it hitting his chin or tummy, so he catches and holds
+  it on his right paw, out at his side, and bites it from the side. He hops down off the stump before the moral.
 
 - The apple hangs just under the canopy (centre 2.95). Tumble's paws only reach about 1.36 high (below his own ears),
   so the apple sits just above his jumping ears, and even standing on the stump he can't quite reach it.
